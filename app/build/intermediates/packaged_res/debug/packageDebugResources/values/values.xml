@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <string-array name="inventory_products">
+        <item>Blusa bordada</item>
+        <item>Vestido casual</item>
+        <item>Conjunto lino</item>
+    </string-array>
+    <color name="clarys_bg">#F4F7FB</color>
+    <color name="clarys_border">#DCE5EF</color>
+    <color name="clarys_danger">#B63D3D</color>
+    <color name="clarys_danger_bg">#FFF1F1</color>
+    <color name="clarys_dark">#17324D</color>
+    <color name="clarys_divider">#E7EEF5</color>
+    <color name="clarys_light">#FFFFFF</color>
+    <color name="clarys_mid">#2F5F85</color>
+    <color name="clarys_muted">#5C7287</color>
+    <color name="clarys_soft">#EDF4FB</color>
+    <color name="clarys_text">#1F2A36</color>
+    <string name="app_name">Clarys</string>
+    <style name="Theme.Clarys" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/clarys_dark</item>
+        <item name="android:windowBackground">@color/clarys_bg</item>
+        <item name="colorPrimary">@color/clarys_dark</item>
+        <item name="colorOnPrimary">@color/clarys_light</item>
+        <item name="colorSecondary">@color/clarys_mid</item>
+        <item name="android:navigationBarColor">@color/clarys_light</item>
+        <item name="android:windowLightStatusBar" ns1:targetApi="m">false</item>
+    </style>
+</resources>

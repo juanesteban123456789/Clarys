@@ -1,0 +1,824 @@
+INFORME GA7-220501096-AA1-EV02
+Definir estandares de codificacion de acuerdo con la plataforma de desarrollo elegida
+Proyecto: Clarys
+
+Nota: Este informe fue elaborado a partir del analisis del proyecto Android
+Clarys. No se realizaron modificaciones sobre el codigo fuente de la app.
+
+
+1. LENGUAJE Y PLATAFORMA USADA
+
+Lenguaje principal:
+- Java.
+
+Framework o plataforma:
+- Android nativo.
+
+IDE recomendado:
+- Android Studio.
+
+Tipo de proyecto:
+- Aplicacion Android de ventas, catalogo, carrito e inventario.
+
+Frontend:
+- XML layouts ubicados en app/src/main/res/layout.
+
+Logica actual:
+- Activities Java, modelos, adaptadores RecyclerView y repositorio mock en memoria.
+
+Configuracion tecnica:
+- Android Gradle Plugin 8.8.2.
+- compileSdk 35.
+- minSdk 24.
+- targetSdk 35.
+- Java 17.
+
+
+2. ESTRUCTURA ACTUAL DEL PROYECTO
+
+Paquetes principales:
+
+- com.clarys.app
+  Contiene las Activities principales y la navegacion de la aplicacion.
+
+- com.clarys.app.model
+  Contiene los modelos de datos del proyecto.
+
+- com.clarys.app.data
+  Contiene la logica de datos mock/repositorio temporal en memoria.
+
+- com.clarys.app.ui
+  Contiene los adaptadores RecyclerView para listas dinamicas.
+
+Activities principales:
+
+- MainActivity
+  Dashboard principal de la aplicacion.
+
+- LoginActivity
+  Pantalla visual de login administrativo.
+
+- CatalogActivity
+  Catalogo de productos para cliente.
+
+- ProductDetailActivity
+  Detalle del producto seleccionado.
+
+- CartActivity
+  Carrito y confirmacion de pedido.
+
+- SaleActivity
+  Pantalla para registrar una nueva venta.
+
+- SaleDetailActivity
+  Detalle de una venta registrada.
+
+- InventoryActivity
+  Pantalla de inventario y movimientos recientes.
+
+- InventoryMovementActivity
+  Pantalla para registrar entradas, salidas o ajustes de stock.
+
+- ProductListActivity
+  Listado administrativo de productos.
+
+- ProductFormActivity
+  Formulario para crear o editar productos.
+
+- ReportsActivity
+  Pantalla de reportes de ventas e inventario.
+
+- CustomerActivity
+  Pantalla de clientes.
+
+- SettingsActivity
+  Configuracion basica del negocio.
+
+Clases de backend, servicios, repositorios o modelos:
+
+- MockStore
+  Repositorio temporal en memoria. Maneja productos, carrito, ventas,
+  clientes, movimientos de inventario, configuracion y reportes.
+
+- Product
+  Modelo de producto.
+
+- Sale
+  Modelo de venta o pedido.
+
+- CartItem
+  Producto agregado al carrito.
+
+- Customer
+  Modelo de cliente.
+
+- InventoryMovement
+  Modelo de movimiento de inventario.
+
+Adaptadores UI:
+
+- ProductAdapter
+- CartAdapter
+- SaleAdapter
+- CustomerAdapter
+- InventoryMovementAdapter
+
+Archivos XML importantes:
+
+- AndroidManifest.xml
+- activity_main.xml
+- activity_catalog.xml
+- activity_product_detail.xml
+- activity_cart.xml
+- activity_sale.xml
+- activity_sale_detail.xml
+- activity_inventory.xml
+- activity_inventory_movement.xml
+- activity_product_list.xml
+- activity_product_form.xml
+- activity_reports.xml
+- activity_customers.xml
+- activity_settings.xml
+- item_product.xml
+- item_cart.xml
+- item_sale.xml
+- item_customer.xml
+- item_movement.xml
+
+Archivos de recursos importantes:
+
+- colors.xml
+  Define la paleta visual de Clarys.
+
+- themes.xml
+  Define el tema principal Theme.Clarys basado en Material3 Light sin ActionBar.
+
+- strings.xml
+  Contiene el nombre de la aplicacion: Clarys.
+
+- arrays.xml
+  Contiene una lista inicial de productos para inventario.
+
+- drawable/bg_*.xml
+  Fondos reutilizables para tarjetas, botones, inputs y chips.
+
+- logo_taller_clarys.png
+  Logo principal del proyecto.
+
+- logo_taller_clarys_con_eslogan.png
+  Logo con eslogan.
+
+
+3. VARIABLES ACTUALES USADAS EN EL PROYECTO
+
+Variable: store
+Archivo/clase: Varias Activities y adaptadores
+Uso: Acceso a MockStore.
+Convencion: Correcta, usa camelCase.
+
+Variable: productAdapter
+Archivo/clase: InventoryActivity, SaleActivity
+Uso: Adaptador para mostrar productos.
+Convencion: Correcta, usa camelCase.
+
+Variable: cartAdapter
+Archivo/clase: CartActivity, SaleActivity
+Uso: Adaptador para mostrar productos del carrito.
+Convencion: Correcta.
+
+Variable: movementAdapter
+Archivo/clase: InventoryActivity
+Uso: Adaptador para mostrar movimientos de inventario.
+Convencion: Correcta.
+
+Variable: searchInput
+Archivo/clase: CatalogActivity, ProductListActivity, SaleActivity
+Uso: Campo de busqueda de productos.
+Convencion: Correcta.
+
+Variable: nameInput
+Archivo/clase: CartActivity, ProductFormActivity
+Uso: Captura nombre de cliente o producto segun pantalla.
+Convencion: Correcta.
+
+Variable: phoneInput
+Archivo/clase: CartActivity, SaleActivity
+Uso: Captura telefono o WhatsApp del cliente.
+Convencion: Correcta.
+
+Variable: customerInput
+Archivo/clase: SaleActivity
+Uso: Captura nombre del cliente en una venta.
+Convencion: Correcta.
+
+Variable: discountInput
+Archivo/clase: SaleActivity
+Uso: Captura descuento aplicado a la venta.
+Convencion: Correcta.
+
+Variable: paymentSpinner
+Archivo/clase: SaleActivity
+Uso: Seleccion del metodo de pago.
+Convencion: Correcta.
+
+Variable: productId
+Archivo/clase: Varias Activities
+Uso: Identificador del producto recibido por Intent.
+Convencion: Correcta.
+
+Variable: saleId
+Archivo/clase: SaleDetailActivity
+Uso: Identificador de venta recibido por Intent.
+Convencion: Correcta.
+
+Variable: products
+Archivo/clase: MockStore, adaptadores
+Uso: Lista de productos.
+Convencion: Correcta.
+
+Variable: cart
+Archivo/clase: MockStore
+Uso: Lista de productos agregados al carrito.
+Convencion: Correcta.
+
+Variable: sales
+Archivo/clase: MockStore, SaleAdapter
+Uso: Lista de ventas registradas.
+Convencion: Correcta.
+
+Variable: customers
+Archivo/clase: MockStore, CustomerAdapter
+Uso: Lista de clientes.
+Convencion: Correcta.
+
+Variable: movements
+Archivo/clase: MockStore, InventoryMovementAdapter
+Uso: Lista de movimientos de inventario.
+Convencion: Correcta.
+
+Variable: nextProductId
+Archivo/clase: MockStore
+Uso: Consecutivo temporal para productos.
+Convencion: Correcta.
+
+Variable: nextSaleId
+Archivo/clase: MockStore
+Uso: Consecutivo temporal para ventas.
+Convencion: Correcta.
+
+Variable: businessName
+Archivo/clase: MockStore
+Uso: Nombre del negocio.
+Convencion: Correcta.
+
+Variable: contactWhatsapp
+Archivo/clase: MockStore
+Uso: WhatsApp de contacto.
+Convencion: Correcta.
+
+Variable: currency
+Archivo/clase: MockStore
+Uso: Moneda configurada.
+Convencion: Correcta.
+
+Variable: defaultMinStock
+Archivo/clase: MockStore
+Uso: Stock minimo por defecto.
+Convencion: Correcta.
+
+Variable: purchasePrice
+Archivo/clase: Product
+Uso: Precio de compra del producto.
+Convencion: Correcta.
+
+Variable: salePrice
+Archivo/clase: Product
+Uso: Precio de venta del producto.
+Convencion: Correcta.
+
+Variable: minStock
+Archivo/clase: Product
+Uso: Cantidad minima para alerta de inventario.
+Convencion: Correcta.
+
+Variable: soldUnits
+Archivo/clase: Product
+Uso: Cantidad de unidades vendidas.
+Convencion: Correcta.
+
+Variable: previousStock
+Archivo/clase: InventoryMovement
+Uso: Stock antes de un movimiento.
+Convencion: Correcta.
+
+Variable: newStock
+Archivo/clase: InventoryMovement
+Uso: Stock despues de un movimiento.
+Convencion: Correcta.
+
+Variable: reason
+Archivo/clase: InventoryMovement
+Uso: Motivo del movimiento de inventario.
+Convencion: Correcta.
+
+Variable: items
+Archivo/clase: Sale, CartAdapter
+Uso: Elementos de una venta o carrito.
+Convencion: Correcta, aunque en adaptadores podria ser mas especifica:
+cartItems o saleItems.
+
+
+4. METODOS ACTUALES USADOS EN EL PROYECTO
+
+Metodo: setupHeader
+Clase: BaseScreenActivity
+Proposito: Configura botones de Inicio y Atras.
+Convencion: Correcta, usa camelCase.
+Mejora: Mantener.
+
+Metodo: bindNavigation
+Clase: BaseScreenActivity
+Proposito: Asocia un boton con la apertura de otra Activity.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: bindMessage
+Clase: BaseScreenActivity
+Proposito: Asocia una vista con un mensaje Toast.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: openScreen
+Clase: BaseScreenActivity
+Proposito: Abre una pantalla mediante Intent.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: showMessage
+Clase: BaseScreenActivity
+Proposito: Muestra mensajes cortos al usuario.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: renderDashboard
+Clase: MainActivity
+Proposito: Actualiza las metricas del dashboard.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: refreshProducts
+Clase: CatalogActivity, SaleActivity, ProductListActivity
+Proposito: Refresca la lista de productos.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: openProductDetail
+Clase: CatalogActivity
+Proposito: Abre el detalle de un producto por ID.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: refreshCart
+Clase: CartActivity, SaleActivity
+Proposito: Actualiza carrito y total.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: confirmSale
+Clase: SaleActivity, MockStore
+Proposito: Registra una venta.
+Convencion: Correcta.
+Mejora: Cuando haya backend, mover logica a un repositorio o servicio real.
+
+Metodo: renderProduct
+Clase: ProductDetailActivity, ProductFormActivity
+Proposito: Muestra informacion del producto.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: saveProduct
+Clase: ProductFormActivity, MockStore
+Proposito: Guarda o actualiza un producto.
+Convencion: Correcta.
+Mejora: Con backend, delegar en ProductRepository.
+
+Metodo: applyMovement
+Clase: InventoryMovementActivity
+Proposito: Aplica entrada, salida o ajuste de inventario.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: adjustStock
+Clase: MockStore
+Proposito: Ajusta stock y registra movimiento.
+Convencion: Correcta.
+Mejora: Con backend, delegar en InventoryRepository.
+
+Metodo: addToCart
+Clase: MockStore
+Proposito: Agrega un producto al carrito.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: updateCartQuantity
+Clase: MockStore
+Proposito: Actualiza cantidad de producto en carrito.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: clearCart
+Clase: MockStore
+Proposito: Limpia el carrito.
+Convencion: Correcta.
+Mejora: Mantener.
+
+Metodo: formatMoney
+Clase: MockStore
+Proposito: Formatea valores monetarios.
+Convencion: Correcta.
+Mejora: Podria moverse a una clase utilitaria CurrencyUtils.
+
+Metodo: calculateProfit
+Clase: ReportsActivity
+Proposito: Calcula utilidad estimada.
+Convencion: Correcta.
+Mejora: Podria moverse a un servicio de reportes.
+
+
+5. CLASES ACTUALES DEL PROYECTO
+
+Clase: BaseScreenActivity
+Funcion: Clase base para navegacion y mensajes.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: MainActivity
+Funcion: Dashboard principal.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: LoginActivity
+Funcion: Login visual administrativo.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: CatalogActivity
+Funcion: Catalogo cliente.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: ProductDetailActivity
+Funcion: Detalle de producto.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: CartActivity
+Funcion: Carrito y pedido.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: SaleActivity
+Funcion: Nueva venta.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: SaleDetailActivity
+Funcion: Detalle de venta.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: InventoryActivity
+Funcion: Inventario.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: InventoryMovementActivity
+Funcion: Movimiento de inventario.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: ProductListActivity
+Funcion: Listado administrativo de productos.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: ProductFormActivity
+Funcion: Crear o editar producto.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: ReportsActivity
+Funcion: Reportes.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: CustomerActivity
+Funcion: Clientes.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: SettingsActivity
+Funcion: Configuracion.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: MockStore
+Funcion: Repositorio temporal en memoria.
+PascalCase: Si.
+Recomendacion: En una version con backend, reemplazar o dividir en
+ProductRepository, SaleRepository, CustomerRepository e InventoryRepository.
+
+Clase: Product
+Funcion: Modelo de producto.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: Sale
+Funcion: Modelo de venta.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: CartItem
+Funcion: Item del carrito.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: Customer
+Funcion: Modelo de cliente.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: InventoryMovement
+Funcion: Movimiento de inventario.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+Clase: ProductAdapter, CartAdapter, SaleAdapter, CustomerAdapter,
+InventoryMovementAdapter
+Funcion: Adaptadores para RecyclerView.
+PascalCase: Si.
+Recomendacion: Mantener.
+
+
+6. CONSTANTES O VALORES FIJOS
+
+Valor fijo: "productId"
+Uso: Clave de Intent para productos.
+Recomendacion: Convertir a constante.
+Nombre sugerido: EXTRA_PRODUCT_ID
+
+Valor fijo: "saleId"
+Uso: Clave de Intent para ventas.
+Recomendacion: Convertir a constante.
+Nombre sugerido: EXTRA_SALE_ID
+
+Valor fijo: "Todos"
+Uso: Filtro general.
+Recomendacion: Convertir a constante.
+Nombre sugerido: FILTER_ALL
+
+Valor fijo: "Stock bajo"
+Uso: Filtro y estado de stock.
+Recomendacion: Convertir a constante.
+Nombre sugerido: FILTER_LOW_STOCK
+
+Valor fijo: "Agotados"
+Uso: Filtro de productos agotados.
+Recomendacion: Convertir a constante.
+Nombre sugerido: FILTER_OUT_OF_STOCK
+
+Valor fijo: "Inactivos"
+Uso: Filtro de productos inactivos.
+Recomendacion: Convertir a constante.
+Nombre sugerido: FILTER_INACTIVE
+
+Valor fijo: "Entrada"
+Uso: Movimiento de inventario.
+Recomendacion: Convertir a constante.
+Nombre sugerido: MOVEMENT_TYPE_ENTRY
+
+Valor fijo: "Salida"
+Uso: Movimiento de inventario.
+Recomendacion: Convertir a constante.
+Nombre sugerido: MOVEMENT_TYPE_EXIT
+
+Valor fijo: "Ajuste"
+Uso: Movimiento de inventario.
+Recomendacion: Convertir a constante.
+Nombre sugerido: MOVEMENT_TYPE_ADJUSTMENT
+
+Valor fijo: "Confirmada"
+Uso: Estado de venta.
+Recomendacion: Convertir a constante.
+Nombre sugerido: SALE_STATUS_CONFIRMED
+
+Valor fijo: "Pedido pendiente"
+Uso: Estado de pedido.
+Recomendacion: Convertir a constante.
+Nombre sugerido: ORDER_STATUS_PENDING
+
+Valor fijo: "COP"
+Uso: Moneda por defecto.
+Recomendacion: Convertir a constante o configuracion persistente.
+Nombre sugerido: DEFAULT_CURRENCY
+
+Valor fijo: "3001234567"
+Uso: WhatsApp mock.
+Recomendacion: Convertir a constante/configuracion.
+Nombre sugerido: DEFAULT_CONTACT_WHATSAPP
+
+Valor fijo: "Taller Clarys"
+Uso: Nombre del negocio.
+Recomendacion: Convertir a constante/configuracion.
+Nombre sugerido: DEFAULT_BUSINESS_NAME
+
+Observacion:
+- No se encontraron URLs, endpoints, claves API ni conexion Supabase activa
+  en el codigo analizado.
+
+
+7. VARIABLES SUGERIDAS PARA BACKEND O LOGICA DE DATOS
+
+Productos:
+
+Variable sugerida | Tipo de dato | Uso | Ejemplo
+productId | String/int | Identificador unico | 101
+productName | String | Nombre del producto | "Blusa bordada"
+sku | String | Codigo interno | "CLA-BLU-001"
+categoryId | String/int | Categoria | 3
+purchasePrice | int/double | Precio de compra | 38000
+salePrice | int/double | Precio de venta | 65000
+stock | int | Cantidad disponible | 12
+minStock | int | Alerta minima | 4
+isActive | boolean | Estado del producto | true
+
+Clientes:
+
+Variable sugerida | Tipo de dato | Uso | Ejemplo
+customerId | String/int | Identificador del cliente | 25
+customerName | String | Nombre del cliente | "Cliente mostrador"
+customerPhone | String | WhatsApp o telefono | "3001234567"
+customerAddress | String | Direccion opcional | "Calle 1 #2-3"
+
+Pedidos:
+
+Variable sugerida | Tipo de dato | Uso | Ejemplo
+orderId | String/int | Identificador del pedido | 5001
+orderStatus | String | Estado del pedido | "PENDING"
+orderTotal | double | Total del pedido | 123000
+paymentMethod | String | Metodo de pago | "Efectivo"
+createdAt | String/Date | Fecha de creacion | "2026-06-07"
+
+Carrito:
+
+Variable sugerida | Tipo de dato | Uso | Ejemplo
+cartItems | List<CartItem> | Productos seleccionados | [item1, item2]
+quantity | int | Cantidad por producto | 2
+subtotal | double | Subtotal por item | 130000
+discount | double | Descuento | 10000
+
+Inventario:
+
+Variable sugerida | Tipo de dato | Uso | Ejemplo
+movementId | String/int | ID del movimiento | 9001
+movementType | String | Entrada/salida/ajuste | "ENTRY"
+previousStock | int | Stock anterior | 10
+newStock | int | Stock actualizado | 15
+reason | String | Motivo del movimiento | "Compra proveedor"
+
+Autenticacion:
+
+Variable sugerida | Tipo de dato | Uso | Ejemplo
+userId | String/int | Identificador del usuario | 1
+userEmail | String | Correo de inicio de sesion | "admin@clarys.com"
+userPassword | String | Clave de acceso | "********"
+userRole | String | Rol de usuario | "ADMIN"
+authToken | String | Token de sesion | "Bearer ..."
+
+Supabase/API:
+
+Variable sugerida | Tipo de dato | Uso | Ejemplo
+apiBaseUrl | String | URL base del backend | "https://xxxx.supabase.co"
+apiKey | String | Clave publica de API | "ey..."
+authToken | String | Token de autorizacion | "Bearer ..."
+productsEndpoint | String | Endpoint de productos | "/products"
+ordersEndpoint | String | Endpoint de pedidos | "/orders"
+
+
+8. ESTANDARES DE CODIFICACION RECOMENDADOS
+
+Nombres de variables:
+- Usar camelCase.
+- Ejemplos: productName, salePrice, customerPhone, minStock.
+
+Nombres de clases:
+- Usar PascalCase.
+- Ejemplos: ProductFormActivity, InventoryMovement, ProductRepository.
+
+Nombres de metodos:
+- Usar camelCase con verbos claros.
+- Ejemplos: saveProduct, confirmSale, loadProducts, refreshCart.
+
+Nombres de constantes:
+- Usar MAYUSCULAS_CON_GUION_BAJO.
+- Ejemplos: EXTRA_PRODUCT_ID, SALE_STATUS_CONFIRMED, DEFAULT_CURRENCY.
+
+Organizacion de paquetes:
+- com.clarys.app.activities o com.clarys.app para Activities.
+- com.clarys.app.model para modelos.
+- com.clarys.app.data para datos temporales o mock.
+- com.clarys.app.repository para repositorios reales.
+- com.clarys.app.service para servicios/API.
+- com.clarys.app.ui para adaptadores y componentes UI.
+- com.clarys.app.utils para utilidades.
+
+Comentarios:
+- Usar comentarios solo cuando ayuden a entender una regla de negocio o logica
+  no evidente.
+- Evitar comentarios que repitan exactamente lo que hace una linea.
+
+Indentacion:
+- Usar 4 espacios en Java.
+- Mantener XML ordenado y legible.
+
+Longitud recomendada de lineas:
+- Entre 100 y 120 caracteres.
+
+Buenas practicas para Activities:
+- Las Activities deben manejar principalmente UI y navegacion.
+- Evitar concentrar demasiada logica de negocio en Activities.
+- Delegar datos a repositorios o servicios.
+
+Buenas practicas para XML:
+- Usar IDs descriptivos.
+- Ejemplos: inputProductName, buttonConfirmSale, recyclerSaleProducts.
+- Mover textos visibles a strings.xml.
+
+Buenas practicas para backend:
+- No guardar claves secretas directamente en codigo fuente.
+- Centralizar URLs, endpoints y claves publicas.
+- Usar repositorios: ProductRepository, SaleRepository, InventoryRepository.
+- Manejar errores de red y estados de carga.
+
+
+9. EJEMPLOS DE CODIGO CORRECTO E INCORRECTO
+
+Variable correcta vs incorrecta:
+
+Incorrecto:
+String nomProd;
+
+Correcto:
+String productName;
+
+Clase correcta vs incorrecta:
+
+Incorrecto:
+class productform {
+}
+
+Correcto:
+class ProductFormActivity {
+}
+
+Metodo correcto vs incorrecto:
+
+Incorrecto:
+void hacer() {
+}
+
+Correcto:
+void saveProduct() {
+}
+
+Constante correcta vs incorrecta:
+
+Incorrecto:
+String productIdKey = "productId";
+
+Correcto:
+private static final String EXTRA_PRODUCT_ID = "productId";
+
+Comentario correcto vs incorrecto:
+
+Incorrecto:
+// Suma uno al contador
+nextProductId++;
+
+Correcto:
+// Genera un ID temporal mientras no exista backend persistente.
+nextProductId++;
+
+
+10. RESUMEN PARA DOCUMENTO SENA
+
+El proyecto Clarys debe adoptar estandares de codificacion propios de una
+aplicacion Android nativa desarrollada en Java y XML. Las clases deben nombrarse
+en PascalCase, los metodos y variables en camelCase, y las constantes en
+MAYUSCULAS_CON_GUION_BAJO. La estructura debe mantenerse organizada por
+responsabilidades, separando Activities, modelos, adaptadores, repositorios y
+servicios. Los textos visibles deben ubicarse en archivos de recursos como
+strings.xml, mientras que valores fijos como estados, filtros, claves de Intent
+y tipos de movimiento deben definirse como constantes. Estos estandares permiten
+que el codigo sea mas legible, mantenible, escalable y facil de integrar
+posteriormente con backend, base de datos o servicios externos como Supabase/API.

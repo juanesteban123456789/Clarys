@@ -1,0 +1,206 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.clarys.app"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="35" />
+10
+11    <permission
+11-->[androidx.core:core:1.13.0] C:\Users\user\.gradle\caches\8.10.2\transforms\4ef215c8b10a026e862f592266e0feb4\transformed\core-1.13.0\AndroidManifest.xml:22:5-24:47
+12        android:name="com.clarys.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+12-->[androidx.core:core:1.13.0] C:\Users\user\.gradle\caches\8.10.2\transforms\4ef215c8b10a026e862f592266e0feb4\transformed\core-1.13.0\AndroidManifest.xml:23:9-81
+13        android:protectionLevel="signature" />
+13-->[androidx.core:core:1.13.0] C:\Users\user\.gradle\caches\8.10.2\transforms\4ef215c8b10a026e862f592266e0feb4\transformed\core-1.13.0\AndroidManifest.xml:24:9-44
+14
+15    <uses-permission android:name="com.clarys.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+15-->[androidx.core:core:1.13.0] C:\Users\user\.gradle\caches\8.10.2\transforms\4ef215c8b10a026e862f592266e0feb4\transformed\core-1.13.0\AndroidManifest.xml:26:5-97
+15-->[androidx.core:core:1.13.0] C:\Users\user\.gradle\caches\8.10.2\transforms\4ef215c8b10a026e862f592266e0feb4\transformed\core-1.13.0\AndroidManifest.xml:26:22-94
+16
+17    <application
+17-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:4:5-60:19
+18        android:allowBackup="true"
+18-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:5:9-35
+19        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+19-->[androidx.core:core:1.13.0] C:\Users\user\.gradle\caches\8.10.2\transforms\4ef215c8b10a026e862f592266e0feb4\transformed\core-1.13.0\AndroidManifest.xml:28:18-86
+20        android:debuggable="true"
+21        android:extractNativeLibs="false"
+22        android:label="@string/app_name"
+22-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:6:9-41
+23        android:supportsRtl="true"
+23-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:7:9-35
+24        android:testOnly="true"
+25        android:theme="@style/Theme.Clarys" >
+25-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:8:9-44
+26        <activity
+26-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:9:9-11:40
+27            android:name="com.clarys.app.SettingsActivity"
+27-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:10:13-45
+28            android:exported="false" />
+28-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:11:13-37
+29        <activity
+29-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:12:9-14:40
+30            android:name="com.clarys.app.CustomerActivity"
+30-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:13:13-45
+31            android:exported="false" />
+31-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:14:13-37
+32        <activity
+32-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:15:9-17:40
+33            android:name="com.clarys.app.ReportsActivity"
+33-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:16:13-44
+34            android:exported="false" />
+34-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:17:13-37
+35        <activity
+35-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:18:9-20:40
+36            android:name="com.clarys.app.SaleDetailActivity"
+36-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:19:13-47
+37            android:exported="false" />
+37-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:20:13-37
+38        <activity
+38-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:21:9-23:40
+39            android:name="com.clarys.app.SaleActivity"
+39-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:22:13-41
+40            android:exported="false" />
+40-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:23:13-37
+41        <activity
+41-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:24:9-26:40
+42            android:name="com.clarys.app.InventoryMovementActivity"
+42-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:25:13-54
+43            android:exported="false" />
+43-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:26:13-37
+44        <activity
+44-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:27:9-29:40
+45            android:name="com.clarys.app.ProductFormActivity"
+45-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:28:13-48
+46            android:exported="false" />
+46-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:29:13-37
+47        <activity
+47-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:30:9-32:40
+48            android:name="com.clarys.app.ProductListActivity"
+48-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:31:13-48
+49            android:exported="false" />
+49-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:32:13-37
+50        <activity
+50-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:33:9-35:40
+51            android:name="com.clarys.app.InventoryActivity"
+51-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:34:13-46
+52            android:exported="false" />
+52-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:35:13-37
+53        <activity
+53-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:36:9-38:40
+54            android:name="com.clarys.app.ManagementActivity"
+54-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:37:13-47
+55            android:exported="false" />
+55-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:38:13-37
+56        <activity
+56-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:39:9-41:40
+57            android:name="com.clarys.app.CartActivity"
+57-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:40:13-41
+58            android:exported="false" />
+58-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:41:13-37
+59        <activity
+59-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:42:9-44:40
+60            android:name="com.clarys.app.ProductDetailActivity"
+60-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:43:13-50
+61            android:exported="false" />
+61-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:44:13-37
+62        <activity
+62-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:45:9-47:40
+63            android:name="com.clarys.app.CatalogActivity"
+63-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:46:13-44
+64            android:exported="false" />
+64-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:47:13-37
+65        <activity
+65-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:48:9-50:40
+66            android:name="com.clarys.app.LoginActivity"
+66-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:49:13-42
+67            android:exported="false" />
+67-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:50:13-37
+68        <activity
+68-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:51:9-59:20
+69            android:name="com.clarys.app.MainActivity"
+69-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:52:13-41
+70            android:exported="true" >
+70-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:53:13-36
+71            <intent-filter>
+71-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:54:13-58:29
+72                <action android:name="android.intent.action.MAIN" />
+72-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:55:17-69
+72-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:55:25-66
+73
+74                <category android:name="android.intent.category.LAUNCHER" />
+74-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:57:17-77
+74-->D:\SENA\Proyecto de software\PROYECTO\android-clarys-app\app\src\main\AndroidManifest.xml:57:27-74
+75            </intent-filter>
+76        </activity>
+77
+78        <provider
+78-->[androidx.emoji2:emoji2:1.3.0] C:\Users\user\.gradle\caches\8.10.2\transforms\149b01a256ef9789589e0b8f4c12af0c\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+79            android:name="androidx.startup.InitializationProvider"
+79-->[androidx.emoji2:emoji2:1.3.0] C:\Users\user\.gradle\caches\8.10.2\transforms\149b01a256ef9789589e0b8f4c12af0c\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+80            android:authorities="com.clarys.app.androidx-startup"
+80-->[androidx.emoji2:emoji2:1.3.0] C:\Users\user\.gradle\caches\8.10.2\transforms\149b01a256ef9789589e0b8f4c12af0c\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+81            android:exported="false" >
+81-->[androidx.emoji2:emoji2:1.3.0] C:\Users\user\.gradle\caches\8.10.2\transforms\149b01a256ef9789589e0b8f4c12af0c\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+82            <meta-data
+82-->[androidx.emoji2:emoji2:1.3.0] C:\Users\user\.gradle\caches\8.10.2\transforms\149b01a256ef9789589e0b8f4c12af0c\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+83                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+83-->[androidx.emoji2:emoji2:1.3.0] C:\Users\user\.gradle\caches\8.10.2\transforms\149b01a256ef9789589e0b8f4c12af0c\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+84                android:value="androidx.startup" />
+84-->[androidx.emoji2:emoji2:1.3.0] C:\Users\user\.gradle\caches\8.10.2\transforms\149b01a256ef9789589e0b8f4c12af0c\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+85            <meta-data
+85-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\user\.gradle\caches\8.10.2\transforms\e4aa5541b71e994c551ce94aa0e68f09\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+86                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+86-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\user\.gradle\caches\8.10.2\transforms\e4aa5541b71e994c551ce94aa0e68f09\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+87                android:value="androidx.startup" />
+87-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\user\.gradle\caches\8.10.2\transforms\e4aa5541b71e994c551ce94aa0e68f09\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+88            <meta-data
+88-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+89                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+89-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+90                android:value="androidx.startup" />
+90-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+91        </provider>
+92
+93        <receiver
+93-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+94            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+94-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+95            android:directBootAware="false"
+95-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+96            android:enabled="true"
+96-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+97            android:exported="true"
+97-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+98            android:permission="android.permission.DUMP" >
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+99            <intent-filter>
+99-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+100                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+101            </intent-filter>
+102            <intent-filter>
+102-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+103                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+103-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+103-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+104            </intent-filter>
+105            <intent-filter>
+105-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+106                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+106-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+106-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+107            </intent-filter>
+108            <intent-filter>
+108-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+109                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+109-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+109-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\user\.gradle\caches\8.10.2\transforms\196a0dd8bec30915ea7aa7c10fbc4b32\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+110            </intent-filter>
+111        </receiver>
+112    </application>
+113
+114</manifest>

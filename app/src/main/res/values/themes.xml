@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.Clarys" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/clarys_dark</item>
+        <item name="android:windowBackground">@color/clarys_bg</item>
+        <item name="colorPrimary">@color/clarys_dark</item>
+        <item name="colorOnPrimary">@color/clarys_light</item>
+        <item name="colorSecondary">@color/clarys_mid</item>
+        <item name="android:navigationBarColor">@color/clarys_light</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    </style>
+</resources>
