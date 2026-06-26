@@ -2,60 +2,104 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/clarys_bg"
+    android:background="@drawable/bg_login_canvas"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="18dp">
 
-        <ImageView
-            android:layout_width="150dp"
-            android:layout_height="70dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/logo_taller_clarys" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="96dp"
+                android:layout_height="48dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/logo_taller_clarys" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:text="Panel de control"
+                android:textColor="@color/clarys_dark"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Panel de control"
-            android:textColor="@color/clarys_dark"
-            android:textSize="26sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Ventas, inventario y productos conectados con datos mock."
+            android:layout_marginTop="8dp"
+            android:text="Resumen administrativo del taller"
             android:textColor="@color/clarys_muted"
             android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:orientation="vertical">
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Ventas acumuladas"
-                android:textColor="@color/clarys_muted" />
-
-            <TextView
-                android:id="@+id/textDashboardSales"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
                 android:background="@drawable/bg_card"
-                android:padding="16dp"
-                android:textColor="@color/clarys_dark"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ventas"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/textDashboardSales"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Pedidos"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/textDashboardOrders"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -66,49 +110,53 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="90dp"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_card"
                 android:orientation="vertical"
-                android:padding="14dp">
+                android:padding="12dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Pedidos"
-                    android:textColor="@color/clarys_muted" />
-
-                <TextView
-                    android:id="@+id/textDashboardOrders"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/clarys_dark"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="14dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Alertas stock"
-                    android:textColor="@color/clarys_muted" />
+                    android:text="Stock bajo"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/textDashboardLowStock"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
                     android:textColor="@color/clarys_dark"
-                    android:textSize="22sp"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Inventario"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/textDashboardInventoryValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -116,111 +164,178 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_soft_card"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_login_panel"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="14dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Inventario valorizado"
-                android:textColor="@color/clarys_muted" />
-
-            <TextView
-                android:id="@+id/textDashboardInventoryValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:text="Grafico operativo"
                 android:textColor="@color/clarys_dark"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
+
+            <com.clarys.app.ui.DashboardChartView
+                android:id="@+id/chartDashboard"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="8dp" />
 
             <TextView
                 android:id="@+id/textDashboardBestSeller"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:textColor="@color/clarys_mid"
+                android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/buttonOpenSale"
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:background="@drawable/bg_primary_button"
-            android:text="Nueva venta"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
+            android:text="Acciones"
+            android:textColor="@color/clarys_dark"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonOpenProducts"
+                android:layout_width="0dp"
+                android:layout_height="74dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_primary_button"
+                android:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_store"
+                android:drawableTint="@color/clarys_light"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="6dp"
+                android:text="Productos"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="11sp" />
+
+            <Button
+                android:id="@+id/buttonOpenInventory"
+                android:layout_width="0dp"
+                android:layout_height="74dp"
+                android:layout_marginHorizontal="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_primary_button"
+                android:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_inventory"
+                android:drawableTint="@color/clarys_light"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="6dp"
+                android:text="Inventario"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="11sp" />
+
+            <Button
+                android:id="@+id/buttonOpenReports"
+                android:layout_width="0dp"
+                android:layout_height="74dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_primary_button"
+                android:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_report"
+                android:drawableTint="@color/clarys_light"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="6dp"
+                android:text="Reportes"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonOpenCatalog"
+                android:layout_width="0dp"
+                android:layout_height="74dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_primary_button"
+                android:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_customer"
+                android:drawableTint="@color/clarys_light"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="6dp"
+                android:text="Mi catalogo"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="11sp" />
+
+            <Button
+                android:id="@+id/buttonOpenCustomers"
+                android:layout_width="0dp"
+                android:layout_height="74dp"
+                android:layout_marginHorizontal="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_primary_button"
+                android:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_customer"
+                android:drawableTint="@color/clarys_light"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="6dp"
+                android:text="Clientes"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="11sp" />
+
+            <Button
+                android:id="@+id/buttonOpenSettings"
+                android:layout_width="0dp"
+                android:layout_height="74dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_primary_button"
+                android:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_settings"
+                android:drawableTint="@color/clarys_light"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="6dp"
+                android:text="Ajustes"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="11sp" />
+        </LinearLayout>
 
         <Button
-            android:id="@+id/buttonOpenProducts"
+            android:id="@+id/buttonLogout"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_primary_button"
-            android:text="Productos"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
-
-        <Button
-            android:id="@+id/buttonOpenInventory"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_primary_button"
-            android:text="Inventario"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
-
-        <Button
-            android:id="@+id/buttonOpenReports"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_primary_button"
-            android:text="Reportes"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
-
-        <Button
-            android:id="@+id/buttonOpenCatalog"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="14dp"
             android:background="@drawable/bg_secondary_button"
-            android:text="Catalogo cliente"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_mid" />
-
-        <Button
-            android:id="@+id/buttonOpenCustomers"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_secondary_button"
-            android:text="Clientes"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_mid" />
-
-        <Button
-            android:id="@+id/buttonOpenSettings"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_secondary_button"
-            android:text="Configuracion"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_mid" />
-
-        <Button
-            android:id="@+id/buttonOpenLogin"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_soft_button"
-            android:text="Login administrador"
+            android:backgroundTint="@null"
+            android:drawableStart="@drawable/ic_lock"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/clarys_mid"
+            android:paddingHorizontal="16dp"
+            android:text="Cerrar sesion"
             android:textAllCaps="false"
             android:textColor="@color/clarys_mid" />
     </LinearLayout>
