@@ -9,12 +9,13 @@ import android.widget.Spinner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.StoreCallback;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.Product;
 import com.clarys.app.ui.ProductAdapter;
 
 public class ProductListActivity extends BaseScreenActivity {
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private ProductAdapter adapter;
     private EditText searchInput;
     private Spinner filterSpinner;
@@ -23,6 +24,7 @@ public class ProductListActivity extends BaseScreenActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_list);
+        store = SupabaseStore.getInstance(this);
 
         setupHeader(R.id.buttonHeaderHome, R.id.buttonHeaderBack);
         bindNavigation(R.id.buttonAddProduct, ProductFormActivity.class);
@@ -57,7 +59,18 @@ public class ProductListActivity extends BaseScreenActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshProducts();
+        store.refreshProducts(true, new StoreCallback<java.util.List<Product>>() {
+            @Override
+            public void onSuccess(java.util.List<Product> result) {
+                refreshProducts();
+            }
+
+            @Override
+            public void onError(String message) {
+                showMessage(message);
+                refreshProducts();
+            }
+        });
     }
 
     private void refreshProducts() {

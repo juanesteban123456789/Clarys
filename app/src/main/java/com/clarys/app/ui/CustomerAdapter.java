@@ -9,14 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.clarys.app.R;
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.Customer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> {
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private List<Customer> customers = new ArrayList<>();
 
     public void submitList(List<Customer> newCustomers) {
@@ -29,6 +29,9 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     public CustomerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_customer, parent, false);
+        if (store == null) {
+            store = SupabaseStore.getInstance(parent.getContext());
+        }
         return new CustomerViewHolder(view);
     }
 

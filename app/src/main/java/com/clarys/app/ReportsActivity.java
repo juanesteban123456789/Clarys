@@ -7,20 +7,22 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.StoreCallback;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.CartItem;
 import com.clarys.app.model.Product;
 import com.clarys.app.model.Sale;
 import com.clarys.app.ui.SaleAdapter;
 
 public class ReportsActivity extends BaseScreenActivity {
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private SaleAdapter saleAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
+        store = SupabaseStore.getInstance(this);
 
         setupHeader(R.id.buttonHeaderHome, R.id.buttonHeaderBack);
         bindNavigation(R.id.buttonReportNewSale, SaleActivity.class);
@@ -38,7 +40,18 @@ public class ReportsActivity extends BaseScreenActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        renderReports();
+        store.refreshSales(new StoreCallback<java.util.List<Sale>>() {
+            @Override
+            public void onSuccess(java.util.List<Sale> result) {
+                renderReports();
+            }
+
+            @Override
+            public void onError(String message) {
+                showMessage(message);
+                renderReports();
+            }
+        });
     }
 
     private void renderReports() {

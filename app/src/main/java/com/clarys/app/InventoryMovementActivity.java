@@ -5,14 +5,15 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.StoreCallback;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.Product;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryMovementActivity extends BaseScreenActivity {
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private final List<Product> products = new ArrayList<>();
     private Spinner productSpinner;
     private Spinner typeSpinner;
@@ -23,6 +24,7 @@ public class InventoryMovementActivity extends BaseScreenActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory_movement);
+        store = SupabaseStore.getInstance(this);
 
         setupHeader(R.id.buttonHeaderHome, R.id.buttonHeaderBack);
         productSpinner = findViewById(R.id.spinnerMovementProduct);
@@ -69,15 +71,20 @@ public class InventoryMovementActivity extends BaseScreenActivity {
         }
 
         Product selected = products.get(productSpinner.getSelectedItemPosition());
-        boolean success = store.adjustStock(selected.getId(), typeSpinner.getSelectedItem().toString(),
-                quantity, reasonInput.getText().toString());
-        if (!success) {
-            showMessage("No se pudo registrar el movimiento");
-            return;
-        }
-        showMessage("Movimiento registrado");
-        openScreen(InventoryActivity.class);
-        finish();
+        store.adjustStockAsync(selected.getId(), typeSpinner.getSelectedItem().toString(),
+                quantity, reasonInput.getText().toString(), new StoreCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        showMessage("Movimiento registrado");
+                        openScreen(InventoryActivity.class);
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        showMessage(message);
+                    }
+                });
     }
 
     private int parseQuantity() {

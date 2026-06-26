@@ -3,10 +3,11 @@ package com.clarys.app;
 import android.os.Bundle;
 import android.widget.EditText;
 
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.StoreCallback;
+import com.clarys.app.data.SupabaseStore;
 
 public class SettingsActivity extends BaseScreenActivity {
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private EditText businessInput;
     private EditText whatsappInput;
     private EditText currencyInput;
@@ -16,6 +17,7 @@ public class SettingsActivity extends BaseScreenActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        store = SupabaseStore.getInstance(this);
 
         setupHeader(R.id.buttonHeaderHome, R.id.buttonHeaderBack);
         businessInput = findViewById(R.id.inputSettingsBusiness);
@@ -32,16 +34,25 @@ public class SettingsActivity extends BaseScreenActivity {
     }
 
     private void saveSettings() {
-        store.setBusinessName(businessInput.getText().toString());
-        store.setContactWhatsapp(whatsappInput.getText().toString());
-        store.setCurrency(currencyInput.getText().toString());
+        int minStock;
         try {
-            store.setDefaultMinStock(Integer.parseInt(minStockInput.getText().toString().trim()));
+            minStock = Integer.parseInt(minStockInput.getText().toString().trim());
         } catch (NumberFormatException exception) {
-            store.setDefaultMinStock(5);
+            minStock = 5;
         }
-        showMessage("Configuracion guardada en memoria");
-        openScreen(MainActivity.class);
-        finish();
+        store.saveSettingsAsync(businessInput.getText().toString(), whatsappInput.getText().toString(),
+                currencyInput.getText().toString(), minStock, new StoreCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        showMessage("Configuracion guardada");
+                        openScreen(MainActivity.class);
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        showMessage(message);
+                    }
+                });
     }
 }
