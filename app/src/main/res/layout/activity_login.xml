@@ -2,172 +2,188 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/clarys_bg"
+    android:background="@drawable/bg_login_canvas"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-            <Button
+            <ImageButton
                 android:id="@+id/buttonHeaderHome"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/bg_soft_button"
-                android:text="Inicio"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_secondary_button"
+                android:backgroundTint="@null"
+                android:contentDescription="Ir al inicio"
+                android:padding="12dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_home"
+                android:tint="@color/clarys_mid" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/buttonHeaderBack"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_soft_button"
-                android:text="Atrás"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_secondary_button"
+                android:backgroundTint="@null"
+                android:contentDescription="Volver atras"
+                android:padding="12dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="@color/clarys_mid" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/bg_phone"
-            android:orientation="vertical">
+            android:background="@drawable/bg_login_hero"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <ImageView
+                android:layout_width="118dp"
+                android:layout_height="118dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="Logo Clarys"
+                android:src="@drawable/logo_taller_clarys" />
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_logo_strip"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_login_badge"
+                android:drawableStart="@drawable/ic_store"
+                android:drawablePadding="8dp"
                 android:gravity="center"
-                android:padding="16dp">
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
+                android:text="Inventario y ventas"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-                <ImageView
-                    android:layout_width="230dp"
-                    android:layout_height="96dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="Logo con eslogan"
-                    android:src="@drawable/logo_taller_clarys_con_eslogan" />
-            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_login_panel"
+            android:orientation="vertical"
+            android:padding="18dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_status"
-                android:gravity="center"
-                android:padding="12dp"
-                android:text="Panel administrativo"
-                android:textColor="@color/clarys_mid"
+                android:text="Accede a Clarys"
+                android:textColor="@color/clarys_dark"
+                android:textSize="25sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Administra tu taller o entra al catalogo como cliente."
+                android:textColor="@color/clarys_muted"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/inputLoginEmail"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_input"
+                android:hint="Correo"
+                android:inputType="textEmailAddress"
+                android:paddingHorizontal="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted" />
+
+            <EditText
+                android:id="@+id/inputLoginPassword"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_input"
+                android:hint="Contrasena"
+                android:inputType="textPassword"
+                android:paddingHorizontal="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted" />
+
+            <Button
+                android:id="@+id/buttonLogin"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_primary_button"
+                android:backgroundTint="@null"
+                android:drawableStart="@drawable/ic_mail"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Ingresar con correo y contrasena"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light" />
+
+            <Button
+                android:id="@+id/buttonGoogleLogin"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_google_button"
+                android:backgroundTint="@null"
+                android:drawableStart="@drawable/ic_google"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Iniciar con Google"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_dark" />
+
+            <Button
+                android:id="@+id/buttonEnterAsClient"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_client_button"
+                android:backgroundTint="@null"
+                android:drawableStart="@drawable/ic_customer"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Iniciar como cliente"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_mid" />
+
+            <Button
+                android:id="@+id/buttonRegisterAdmin"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
                 android:layout_marginTop="12dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:background="@drawable/bg_register_button"
+                android:backgroundTint="@null"
+                android:drawableStart="@drawable/ic_register"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Registrarse"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_mid" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Iniciar sesión"
-                    android:textColor="@color/clarys_dark"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Ingresa con tu cuenta de administrador"
-                    android:textColor="@color/clarys_muted"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Correo"
-                    android:textColor="@color/clarys_dark"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/bg_input"
-                    android:hint="admin@clarys.com"
-                    android:inputType="textEmailAddress"
-                    android:padding="14dp"
-                    android:textColor="@color/clarys_text"
-                    android:textColorHint="@color/clarys_muted" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Contraseña"
-                    android:textColor="@color/clarys_dark"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/bg_input"
-                    android:hint="********"
-                    android:inputType="textPassword"
-                    android:padding="14dp"
-                    android:textColor="@color/clarys_text"
-                    android:textColorHint="@color/clarys_muted" />
-
-                <Button
-                    android:id="@+id/buttonLogin"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_primary_button"
-                    android:padding="14dp"
-                    android:text="Ingresar"
-                    android:textAllCaps="false"
-                    android:textColor="@color/clarys_light" />
-
-                <Button
-                    android:id="@+id/buttonForgotPassword"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:background="@android:color/transparent"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:padding="0dp"
-                    android:text="¿Olvidaste tu contraseña?"
-                    android:textAllCaps="false"
-                    android:textColor="@color/clarys_mid" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_error_box"
-                    android:padding="12dp"
-                    android:text="Error: Los datos no coinciden. Intenta otra vez."
-                    android:textColor="@color/clarys_danger"
-                    android:textStyle="bold" />
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
