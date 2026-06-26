@@ -14,6 +14,10 @@ public class Product {
     private String sku;
     private boolean active;
     private int soldUnits;
+    private String workshopId;
+    private String workshopName;
+    private String workshopWhatsapp;
+    private String imageUrl;
 
     public Product(int id, String name, String description, String category, int purchasePrice,
             int salePrice, int stock, int minStock, String sizes, String colors, String sku,
@@ -31,6 +35,10 @@ public class Product {
         this.sku = sku;
         this.active = active;
         this.soldUnits = soldUnits;
+        this.workshopId = "";
+        this.workshopName = "";
+        this.workshopWhatsapp = "";
+        this.imageUrl = "";
     }
 
     public int getId() {
@@ -143,5 +151,37 @@ public class Product {
 
     public int getPotentialProfit() {
         return Math.max(0, salePrice - purchasePrice);
+    }
+
+    public String getWorkshopId() {
+        return workshopId;
+    }
+
+    public void setWorkshopId(String workshopId) {
+        this.workshopId = workshopId == null ? "" : workshopId;
+    }
+
+    public String getWorkshopName() {
+        return workshopName;
+    }
+
+    public void setWorkshopName(String workshopName) {
+        this.workshopName = workshopName == null ? "" : workshopName;
+    }
+
+    public String getWorkshopWhatsapp() {
+        return workshopWhatsapp;
+    }
+
+    public void setWorkshopWhatsapp(String workshopWhatsapp) {
+        this.workshopWhatsapp = workshopWhatsapp == null ? "" : workshopWhatsapp;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl == null ? "" : imageUrl;
     }
 }
