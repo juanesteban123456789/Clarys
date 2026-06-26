@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/clarys_bg">
+    android:background="@drawable/bg_login_canvas">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,26 +15,30 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
+            <ImageButton
                 android:id="@+id/buttonHeaderHome"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="8dp"
-                android:layout_weight="1"
                 android:background="@drawable/bg_secondary_button"
-                android:text="Inicio"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:backgroundTint="@null"
+                android:contentDescription="Ir al inicio"
+                android:padding="12dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_home"
+                android:tint="@color/clarys_mid" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/buttonHeaderBack"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_secondary_button"
-                android:text="Atras"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:backgroundTint="@null"
+                android:contentDescription="Volver atras"
+                android:padding="12dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="@color/clarys_mid" />
         </LinearLayout>
 
         <ImageView
@@ -78,6 +82,10 @@
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_primary_button"
+                android:backgroundTint="@null"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/clarys_light"
                 android:text="Buscar"
                 android:textAllCaps="false"
                 android:textColor="@color/clarys_light" />
@@ -88,6 +96,10 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_secondary_button"
+                android:backgroundTint="@null"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/clarys_mid"
                 android:text="Visual"
                 android:textAllCaps="false"
                 android:textColor="@color/clarys_mid" />
@@ -99,6 +111,9 @@
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_soft_button"
+            android:backgroundTint="@null"
+            android:drawableStart="@drawable/ic_cart"
+            android:drawablePadding="10dp"
             android:text="Abrir venta rapida"
             android:textAllCaps="false"
             android:textColor="@color/clarys_mid" />
@@ -118,45 +133,71 @@
             android:orientation="horizontal"
             android:padding="8dp">
 
-            <Button
+            <ImageButton
                 android:id="@+id/buttonBottomHome"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
+                android:layout_height="64dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_soft_button"
-                android:text="Inicio"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:backgroundTint="@null"
+                android:contentDescription="Ir al inicio"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="12dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_home"
+                android:tint="@color/clarys_mid" />
 
             <Button
                 android:id="@+id/buttonBottomCategories"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
+                android:layout_height="64dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_soft_button"
-                android:text="Categorias"
+                android:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_store"
+                android:drawablePadding="2dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="4dp"
+                android:text="Catalogo"
                 android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:textColor="@color/clarys_mid"
+                android:textSize="11sp" />
 
             <Button
                 android:id="@+id/buttonBottomCart"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
+                android:layout_height="64dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_soft_button"
+                android:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_cart"
+                android:drawablePadding="2dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="4dp"
                 android:text="Carrito"
                 android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:textColor="@color/clarys_mid"
+                android:textSize="11sp" />
 
             <Button
                 android:id="@+id/buttonBottomProfile"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
+                android:layout_height="64dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_soft_button"
+                android:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_lock"
+                android:drawablePadding="2dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="4dp"
                 android:text="Admin"
                 android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:textColor="@color/clarys_mid"
+                android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

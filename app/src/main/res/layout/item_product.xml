@@ -7,6 +7,16 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <ImageView
+        android:id="@+id/imageProduct"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_placeholder"
+        android:contentDescription="Imagen del producto"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -80,6 +90,11 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:background="@drawable/bg_primary_button"
+            android:backgroundTint="@null"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/clarys_light"
+            android:paddingHorizontal="12dp"
             android:textAllCaps="false"
             android:textColor="@color/clarys_light" />
 
@@ -89,6 +104,11 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/bg_secondary_button"
+            android:backgroundTint="@null"
+            android:drawableStart="@drawable/ic_cart"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/clarys_mid"
+            android:paddingHorizontal="12dp"
             android:textAllCaps="false"
             android:textColor="@color/clarys_mid" />
     </LinearLayout>
