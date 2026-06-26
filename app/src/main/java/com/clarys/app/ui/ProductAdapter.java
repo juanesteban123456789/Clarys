@@ -4,13 +4,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.clarys.app.R;
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.Product;
 
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         void onSecondaryAction(Product product);
     }
 
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private final ProductActionListener listener;
     private final String primaryLabel;
     private final String secondaryLabel;
@@ -48,6 +50,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_product, parent, false);
+        if (store == null) {
+            store = SupabaseStore.getInstance(parent.getContext());
+        }
         return new ProductViewHolder(view);
     }
 
@@ -63,7 +68,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 ? "Costo " + store.formatMoney(product.getPurchasePrice())
                         + " | Margen " + store.formatMoney(product.getPotentialProfit())
                         + " | Vendidas " + product.getSoldUnits()
-                : "Tallas " + product.getSizes() + " | Colores " + product.getColors());
+                : buildPublicExtra(product));
+        if (product.getImageUrl().isEmpty()) {
+            holder.image.setVisibility(View.GONE);
+            Glide.with(holder.image).clear(holder.image);
+        } else {
+            holder.image.setVisibility(View.VISIBLE);
+            Glide.with(holder.image)
+                    .load(product.getImageUrl())
+                    .centerCrop()
+                    .into(holder.image);
+        }
         holder.primaryButton.setText(primaryLabel);
         holder.secondaryButton.setText(secondaryLabel);
         holder.primaryButton.setOnClickListener(view -> listener.onPrimaryAction(product));
@@ -83,6 +98,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         return "Stock: " + product.getStock();
     }
 
+    private String buildPublicExtra(Product product) {
+        String workshop = product.getWorkshopName().isEmpty() ? "" : " | Taller " + product.getWorkshopName();
+        String whatsapp = product.getWorkshopWhatsapp().isEmpty() ? "" : " | WhatsApp " + product.getWorkshopWhatsapp();
+        return "Tallas " + product.getSizes() + " | Colores " + product.getColors() + workshop + whatsapp;
+    }
+
     @Override
     public int getItemCount() {
         return products.size();
@@ -95,11 +116,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         final TextView description;
         final TextView stock;
         final TextView extra;
+        final ImageView image;
         final Button primaryButton;
         final Button secondaryButton;
 
         ProductViewHolder(@NonNull View itemView) {
             super(itemView);
+            image = itemView.findViewById(R.id.imageProduct);
             name = itemView.findViewById(R.id.textProductName);
             category = itemView.findViewById(R.id.textProductCategory);
             price = itemView.findViewById(R.id.textProductPrice);

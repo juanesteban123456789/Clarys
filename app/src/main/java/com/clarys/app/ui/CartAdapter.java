@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.clarys.app.R;
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.CartItem;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         void onQuantityChanged(CartItem item, int newQuantity);
     }
 
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private final CartActionListener listener;
     private List<CartItem> items = new ArrayList<>();
 
@@ -39,6 +39,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_cart, parent, false);
+        if (store == null) {
+            store = SupabaseStore.getInstance(parent.getContext());
+        }
         return new CartViewHolder(view);
     }
 

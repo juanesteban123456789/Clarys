@@ -10,7 +10,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.StoreCallback;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.CartItem;
 import com.clarys.app.model.Product;
 import com.clarys.app.model.Sale;
@@ -18,7 +19,7 @@ import com.clarys.app.ui.CartAdapter;
 import com.clarys.app.ui.ProductAdapter;
 
 public class SaleActivity extends BaseScreenActivity {
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private ProductAdapter productAdapter;
     private CartAdapter cartAdapter;
     private EditText searchInput;
@@ -32,6 +33,7 @@ public class SaleActivity extends BaseScreenActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sale);
+        store = SupabaseStore.getInstance(this);
 
         setupHeader(R.id.buttonHeaderHome, R.id.buttonHeaderBack);
         searchInput = findViewById(R.id.inputSaleSearch);
@@ -85,7 +87,18 @@ public class SaleActivity extends BaseScreenActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshProducts();
+        store.refreshProducts(true, new StoreCallback<java.util.List<Product>>() {
+            @Override
+            public void onSuccess(java.util.List<Product> result) {
+                refreshProducts();
+            }
+
+            @Override
+            public void onError(String message) {
+                showMessage(message);
+                refreshProducts();
+            }
+        });
         refreshCart();
     }
 
@@ -99,17 +112,24 @@ public class SaleActivity extends BaseScreenActivity {
     }
 
     private void confirmSale() {
-        Sale sale = store.confirmSale(customerInput.getText().toString(), phoneInput.getText().toString(),
-                paymentSpinner.getSelectedItem().toString(), parseDiscount(), "Confirmada");
-        if (sale == null) {
-            showMessage("Agrega productos antes de confirmar");
-            return;
-        }
+        store.confirmSaleAsync(customerInput.getText().toString(), phoneInput.getText().toString(),
+                paymentSpinner.getSelectedItem().toString(), parseDiscount(), "Confirmada",
+                new StoreCallback<Sale>() {
+                    @Override
+                    public void onSuccess(Sale sale) {
+                        showMessage("Venta registrada");
+                        Intent intent = new Intent(SaleActivity.this, SaleDetailActivity.class);
+                        if (sale != null) {
+                            intent.putExtra("saleId", sale.getId());
+                        }
+                        startActivity(intent);
+                    }
 
-        showMessage("Venta registrada");
-        Intent intent = new Intent(this, SaleDetailActivity.class);
-        intent.putExtra("saleId", sale.getId());
-        startActivity(intent);
+                    @Override
+                    public void onError(String message) {
+                        showMessage(message);
+                    }
+                });
     }
 
     private int parseDiscount() {

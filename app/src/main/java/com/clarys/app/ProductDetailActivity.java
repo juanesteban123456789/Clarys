@@ -2,20 +2,26 @@ package com.clarys.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.clarys.app.data.MockStore;
+import com.bumptech.glide.Glide;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.Product;
 
 public class ProductDetailActivity extends BaseScreenActivity {
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private Product product;
+    private boolean adminCatalog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
+        store = SupabaseStore.getInstance(this);
+        adminCatalog = getIntent().getBooleanExtra("adminCatalog", false);
 
         setupHeader(R.id.buttonHeaderHome, R.id.buttonHeaderBack);
 
@@ -23,6 +29,11 @@ public class ProductDetailActivity extends BaseScreenActivity {
         Button backToCatalogButton = findViewById(R.id.buttonBackToCatalog);
         Button inventoryButton = findViewById(R.id.buttonSeeInventory);
         Button editButton = findViewById(R.id.buttonEditProduct);
+        boolean adminMode = store.isAuthenticated();
+        int adminVisibility = adminMode ? View.VISIBLE : View.GONE;
+        inventoryButton.setVisibility(adminVisibility);
+        editButton.setVisibility(adminVisibility);
+        addToCartButton.setVisibility(adminMode ? View.GONE : View.VISIBLE);
 
         addToCartButton.setOnClickListener(view -> {
             if (product != null && store.addToCart(product.getId(), 1)) {
@@ -33,7 +44,11 @@ public class ProductDetailActivity extends BaseScreenActivity {
             }
         });
 
-        backToCatalogButton.setOnClickListener(view -> openScreen(CatalogActivity.class));
+        backToCatalogButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, CatalogActivity.class);
+            intent.putExtra("adminCatalog", adminCatalog);
+            startActivity(intent);
+        });
         inventoryButton.setOnClickListener(view -> {
             if (product != null) {
                 Intent intent = new Intent(this, InventoryMovementActivity.class);
@@ -61,6 +76,11 @@ public class ProductDetailActivity extends BaseScreenActivity {
         renderProduct();
     }
 
+    @Override
+    protected boolean isPublicScreen() {
+        return true;
+    }
+
     private void renderProduct() {
         if (product == null) {
             showMessage("Producto no encontrado");
@@ -75,5 +95,14 @@ public class ProductDetailActivity extends BaseScreenActivity {
         ((TextView) findViewById(R.id.textDetailColors)).setText(product.getColors());
         ((TextView) findViewById(R.id.textDetailStock)).setText("Stock " + product.getStock()
                 + " | minimo " + product.getMinStock());
+        ImageView image = findViewById(R.id.imageDetailProduct);
+        if (product.getImageUrl().isEmpty()) {
+            image.setImageResource(android.R.color.transparent);
+        } else {
+            Glide.with(this)
+                    .load(product.getImageUrl())
+                    .centerCrop()
+                    .into(image);
+        }
     }
 }
