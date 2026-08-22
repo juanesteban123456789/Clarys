@@ -17,6 +17,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * Centraliza las peticiones HTTP hacia Supabase Auth, REST API y Storage.
+ * La clase mantiene los encabezados comunes y entrega las respuestas al hilo principal.
+ */
 public class SupabaseClient {
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
@@ -28,6 +32,9 @@ public class SupabaseClient {
         this.session = session;
     }
 
+    /**
+     * Ejecuta peticiones de autenticacion contra Supabase Auth.
+     */
     public void auth(String path, JSONObject body, StoreCallback<JSONObject> callback) {
         String url = BuildConfig.SUPABASE_URL + "/auth/v1/" + path;
         Request request = new Request.Builder()
@@ -39,11 +46,17 @@ public class SupabaseClient {
         executeJsonObject(request, callback);
     }
 
+    /**
+     * Consulta recursos de Supabase REST usando GET.
+     */
     public void get(String path, boolean authenticated, StoreCallback<String> callback) {
         Request request = baseBuilder(path, authenticated).get().build();
         executeString(request, callback);
     }
 
+    /**
+     * Crea registros o ejecuta funciones RPC de Supabase usando POST.
+     */
     public void post(String path, JSONObject body, boolean authenticated, StoreCallback<String> callback) {
         Request request = baseBuilder(path, authenticated)
                 .post(RequestBody.create(body.toString(), JSON))
@@ -51,6 +64,9 @@ public class SupabaseClient {
         executeString(request, callback);
     }
 
+    /**
+     * Actualiza registros existentes de Supabase REST usando PATCH.
+     */
     public void patch(String path, JSONObject body, boolean authenticated, StoreCallback<String> callback) {
         Request request = baseBuilder(path, authenticated)
                 .patch(RequestBody.create(body.toString(), JSON))
@@ -58,11 +74,17 @@ public class SupabaseClient {
         executeString(request, callback);
     }
 
+    /**
+     * Elimina recursos de Supabase REST cuando la app habilite flujos de borrado.
+     */
     public void delete(String path, boolean authenticated, StoreCallback<String> callback) {
         Request request = baseBuilder(path, authenticated).delete().build();
         executeString(request, callback);
     }
 
+    /**
+     * Sube archivos binarios a Supabase Storage y permite reutilizar el mismo nombre de objeto.
+     */
     public void uploadStorageObject(String bucket, String path, byte[] data, String contentType,
             StoreCallback<String> callback) {
         String url = BuildConfig.SUPABASE_URL + "/storage/v1/object/" + bucket + "/" + path;

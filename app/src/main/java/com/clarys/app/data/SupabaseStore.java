@@ -18,8 +18,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Repositorio principal de Clarys para autenticacion, catalogo, inventario,
+ * ventas, clientes y configuracion usando Supabase como backend.
+ */
 public class SupabaseStore {
     private static SupabaseStore instance;
+    private static final String STORAGE_BUCKET_PRODUCT_IMAGES = "product-images";
 
     private final SupabaseSession session;
     private final SupabaseClient client;
@@ -54,6 +59,9 @@ public class SupabaseStore {
         return session.getWorkshopId();
     }
 
+    /**
+     * Inicia sesion administrativa con correo y contrasena mediante Supabase Auth.
+     */
     public void signIn(String email, String password, StoreCallback<Void> callback) {
         try {
             JSONObject body = new JSONObject()
@@ -76,6 +84,9 @@ public class SupabaseStore {
         }
     }
 
+    /**
+     * Registra un administrador y crea el taller asociado cuando Supabase confirma la sesion.
+     */
     public void signUpAdmin(String email, String password, String workshopName, String whatsapp,
             StoreCallback<Void> callback) {
         try {
@@ -104,10 +115,16 @@ public class SupabaseStore {
         }
     }
 
+    /**
+     * Inicia sesion con Google usando el token entregado por Google Sign-In.
+     */
     public void signInWithGoogle(String idToken, StoreCallback<Void> callback) {
         authenticateWithGoogle(idToken, false, "", "", callback);
     }
 
+    /**
+     * Registra un administrador con Google y vincula el usuario con un taller.
+     */
     public void signUpAdminWithGoogle(String idToken, String workshopName, String whatsapp,
             StoreCallback<Void> callback) {
         authenticateWithGoogle(idToken, true, workshopName, whatsapp, callback);
@@ -318,6 +335,9 @@ public class SupabaseStore {
         movements.clear();
     }
 
+    /**
+     * Obtiene productos desde Supabase para el inventario administrativo o el catalogo publico.
+     */
     public void refreshProducts(boolean adminOnly, StoreCallback<List<Product>> callback) {
         String path;
         if (adminOnly) {
@@ -350,6 +370,9 @@ public class SupabaseStore {
         });
     }
 
+    /**
+     * Crea o actualiza productos del taller autenticado en Supabase.
+     */
     public void saveProductAsync(Integer productId, String name, String description, String category,
             int purchasePrice, int salePrice, int stock, int minStock, String sizes, String colors,
             String sku, String imageUrl, boolean active, StoreCallback<Product> callback) {
@@ -419,6 +442,9 @@ public class SupabaseStore {
                 .put("active", active);
     }
 
+    /**
+     * Sube la imagen de un producto a Supabase Storage y retorna su URL publica.
+     */
     public void uploadProductImage(String productName, byte[] imageBytes, StoreCallback<String> callback) {
         if (!isAuthenticated() || session.getWorkshopId() == null) {
             callback.onError("Inicia sesion para subir imagenes");
@@ -430,19 +456,23 @@ public class SupabaseStore {
         }
 
         String path = session.getWorkshopId() + "/" + System.currentTimeMillis() + "-" + slug(productName) + ".jpg";
-        client.uploadStorageObject("product-images", path, imageBytes, "image/jpeg", new StoreCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                callback.onSuccess(client.publicStorageUrl("product-images", path));
-            }
+        client.uploadStorageObject(STORAGE_BUCKET_PRODUCT_IMAGES, path, imageBytes, "image/jpeg",
+                new StoreCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        callback.onSuccess(client.publicStorageUrl(STORAGE_BUCKET_PRODUCT_IMAGES, path));
+                    }
 
-            @Override
-            public void onError(String message) {
-                callback.onError(message);
-            }
-        });
+                    @Override
+                    public void onError(String message) {
+                        callback.onError(message);
+                    }
+                });
     }
 
+    /**
+     * Registra un movimiento de inventario ejecutando la funcion RPC adjust_stock.
+     */
     public void adjustStockAsync(int productId, String type, int quantity, String reason,
             StoreCallback<Void> callback) {
         try {
@@ -477,6 +507,9 @@ public class SupabaseStore {
         }
     }
 
+    /**
+     * Confirma una venta administrativa y descuenta el stock mediante Supabase RPC.
+     */
     public void confirmSaleAsync(String customerName, String phone, String paymentMethod, int discount,
             String status, StoreCallback<Sale> callback) {
         if (cart.isEmpty()) {
@@ -513,6 +546,9 @@ public class SupabaseStore {
         }
     }
 
+    /**
+     * Envia una solicitud publica de catalogo para que el taller contacte al cliente.
+     */
     public void submitCatalogRequestAsync(String customerName, String phone, StoreCallback<Void> callback) {
         if (cart.isEmpty()) {
             callback.onError("Agrega productos antes de enviar la solicitud");
@@ -579,6 +615,9 @@ public class SupabaseStore {
         });
     }
 
+    /**
+     * Consulta las ventas registradas junto con cliente e items relacionados.
+     */
     public void refreshSales(StoreCallback<List<Sale>> callback) {
         client.get("sales?select=*,customers(name,phone),sale_items(*,products(*))&order=created_at.desc",
                 true, new StoreCallback<String>() {
@@ -603,6 +642,9 @@ public class SupabaseStore {
                 });
     }
 
+    /**
+     * Consulta los clientes calculados por Supabase para los reportes administrativos.
+     */
     public void refreshCustomers(StoreCallback<List<Customer>> callback) {
         client.get("customers?select=*&order=name.asc", true, new StoreCallback<String>() {
             @Override
@@ -629,6 +671,9 @@ public class SupabaseStore {
         });
     }
 
+    /**
+     * Consulta los movimientos recientes de inventario del taller autenticado.
+     */
     public void refreshMovements(StoreCallback<Void> callback) {
         client.get("inventory_movements?select=*,products(name)&order=created_at.desc&limit=30",
                 true, new StoreCallback<String>() {
@@ -661,6 +706,9 @@ public class SupabaseStore {
                 });
     }
 
+    /**
+     * Guarda la configuracion principal del taller en Supabase.
+     */
     public void saveSettingsAsync(String businessName, String whatsapp, String currency, int minStock,
             StoreCallback<Void> callback) {
         if (!isAuthenticated() || session.getWorkshopId() == null) {
