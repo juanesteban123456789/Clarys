@@ -5,7 +5,7 @@ PROYECTO
 Clarys
 
 TIPO DE PROYECTO
-Aplicacion movil Android nativa.
+Aplicación móvil Android nativa.
 
 PLATAFORMA / FRAMEWORK
 Android SDK / Android nativo.
@@ -19,10 +19,10 @@ XML.
 IDE
 Android Studio.
 
-GESTION DEL PROYECTO
+GESTIÓN DEL PROYECTO
 Gradle.
 
-LIBRERIAS PRINCIPALES
+LIBRERÍAS PRINCIPALES
 AndroidX
 Material Components
 OkHttp
@@ -32,15 +32,15 @@ Google Play Services Auth
 ALMACENAMIENTO DE DATOS
 Supabase.
 
-La aplicacion utiliza Supabase para gestionar productos, inventario,
-clientes, ventas, catalogo publico, perfiles de administradores,
-talleres y configuracion.
+La aplicación utiliza Supabase para gestionar productos, inventario,
+clientes, ventas, catálogo público, perfiles de administradores,
+talleres y configuración.
 
-ALMACENAMIENTO DE IMAGENES
+ALMACENAMIENTO DE IMÁGENES
 Supabase Storage.
 
-La aplicacion sube imagenes de productos al bucket product-images
-y almacena la URL publica para mostrarla en catalogos y detalle.
+La aplicación sube imágenes de productos al bucket product-images
+y almacena la URL pública para mostrarla en catálogos y detalle.
 
 VERSIONAMIENTO
 Git + GitHub.
@@ -51,43 +51,43 @@ https://github.com/juanesteban123456789/Clarys.git
 RAMA DE DESARROLLO
 desarrollo
 
-ESTANDARES DE CODIFICACION
+ESTÁNDARES DE CODIFICACIÓN
 - PascalCase para clases.
-- camelCase para metodos y variables.
+- camelCase para métodos y variables.
 - MAYUSCULAS_CON_GUION_BAJO para constantes.
-- paquetes en minusculas.
+- paquetes en minúsculas.
 - nombres descriptivos.
-- JavaDoc en clases y metodos principales.
+- JavaDoc en clases y métodos principales.
 
-MODULOS CODIFICADOS
-- Autenticacion administrativa con correo y contrasena.
-- Autenticacion con Google.
-- Acceso publico para clientes.
-- Gestion de productos.
+MÓDULOS CODIFICADOS
+- Autenticación administrativa con correo y contraseña.
+- Autenticación con Google.
+- Acceso público para clientes.
+- Gestión de productos.
 - Control de inventario.
 - Registro de ventas y pedidos.
-- Catalogo administrativo y catalogo publico.
-- Gestion de clientes.
+- Catálogo administrativo y catálogo público.
+- Gestión de clientes.
 - Reportes y panel de control.
-- Configuracion del taller.
-- Subida de imagenes de productos.
+- Configuración del taller.
+- Subida de imágenes de productos.
 
-INTEGRACION CON SUPABASE
+INTEGRACIÓN CON SUPABASE
 La app usa OkHttp para consumir Supabase Auth, Supabase REST API,
 funciones RPC y Supabase Storage. Las operaciones principales usan
-metodos HTTP GET, POST y PATCH. El metodo DELETE esta implementado
+métodos HTTP GET, POST y PATCH. El método DELETE está implementado
 en el cliente HTTP, pero no se usa actualmente en los flujos principales.
 
 ARCHIVO DE ESQUEMA DE BASE DE DATOS
 supabase_schema_clarys.sql
 
-ESTADO DE COMPILACION
+ESTADO DE COMPILACIÓN
 BUILD SUCCESSFUL
 
-COMANDO DE COMPILACION
+COMANDO DE COMPILACIÓN
 .\gradlew.bat clean assembleDebug
 
 OBSERVACIONES
-El archivo local.properties no se incluye porque contiene configuracion
+El archivo local.properties no se incluye porque contiene configuración
 local del SDK y valores propios de cada equipo. Android Studio puede
 regenerarlo al abrir el proyecto.
