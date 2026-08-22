@@ -36,7 +36,7 @@
                 android:layout_height="48dp"
                 android:background="@drawable/bg_secondary_button"
                 android:backgroundTint="@null"
-                android:contentDescription="Volver atras"
+                android:contentDescription="Volver atrás"
                 android:padding="12dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_arrow_back"
@@ -71,7 +71,7 @@
                 android:background="@drawable/bg_status"
                 android:gravity="center"
                 android:padding="12dp"
-                android:text="GestiÃ³n de productos"
+                android:text="Gestión de productos"
                 android:textColor="@color/clarys_mid"
                 android:textStyle="bold" />
 
@@ -113,7 +113,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="DescripciÃ³n"
+                    android:text="Descripción"
                     android:textColor="@color/clarys_dark"
                     android:textStyle="bold" />
 
@@ -123,7 +123,7 @@
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
                     android:gravity="top|start"
-                    android:hint="DescripciÃ³n corta"
+                    android:hint="Descripción corta"
                     android:padding="14dp"
                     android:textColor="@color/clarys_text"
                     android:textColorHint="@color/clarys_muted" />

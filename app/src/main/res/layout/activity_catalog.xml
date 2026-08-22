@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_login_canvas">
+    android:background="@drawable/bg_login_canvas"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,7 +42,7 @@
                 android:layout_height="48dp"
                 android:background="@drawable/bg_secondary_button"
                 android:backgroundTint="@null"
-                android:contentDescription="Volver atras"
+                android:contentDescription="Volver atrás"
                 android:padding="12dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_arrow_back"
@@ -53,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Catalogo"
+            android:text="Catálogo"
             android:textColor="@color/clarys_dark"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -64,7 +72,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="14dp"
             android:background="@drawable/bg_input"
-            android:hint="Buscar prenda, categoria o SKU"
+            android:hint="Buscar prenda, categoría o SKU"
             android:paddingHorizontal="14dp"
             android:textColor="@color/clarys_text"
             android:textColorHint="@color/clarys_muted" />
@@ -95,14 +103,14 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_secondary_button"
+                android:background="@drawable/bg_primary_button"
                 android:backgroundTint="@null"
                 android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="8dp"
-                android:drawableTint="@color/clarys_mid"
+                android:drawableTint="@color/clarys_light"
                 android:text="Visual"
                 android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:textColor="@color/clarys_light" />
         </LinearLayout>
 
         <Button
@@ -114,7 +122,7 @@
             android:backgroundTint="@null"
             android:drawableStart="@drawable/ic_cart"
             android:drawablePadding="10dp"
-            android:text="Abrir venta rapida"
+            android:text="Abrir venta rápida"
             android:textAllCaps="false"
             android:textColor="@color/clarys_mid" />
 
@@ -124,80 +132,105 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:nestedScrollingEnabled="false" />
+        </LinearLayout>
+    </ScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/bg_card"
+            android:elevation="4dp"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:padding="8dp"
+            android:weightSum="4">
 
-            <ImageButton
+            <TextView
                 android:id="@+id/buttonBottomHome"
                 android:layout_width="0dp"
-                android:layout_height="64dp"
+                android:layout_height="74dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_soft_button"
-                android:backgroundTint="@null"
+                android:clickable="true"
                 android:contentDescription="Ir al inicio"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                android:padding="12dp"
-                android:scaleType="center"
-                android:src="@drawable/ic_home"
-                android:tint="@color/clarys_mid" />
+                android:drawablePadding="4dp"
+                android:drawableTop="@drawable/ic_home"
+                android:drawableTint="@color/clarys_mid"
+                android:focusable="true"
+                android:gravity="center"
+                android:maxLines="2"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="8dp"
+                android:text="Inicio"
+                android:textColor="@color/clarys_dark"
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
-            <Button
+            <TextView
                 android:id="@+id/buttonBottomCategories"
                 android:layout_width="0dp"
-                android:layout_height="64dp"
+                android:layout_height="74dp"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_soft_button"
-                android:backgroundTint="@null"
+                android:background="@drawable/bg_google_button"
+                android:clickable="true"
+                android:contentDescription="Ver catálogo"
                 android:drawableTop="@drawable/ic_store"
-                android:drawablePadding="2dp"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                android:padding="4dp"
-                android:text="Catalogo"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid"
-                android:textSize="11sp" />
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/clarys_mid"
+                android:focusable="true"
+                android:gravity="center"
+                android:maxLines="2"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="8dp"
+                android:text="Catálogo"
+                android:textColor="@color/clarys_dark"
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
-            <Button
+            <TextView
                 android:id="@+id/buttonBottomCart"
                 android:layout_width="0dp"
-                android:layout_height="64dp"
+                android:layout_height="74dp"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_soft_button"
-                android:backgroundTint="@null"
+                android:background="@drawable/bg_client_button"
+                android:clickable="true"
+                android:contentDescription="Abrir carrito"
                 android:drawableTop="@drawable/ic_cart"
-                android:drawablePadding="2dp"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                android:padding="4dp"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/clarys_mid"
+                android:focusable="true"
+                android:gravity="center"
+                android:maxLines="2"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="8dp"
                 android:text="Carrito"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid"
-                android:textSize="11sp" />
+                android:textColor="@color/clarys_dark"
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
-            <Button
+            <TextView
                 android:id="@+id/buttonBottomProfile"
                 android:layout_width="0dp"
-                android:layout_height="64dp"
+                android:layout_height="74dp"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_soft_button"
-                android:backgroundTint="@null"
+                android:background="@drawable/bg_register_button"
+                android:clickable="true"
+                android:contentDescription="Abrir acceso administrativo"
                 android:drawableTop="@drawable/ic_lock"
-                android:drawablePadding="2dp"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                android:padding="4dp"
-                android:text="Admin"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid"
-                android:textSize="11sp" />
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/clarys_mid"
+                android:focusable="true"
+                android:gravity="center"
+                android:maxLines="2"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="8dp"
+                android:text="Acceso"
+                android:textColor="@color/clarys_dark"
+                android:textSize="11sp"
+                android:textStyle="bold" />
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

@@ -34,7 +34,7 @@
                 android:layout_height="48dp"
                 android:background="@drawable/bg_secondary_button"
                 android:backgroundTint="@null"
-                android:contentDescription="Volver atras"
+                android:contentDescription="Volver atrás"
                 android:padding="12dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_arrow_back"
@@ -56,7 +56,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="12dp"
             android:background="@drawable/bg_input"
-            android:hint="Nombre, categoria o SKU"
+            android:hint="Nombre, categoría o SKU"
             android:paddingHorizontal="14dp"
             android:textColor="@color/clarys_text"
             android:textColorHint="@color/clarys_muted" />
@@ -76,7 +76,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_primary_button"
             android:backgroundTint="@null"
-            android:text="Aplicar busqueda"
+            android:text="Aplicar búsqueda"
             android:textAllCaps="false"
             android:textColor="@color/clarys_light" />
 
@@ -96,11 +96,11 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/bg_secondary_button"
+            android:background="@drawable/bg_primary_button"
             android:backgroundTint="@null"
             android:text="Ir a inventario"
             android:textAllCaps="false"
-            android:textColor="@color/clarys_mid" />
+            android:textColor="@color/clarys_light" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerAdminProducts"

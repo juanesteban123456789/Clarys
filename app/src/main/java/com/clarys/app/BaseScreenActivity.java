@@ -14,7 +14,7 @@ public abstract class BaseScreenActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!isPublicScreen() && !SupabaseStore.getInstance(this).isAuthenticated()) {
-            showMessage("Inicia sesion para entrar al panel administrativo");
+            showMessage("Inicia sesión para entrar al panel administrativo");
             openScreen(LoginActivity.class);
             finish();
         }

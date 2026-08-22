@@ -13,9 +13,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/buttonHeaderHome"
@@ -46,6 +45,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
             android:background="@drawable/bg_login_hero"
             android:gravity="center"
             android:orientation="vertical"
@@ -68,7 +68,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="14dp"
                 android:paddingVertical="8dp"
-                android:text="Inventario y ventas"
+                android:text="Acceso del taller"
                 android:textColor="@color/clarys_dark"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -85,67 +85,107 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Entra a Clarys"
+                android:text="Ingresa como administrador"
                 android:textColor="@color/clarys_dark"
-                android:textSize="25sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Elige cómo quieres entrar a la aplicación."
+                android:text="Administra inventario, productos, pedidos y configuración de tu taller."
                 android:textColor="@color/clarys_muted"
                 android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/inputLoginEmail"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_input"
+                android:hint="Correo del taller"
+                android:inputType="textEmailAddress"
+                android:paddingHorizontal="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted" />
+
+            <EditText
+                android:id="@+id/inputLoginPassword"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_input"
+                android:hint="Contraseña"
+                android:inputType="textPassword"
+                android:paddingHorizontal="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted" />
+
+            <Button
+                android:id="@+id/buttonLogin"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_primary_button"
+                android:backgroundTint="@null"
+                android:drawableStart="@drawable/ic_mail"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/clarys_light"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Ingresar con correo"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/buttonEnterAsClient"
+                    android:id="@+id/buttonGoogleLogin"
                     android:layout_width="0dp"
-                    android:layout_height="142dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_height="86dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_primary_button"
+                    android:background="@drawable/bg_google_button"
                     android:clickable="true"
-                    android:contentDescription="Entrar como cliente"
-                    android:drawablePadding="10dp"
-                    android:drawableTop="@drawable/ic_customer"
-                    android:drawableTint="@color/clarys_light"
+                    android:contentDescription="Iniciar taller con Google"
+                    android:drawablePadding="6dp"
+                    android:drawableTop="@drawable/ic_google_color"
                     android:focusable="true"
                     android:gravity="center"
-                    android:maxLines="3"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="14dp"
-                    android:text="Cliente"
-                    android:textColor="@color/clarys_light"
-                    android:textSize="16sp"
+                    android:maxLines="2"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="10dp"
+                    android:text="Google"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/buttonAdminAccess"
+                    android:id="@+id/buttonRegisterAdmin"
                     android:layout_width="0dp"
-                    android:layout_height="142dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_height="86dp"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_client_button"
+                    android:background="@drawable/bg_register_button"
                     android:clickable="true"
-                    android:contentDescription="Acceso administrador"
-                    android:drawablePadding="10dp"
-                    android:drawableTop="@drawable/ic_store"
-                    android:drawableTint="@color/clarys_mid"
+                    android:contentDescription="Registrar taller"
+                    android:drawablePadding="6dp"
+                    android:drawableTop="@drawable/ic_register"
                     android:focusable="true"
                     android:gravity="center"
-                    android:maxLines="3"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="14dp"
-                    android:text="Acceso admin"
+                    android:maxLines="2"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="10dp"
+                    android:text="Registrar taller"
                     android:textColor="@color/clarys_dark"
-                    android:textSize="16sp"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

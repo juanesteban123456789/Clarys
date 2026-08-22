@@ -34,7 +34,7 @@
                 android:layout_height="48dp"
                 android:background="@drawable/bg_secondary_button"
                 android:backgroundTint="@null"
-                android:contentDescription="Volver atras"
+                android:contentDescription="Volver atrás"
                 android:padding="12dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_arrow_back"
@@ -68,7 +68,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_input"
             android:gravity="top"
-            android:hint="Descripcion"
+            android:hint="Descripción"
             android:padding="14dp"
             android:textColor="@color/clarys_text"
             android:textColorHint="@color/clarys_muted" />
@@ -79,7 +79,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_input"
-            android:hint="Categoria"
+            android:hint="Categoría"
             android:paddingHorizontal="14dp"
             android:textColor="@color/clarys_text"
             android:textColorHint="@color/clarys_muted" />
@@ -90,7 +90,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_input"
-            android:hint="SKU o codigo"
+            android:hint="SKU o código"
             android:paddingHorizontal="14dp"
             android:textColor="@color/clarys_text"
             android:textColorHint="@color/clarys_muted" />
@@ -137,7 +137,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_input"
-            android:hint="Stock minimo"
+            android:hint="Stock mínimo"
             android:inputType="number"
             android:paddingHorizontal="14dp"
             android:textColor="@color/clarys_text"
@@ -178,11 +178,11 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/bg_secondary_button"
+            android:background="@drawable/bg_primary_button"
             android:backgroundTint="@null"
             android:text="Seleccionar imagen"
             android:textAllCaps="false"
-            android:textColor="@color/clarys_mid" />
+            android:textColor="@color/clarys_light" />
 
         <Button
             android:id="@+id/buttonSaveProductForm"

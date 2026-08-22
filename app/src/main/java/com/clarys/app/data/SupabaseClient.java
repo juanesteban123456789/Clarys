@@ -33,7 +33,7 @@ public class SupabaseClient {
     }
 
     /**
-     * Ejecuta peticiones de autenticacion contra Supabase Auth.
+     * Ejecuta peticiones de autenticación contra Supabase Auth.
      */
     public void auth(String path, JSONObject body, StoreCallback<JSONObject> callback) {
         String url = BuildConfig.SUPABASE_URL + "/auth/v1/" + path;
@@ -124,7 +124,7 @@ public class SupabaseClient {
                 try {
                     callback.onSuccess(new JSONObject(result));
                 } catch (Exception exception) {
-                    callback.onError("Respuesta invalida de Supabase");
+                    callback.onError("Respuesta inválida de Supabase");
                 }
             }
 
@@ -169,7 +169,7 @@ public class SupabaseClient {
         } catch (Exception ignored) {
             // Body can be plain text or empty.
         }
-        return "Supabase respondio con error " + code;
+        return "Supabase respondió con error " + code;
     }
 
     private <T> void postSuccess(StoreCallback<T> callback, T result) {

@@ -94,7 +94,7 @@ public class ProductDetailActivity extends BaseScreenActivity {
         ((TextView) findViewById(R.id.textDetailSizes)).setText(product.getSizes());
         ((TextView) findViewById(R.id.textDetailColors)).setText(product.getColors());
         ((TextView) findViewById(R.id.textDetailStock)).setText("Stock " + product.getStock()
-                + " | minimo " + product.getMinStock());
+                + " | mínimo " + product.getMinStock());
         ImageView image = findViewById(R.id.imageDetailProduct);
         if (product.getImageUrl().isEmpty()) {
             image.setImageResource(android.R.color.transparent);

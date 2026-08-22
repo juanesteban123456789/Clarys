@@ -66,7 +66,11 @@ public class InventoryMovementActivity extends BaseScreenActivity {
 
         int quantity = parseQuantity();
         if (quantity <= 0) {
-            showMessage("Ingresa una cantidad valida");
+            showMessage("Ingresa una cantidad válida");
+            return;
+        }
+        if (quantity > ValidationUtils.MAX_STOCK_VALUE) {
+            showMessage("La cantidad supera el límite permitido");
             return;
         }
 

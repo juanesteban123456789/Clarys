@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Repositorio principal de Clarys para autenticacion, catalogo, inventario,
- * ventas, clientes y configuracion usando Supabase como backend.
+ * Repositorio principal de Clarys para autenticación, catálogo, inventario,
+ * ventas, clientes y configuración usando Supabase como backend.
  */
 public class SupabaseStore {
     private static SupabaseStore instance;
@@ -60,7 +60,7 @@ public class SupabaseStore {
     }
 
     /**
-     * Inicia sesion administrativa con correo y contrasena mediante Supabase Auth.
+     * Inicia sesión administrativa con correo y contraseña mediante Supabase Auth.
      */
     public void signIn(String email, String password, StoreCallback<Void> callback) {
         try {
@@ -80,12 +80,12 @@ public class SupabaseStore {
                 }
             });
         } catch (Exception exception) {
-            callback.onError("No se pudo iniciar sesion");
+            callback.onError("No se pudo iniciar sesión");
         }
     }
 
     /**
-     * Registra un administrador y crea el taller asociado cuando Supabase confirma la sesion.
+     * Registra un administrador y crea el taller asociado cuando Supabase confirma la sesión.
      */
     public void signUpAdmin(String email, String password, String workshopName, String whatsapp,
             StoreCallback<Void> callback) {
@@ -99,7 +99,7 @@ public class SupabaseStore {
                     saveSessionFromAuth(result);
                     if (!session.isAuthenticated()) {
                         session.savePendingAdmin(email, workshopName, whatsapp);
-                        callback.onError("Registro creado. Confirma el correo e inicia sesion.");
+                        callback.onError("Registro creado. Confirma el correo e inicia sesión.");
                         return;
                     }
                     createWorkshopAndProfile(workshopName, whatsapp, callback);
@@ -116,7 +116,7 @@ public class SupabaseStore {
     }
 
     /**
-     * Inicia sesion con Google usando el token entregado por Google Sign-In.
+     * Inicia sesión con Google usando el token entregado por Google Sign-In.
      */
     public void signInWithGoogle(String idToken, StoreCallback<Void> callback) {
         authenticateWithGoogle(idToken, false, "", "", callback);
@@ -133,7 +133,7 @@ public class SupabaseStore {
     private void authenticateWithGoogle(String idToken, boolean createMissingProfile, String workshopName,
             String whatsapp, StoreCallback<Void> callback) {
         if (idToken == null || idToken.trim().isEmpty()) {
-            callback.onError("Google no entrego un token valido");
+            callback.onError("Google no entregó un token válido");
             return;
         }
 
@@ -154,7 +154,7 @@ public class SupabaseStore {
                 }
             });
         } catch (Exception exception) {
-            callback.onError("No se pudo iniciar sesion con Google");
+            callback.onError("No se pudo iniciar sesión con Google");
         }
     }
 
@@ -256,7 +256,7 @@ public class SupabaseStore {
                         createWorkshopAndProfile(workshopName, whatsapp, callback);
                     } else {
                         signOut();
-                        callback.onError("Este correo no tiene taller registrado. Usa la opcion Registrar.");
+                        callback.onError("Este correo no tiene taller registrado. Usa la opción Registrar.");
                     }
                     return;
                 }
@@ -336,13 +336,13 @@ public class SupabaseStore {
     }
 
     /**
-     * Obtiene productos desde Supabase para el inventario administrativo o el catalogo publico.
+     * Obtiene productos desde Supabase para el inventario administrativo o el catálogo público.
      */
     public void refreshProducts(boolean adminOnly, StoreCallback<List<Product>> callback) {
         String path;
         if (adminOnly) {
             if (!isAuthenticated() || session.getWorkshopId() == null) {
-                callback.onError("Inicia sesion para administrar productos");
+                callback.onError("Inicia sesión para administrar productos");
                 return;
             }
             path = "products?select=*&workshop_id=eq." + session.getWorkshopId() + "&order=name.asc";
@@ -377,7 +377,7 @@ public class SupabaseStore {
             int purchasePrice, int salePrice, int stock, int minStock, String sizes, String colors,
             String sku, String imageUrl, boolean active, StoreCallback<Product> callback) {
         if (!isAuthenticated() || session.getWorkshopId() == null) {
-            callback.onError("Inicia sesion para guardar productos");
+            callback.onError("Inicia sesión para guardar productos");
             return;
         }
 
@@ -443,15 +443,15 @@ public class SupabaseStore {
     }
 
     /**
-     * Sube la imagen de un producto a Supabase Storage y retorna su URL publica.
+     * Sube la imagen de un producto a Supabase Storage y retorna su URL pública.
      */
     public void uploadProductImage(String productName, byte[] imageBytes, StoreCallback<String> callback) {
         if (!isAuthenticated() || session.getWorkshopId() == null) {
-            callback.onError("Inicia sesion para subir imagenes");
+            callback.onError("Inicia sesión para subir imágenes");
             return;
         }
         if (imageBytes == null || imageBytes.length == 0) {
-            callback.onError("La imagen esta vacia");
+            callback.onError("La imagen está vacía");
             return;
         }
 
@@ -471,7 +471,7 @@ public class SupabaseStore {
     }
 
     /**
-     * Registra un movimiento de inventario ejecutando la funcion RPC adjust_stock.
+     * Registra un movimiento de inventario ejecutando la función RPC adjust_stock.
      */
     public void adjustStockAsync(int productId, String type, int quantity, String reason,
             StoreCallback<Void> callback) {
@@ -517,7 +517,7 @@ public class SupabaseStore {
             return;
         }
         if (!isAuthenticated()) {
-            callback.onError("Inicia sesion para registrar ventas administrativas");
+            callback.onError("Inicia sesión para registrar ventas administrativas");
             return;
         }
 
@@ -547,7 +547,7 @@ public class SupabaseStore {
     }
 
     /**
-     * Envia una solicitud publica de catalogo para que el taller contacte al cliente.
+     * Envía una solicitud pública de catálogo para que el taller contacte al cliente.
      */
     public void submitCatalogRequestAsync(String customerName, String phone, StoreCallback<Void> callback) {
         if (cart.isEmpty()) {
@@ -557,7 +557,7 @@ public class SupabaseStore {
 
         try {
             JSONObject body = new JSONObject()
-                    .put("customer_name", safe(customerName, "Cliente catalogo"))
+                    .put("customer_name", safe(customerName, "Cliente catálogo"))
                     .put("customer_phone", safe(phone, ""))
                     .put("items", cartItemsJson())
                     .put("status", "new");
@@ -707,12 +707,12 @@ public class SupabaseStore {
     }
 
     /**
-     * Guarda la configuracion principal del taller en Supabase.
+     * Guarda la configuración principal del taller en Supabase.
      */
     public void saveSettingsAsync(String businessName, String whatsapp, String currency, int minStock,
             StoreCallback<Void> callback) {
         if (!isAuthenticated() || session.getWorkshopId() == null) {
-            callback.onError("Inicia sesion para guardar configuracion");
+            callback.onError("Inicia sesión para guardar configuración");
             return;
         }
         try {
@@ -737,7 +737,7 @@ public class SupabaseStore {
                 }
             });
         } catch (Exception exception) {
-            callback.onError("No se pudo preparar la configuracion");
+            callback.onError("No se pudo preparar la configuración");
         }
     }
 

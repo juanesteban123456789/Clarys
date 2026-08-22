@@ -16,7 +16,7 @@ public class ManagementActivity extends BaseScreenActivity {
         Button uploadImageButton = findViewById(R.id.buttonUploadImage);
         Button saveProductButton = findViewById(R.id.buttonSaveProduct);
 
-        uploadImageButton.setOnClickListener(view -> showMessage("Carga de imagen pendiente de logica real"));
+        uploadImageButton.setOnClickListener(view -> showMessage("Carga de imagen pendiente de lógica real"));
         saveProductButton.setOnClickListener(view -> openScreen(ProductFormActivity.class));
     }
 }

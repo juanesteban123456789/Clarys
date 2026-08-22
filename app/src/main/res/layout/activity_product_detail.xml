@@ -34,7 +34,7 @@
                 android:layout_height="48dp"
                 android:background="@drawable/bg_secondary_button"
                 android:backgroundTint="@null"
-                android:contentDescription="Volver atras"
+                android:contentDescription="Volver atrás"
                 android:padding="12dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_arrow_back"
@@ -142,11 +142,11 @@
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/bg_secondary_button"
+            android:background="@drawable/bg_primary_button"
             android:backgroundTint="@null"
             android:text="Editar producto"
             android:textAllCaps="false"
-            android:textColor="@color/clarys_mid" />
+            android:textColor="@color/clarys_light" />
 
         <Button
             android:id="@+id/buttonBackToCatalog"
@@ -155,7 +155,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_soft_button"
             android:backgroundTint="@null"
-            android:text="Volver al catalogo"
+            android:text="Volver al catálogo"
             android:textAllCaps="false"
             android:textColor="@color/clarys_mid" />
     </LinearLayout>

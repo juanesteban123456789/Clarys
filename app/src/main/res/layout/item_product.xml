@@ -103,13 +103,13 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_secondary_button"
+            android:background="@drawable/bg_primary_button"
             android:backgroundTint="@null"
             android:drawableStart="@drawable/ic_cart"
             android:drawablePadding="8dp"
-            android:drawableTint="@color/clarys_mid"
+            android:drawableTint="@color/clarys_light"
             android:paddingHorizontal="12dp"
             android:textAllCaps="false"
-            android:textColor="@color/clarys_mid" />
+            android:textColor="@color/clarys_light" />
     </LinearLayout>
 </LinearLayout>

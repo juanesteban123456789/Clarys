@@ -44,22 +44,7 @@ public class CartActivity extends BaseScreenActivity {
         cartList.setAdapter(cartAdapter);
 
         Button confirmButton = findViewById(R.id.buttonConfirmOrder);
-        confirmButton.setOnClickListener(view -> {
-            store.submitCatalogRequestAsync(nameInput.getText().toString(), phoneInput.getText().toString(),
-                    new StoreCallback<Void>() {
-                        @Override
-                        public void onSuccess(Void result) {
-                            showMessage("Solicitud enviada. El taller contactara al cliente.");
-                            refreshCart();
-                            openScreen(CatalogActivity.class);
-                        }
-
-                        @Override
-                        public void onError(String message) {
-                            showMessage(message);
-                        }
-                    });
-        });
+        confirmButton.setOnClickListener(view -> confirmOrder());
     }
 
     @Override
@@ -77,7 +62,42 @@ public class CartActivity extends BaseScreenActivity {
         cartAdapter.submitList(store.getCartItems());
         totalText.setText(store.formatMoney(store.getCartTotal()));
         emptyText.setText(store.getCartItems().isEmpty()
-                ? "El carrito esta vacio. Agrega productos desde catalogo o nueva venta."
+                ? "El carrito está vacío. Agrega productos desde el catálogo."
                 : "");
+    }
+
+    private void confirmOrder() {
+        String customerName = nameInput.getText().toString().trim();
+        String phone = ValidationUtils.digitsOnly(phoneInput.getText().toString());
+        if (store.getCartItems().isEmpty()) {
+            showMessage("Agrega productos antes de confirmar");
+            return;
+        }
+        if (customerName.isEmpty()) {
+            showMessage("Escribe tu nombre para el pedido");
+            return;
+        }
+        if (!ValidationUtils.hasReasonableTextLength(customerName, ValidationUtils.MAX_SHORT_TEXT_LENGTH)) {
+            showMessage("El nombre es demasiado largo");
+            return;
+        }
+        if (!ValidationUtils.isValidPhone(phone)) {
+            showMessage("Escribe un WhatsApp válido");
+            return;
+        }
+
+        store.submitCatalogRequestAsync(customerName, phone, new StoreCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                showMessage("Solicitud enviada. El taller contactará al cliente.");
+                refreshCart();
+                openScreen(CatalogActivity.class);
+            }
+
+            @Override
+            public void onError(String message) {
+                showMessage(message);
+            }
+        });
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,7 +55,7 @@ public class CatalogActivity extends BaseScreenActivity {
                 openScreen(LoginActivity.class);
             }
         });
-        bindMessage(R.id.buttonSearchVisual, "Busqueda visual disponible, logica pendiente");
+        bindMessage(R.id.buttonSearchVisual, "Búsqueda visual disponible, lógica pendiente");
 
         searchInput = findViewById(R.id.inputCatalogSearch);
         RecyclerView productsList = findViewById(R.id.recyclerCatalogProducts);
@@ -110,8 +111,8 @@ public class CatalogActivity extends BaseScreenActivity {
 
     private void renderAccessControls() {
         Button saleButton = findViewById(R.id.buttonGoToSale);
-        Button adminButton = findViewById(R.id.buttonBottomProfile);
-        Button cartButton = findViewById(R.id.buttonBottomCart);
+        TextView adminButton = findViewById(R.id.buttonBottomProfile);
+        TextView cartButton = findViewById(R.id.buttonBottomCart);
         boolean authenticated = store.isAuthenticated();
         saleButton.setVisibility(View.GONE);
         adminButton.setText(authenticated ? "Admin" : "Acceso");

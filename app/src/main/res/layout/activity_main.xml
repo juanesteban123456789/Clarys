@@ -172,7 +172,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Grafico operativo"
+                android:text="Gráfico operativo"
                 android:textColor="@color/clarys_dark"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -282,7 +282,7 @@
                 android:minHeight="0dp"
                 android:minWidth="0dp"
                 android:padding="6dp"
-                android:text="Mi catalogo"
+                android:text="Mi catálogo"
                 android:textAllCaps="false"
                 android:textColor="@color/clarys_light"
                 android:textSize="11sp" />
@@ -329,14 +329,14 @@
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/bg_secondary_button"
+            android:background="@drawable/bg_primary_button"
             android:backgroundTint="@null"
             android:drawableStart="@drawable/ic_lock"
             android:drawablePadding="10dp"
-            android:drawableTint="@color/clarys_mid"
+            android:drawableTint="@color/clarys_light"
             android:paddingHorizontal="16dp"
-            android:text="Cerrar sesion"
+            android:text="Cerrar sesión"
             android:textAllCaps="false"
-            android:textColor="@color/clarys_mid" />
+            android:textColor="@color/clarys_light" />
     </LinearLayout>
 </ScrollView>

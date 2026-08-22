@@ -110,8 +110,7 @@ public class ProductFormActivity extends BaseScreenActivity {
 
     private void saveProduct() {
         String name = nameInput.getText().toString().trim();
-        if (name.isEmpty()) {
-            showMessage("El nombre es obligatorio");
+        if (!validateProductFields(name)) {
             return;
         }
 
@@ -121,6 +120,50 @@ public class ProductFormActivity extends BaseScreenActivity {
         }
 
         saveProductWithImage(name, productImageUrl);
+    }
+
+    private boolean validateProductFields(String name) {
+        if (name.isEmpty()) {
+            showMessage("El nombre es obligatorio");
+            return false;
+        }
+        if (!ValidationUtils.hasReasonableTextLength(name, ValidationUtils.MAX_SHORT_TEXT_LENGTH)) {
+            showMessage("El nombre es demasiado largo");
+            return false;
+        }
+        if (!ValidationUtils.hasReasonableTextLength(descriptionInput.getText().toString(),
+                ValidationUtils.MAX_LONG_TEXT_LENGTH)) {
+            showMessage("La descripción es demasiado larga");
+            return false;
+        }
+        if (categoryInput.getText().toString().trim().isEmpty()) {
+            showMessage("La categoría es obligatoria");
+            return false;
+        }
+        if (!ValidationUtils.hasReasonableTextLength(categoryInput.getText().toString(),
+                ValidationUtils.MAX_SHORT_TEXT_LENGTH)) {
+            showMessage("La categoría es demasiado larga");
+            return false;
+        }
+        if (!ValidationUtils.hasReasonableTextLength(skuInput.getText().toString(),
+                ValidationUtils.MAX_SHORT_TEXT_LENGTH)) {
+            showMessage("El SKU es demasiado largo");
+            return false;
+        }
+        if (!ValidationUtils.hasReasonableTextLength(sizesInput.getText().toString(),
+                ValidationUtils.MAX_SHORT_TEXT_LENGTH)) {
+            showMessage("Las tallas son demasiado largas");
+            return false;
+        }
+        if (!ValidationUtils.hasReasonableTextLength(colorsInput.getText().toString(),
+                ValidationUtils.MAX_SHORT_TEXT_LENGTH)) {
+            showMessage("Los colores son demasiado largos");
+            return false;
+        }
+        return validateNumber(purchasePriceInput, "precio de compra", 0, ValidationUtils.MAX_MONEY_VALUE)
+                && validateNumber(salePriceInput, "precio de venta", 1, ValidationUtils.MAX_MONEY_VALUE)
+                && validateNumber(stockInput, "stock actual", 0, ValidationUtils.MAX_STOCK_VALUE)
+                && validateNumber(minStockInput, "stock mínimo", 0, ValidationUtils.MAX_STOCK_VALUE);
     }
 
     private void uploadImageThenSave(String name) {
@@ -231,6 +274,25 @@ public class ProductFormActivity extends BaseScreenActivity {
             return Integer.parseInt(input.getText().toString().replace("$", "").replace(".", "").trim());
         } catch (NumberFormatException exception) {
             return 0;
+        }
+    }
+
+    private boolean validateNumber(EditText input, String label, int minValue, int maxValue) {
+        String rawValue = input.getText().toString().replace("$", "").replace(".", "").trim();
+        if (rawValue.isEmpty()) {
+            showMessage("Ingresa " + label);
+            return false;
+        }
+        try {
+            int value = Integer.parseInt(rawValue);
+            if (value < minValue || value > maxValue) {
+                showMessage("El " + label + " está fuera del rango permitido");
+                return false;
+            }
+            return true;
+        } catch (NumberFormatException exception) {
+            showMessage("Ingresa un valor numérico válido en " + label);
+            return false;
         }
     }
 }

@@ -34,17 +34,41 @@ public class SettingsActivity extends BaseScreenActivity {
     }
 
     private void saveSettings() {
+        String businessName = businessInput.getText().toString().trim();
+        String whatsapp = whatsappInput.getText().toString().trim();
+        String currency = currencyInput.getText().toString().trim().toUpperCase();
+        if (businessName.isEmpty()) {
+            showMessage("El nombre del taller es obligatorio");
+            return;
+        }
+        if (!ValidationUtils.hasReasonableTextLength(businessName, ValidationUtils.MAX_SHORT_TEXT_LENGTH)) {
+            showMessage("El nombre del taller es demasiado largo");
+            return;
+        }
+        if (!ValidationUtils.isValidPhone(whatsapp)) {
+            showMessage("Escribe un WhatsApp válido");
+            return;
+        }
+        if (!currency.matches("[A-Z]{3}")) {
+            showMessage("La moneda debe tener 3 letras, por ejemplo COP");
+            return;
+        }
+
         int minStock;
         try {
             minStock = Integer.parseInt(minStockInput.getText().toString().trim());
+            if (minStock < 0 || minStock > ValidationUtils.MAX_STOCK_VALUE) {
+                showMessage("El stock mínimo está fuera del rango permitido");
+                return;
+            }
         } catch (NumberFormatException exception) {
-            minStock = 5;
+            showMessage("Ingresa un stock mínimo válido");
+            return;
         }
-        store.saveSettingsAsync(businessInput.getText().toString(), whatsappInput.getText().toString(),
-                currencyInput.getText().toString(), minStock, new StoreCallback<Void>() {
+        store.saveSettingsAsync(businessName, whatsapp, currency, minStock, new StoreCallback<Void>() {
                     @Override
                     public void onSuccess(Void result) {
-                        showMessage("Configuracion guardada");
+                        showMessage("Configuración guardada");
                         openScreen(MainActivity.class);
                         finish();
                     }

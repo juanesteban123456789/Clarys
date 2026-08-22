@@ -35,9 +35,9 @@
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/bg_secondary_button"
+        android:background="@drawable/bg_primary_button"
         android:backgroundTint="@null"
         android:text="Ver detalle"
         android:textAllCaps="false"
-        android:textColor="@color/clarys_mid" />
+        android:textColor="@color/clarys_light" />
 </LinearLayout>

@@ -112,8 +112,17 @@ public class SaleActivity extends BaseScreenActivity {
     }
 
     private void confirmSale() {
+        Integer discount = parseDiscount();
+        if (discount == null) {
+            return;
+        }
+        if (discount > store.getCartTotal()) {
+            showMessage("El descuento no puede superar el total");
+            return;
+        }
+
         store.confirmSaleAsync(customerInput.getText().toString(), phoneInput.getText().toString(),
-                paymentSpinner.getSelectedItem().toString(), parseDiscount(), "Confirmada",
+                paymentSpinner.getSelectedItem().toString(), discount, "Confirmada",
                 new StoreCallback<Sale>() {
                     @Override
                     public void onSuccess(Sale sale) {
@@ -132,11 +141,21 @@ public class SaleActivity extends BaseScreenActivity {
                 });
     }
 
-    private int parseDiscount() {
-        try {
-            return Integer.parseInt(discountInput.getText().toString().replace("$", "").replace(".", "").trim());
-        } catch (NumberFormatException exception) {
+    private Integer parseDiscount() {
+        String value = discountInput.getText().toString().replace("$", "").replace(".", "").trim();
+        if (value.isEmpty()) {
             return 0;
+        }
+        try {
+            int discount = Integer.parseInt(value);
+            if (discount < 0 || discount > ValidationUtils.MAX_MONEY_VALUE) {
+                showMessage("El descuento está fuera del rango permitido");
+                return null;
+            }
+            return discount;
+        } catch (NumberFormatException exception) {
+            showMessage("Ingresa un descuento válido");
+            return null;
         }
     }
 }

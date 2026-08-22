@@ -50,6 +50,9 @@
             android:name=".CatalogActivity"
             android:exported="false" />
         <activity
+            android:name=".AdminAccessActivity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
