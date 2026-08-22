@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_login_canvas"
     android:fillViewport="true">
 
@@ -28,7 +29,7 @@
                 android:padding="12dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_home"
-                android:tint="@color/clarys_mid" />
+                app:tint="@color/clarys_mid" />
 
             <ImageButton
                 android:id="@+id/buttonHeaderBack"
@@ -40,9 +41,10 @@
                 android:padding="12dp"
                 android:scaleType="center"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="@color/clarys_mid" />
+                app:tint="@color/clarys_mid" />
         </LinearLayout>
 
+        <!-- HERO: SE CONSERVA EXACTAMENTE IGUAL -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -74,6 +76,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <!-- PANEL DE ACCESO REDISEÑADO -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -98,56 +101,143 @@
                 android:textColor="@color/clarys_muted"
                 android:textSize="14sp" />
 
+
+            <!-- CLIENTE -->
             <LinearLayout
+                android:id="@+id/buttonEnterAsClient"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:orientation="horizontal">
+                android:layout_height="94dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_action_client"
+                android:clickable="true"
+                android:elevation="7dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
 
-                <TextView
-                    android:id="@+id/buttonEnterAsClient"
-                    android:layout_width="0dp"
-                    android:layout_height="142dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_primary_button"
-                    android:clickable="true"
-                    android:contentDescription="Entrar como cliente"
-                    android:drawablePadding="10dp"
-                    android:drawableTop="@drawable/ic_customer"
-                    android:drawableTint="@color/clarys_light"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:maxLines="3"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="14dp"
-                    android:text="Cliente"
-                    android:textColor="@color/clarys_light"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                <FrameLayout
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_icon_client">
 
-                <TextView
-                    android:id="@+id/buttonAdminAccess"
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_customer"
+                        app:tint="@color/clarys_light" />
+
+                </FrameLayout>
+
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="142dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_client_button"
-                    android:clickable="true"
-                    android:contentDescription="Acceso administrador"
-                    android:drawablePadding="10dp"
-                    android:drawableTop="@drawable/ic_store"
-                    android:drawableTint="@color/clarys_mid"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:maxLines="3"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="14dp"
-                    android:text="Acceso admin"
-                    android:textColor="@color/clarys_dark"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Entrar como cliente"
+                        android:textColor="@color/clarys_light"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:alpha="0.8"
+                        android:text="Consulta productos y realiza compras"
+                        android:textColor="@color/clarys_light"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="@drawable/bg_action_arrow">
+
+                    <ImageView
+                        android:layout_width="19dp"
+                        android:layout_height="19dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/clarys_light" />
+
+                </FrameLayout>
+
             </LinearLayout>
+
+
+            <!-- ADMINISTRADOR -->
+            <LinearLayout
+                android:id="@+id/buttonAdminAccess"
+                android:layout_width="match_parent"
+                android:layout_height="86dp"
+                android:layout_marginTop="13dp"
+                android:background="@drawable/bg_action_admin"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <FrameLayout
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_icon_admin">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_store"
+                        app:tint="@color/clarys_mid" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Administrador"
+                        android:textColor="@color/clarys_dark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Inventario, ventas y configuración"
+                        android:textColor="@color/clarys_muted"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_arrow_forward"
+                    app:tint="@color/clarys_mid" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
