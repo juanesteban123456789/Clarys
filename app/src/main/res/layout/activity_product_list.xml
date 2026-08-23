@@ -1,112 +1,377 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/clarys_bg">
+    android:background="@color/clarys_bg"
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="20dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="32dp">
+
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/buttonHeaderHome"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_secondary_button"
-                android:backgroundTint="@null"
-                android:contentDescription="Ir al inicio"
-                android:padding="12dp"
-                android:scaleType="center"
-                android:src="@drawable/ic_home"
-                android:tint="@color/clarys_mid" />
 
             <ImageButton
                 android:id="@+id/buttonHeaderBack"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@drawable/bg_secondary_button"
+                android:background="@drawable/bg_header_action"
                 android:backgroundTint="@null"
                 android:contentDescription="Volver atrás"
-                android:padding="12dp"
-                android:scaleType="center"
+                android:padding="13dp"
+                android:scaleType="centerInside"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="@color/clarys_mid" />
+                app:tint="@color/clarys_dark" />
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Productos"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Administra tu catálogo"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+
+            <ImageButton
+                android:id="@+id/buttonHeaderHome"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Ir al inicio"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_home"
+                app:tint="@color/clarys_mid" />
+
         </LinearLayout>
+
+
+
+        <!-- ================================================= -->
+        <!-- INTRODUCCIÓN -->
+        <!-- ================================================= -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/bg_product_category"
+            android:paddingStart="12dp"
+            android:paddingTop="7dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="7dp"
+            android:text="GESTIÓN DE CATÁLOGO"
+            android:textColor="@color/clarys_light"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="Productos"
+            android:layout_marginTop="10dp"
+            android:text="Tus productos"
             android:textColor="@color/clarys_dark"
-            android:textSize="24sp"
+            android:textSize="27sp"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/inputProductSearch"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_input"
-            android:hint="Nombre, categoría o SKU"
-            android:paddingHorizontal="14dp"
-            android:textColor="@color/clarys_text"
-            android:textColorHint="@color/clarys_muted" />
 
-        <Spinner
-            android:id="@+id/spinnerProductFilter"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_input"
-            android:paddingHorizontal="10dp" />
-
-        <Button
-            android:id="@+id/buttonSearchProducts"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_primary_button"
-            android:backgroundTint="@null"
-            android:text="Aplicar búsqueda"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
-
-        <Button
-            android:id="@+id/buttonAddProduct"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_primary_button"
-            android:backgroundTint="@null"
-            android:text="Agregar producto"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
-
-        <Button
-            android:id="@+id/buttonOpenInventoryFromProducts"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_primary_button"
-            android:backgroundTint="@null"
-            android:text="Ir a inventario"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerAdminProducts"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:nestedScrollingEnabled="false" />
+            android:layout_marginTop="5dp"
+            android:text="Busca, administra y agrega productos a tu catálogo."
+            android:textColor="@color/clarys_muted"
+            android:textSize="14sp" />
+
+
+
+        <!-- ================================================= -->
+        <!-- BUSCADOR -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Buscar productos"
+                android:textColor="@color/clarys_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Encuentra rápidamente un producto del catálogo"
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp" />
+
+
+
+            <!-- CAMPO DE BÚSQUEDA -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Buscar"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/inputProductSearch"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:hint="Nombre, categoría o SKU"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+
+
+            <!-- FILTRO -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Filtrar productos"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+
+            <Spinner
+                android:id="@+id/spinnerProductFilter"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:popupElevation="8dp" />
+
+
+
+            <!-- APLICAR BÚSQUEDA -->
+
+            <Button
+                android:id="@+id/buttonSearchProducts"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_admin_action"
+                android:backgroundTint="@null"
+                android:text="Aplicar búsqueda"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+
+        <!-- ================================================= -->
+        <!-- ACCIONES -->
+        <!-- ================================================= -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="ACCIONES"
+            android:textColor="@color/clarys_muted"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+
+            <!-- AGREGAR PRODUCTO -->
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buttonAddProduct"
+                android:layout_width="0dp"
+                android:layout_height="62dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_action_client"
+                android:backgroundTint="@null"
+                android:elevation="5dp"
+                android:gravity="center"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="Agregar producto"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_add_product"
+                app:drawableTint="@color/clarys_light"
+                android:drawablePadding="8dp" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buttonOpenInventoryFromProducts"
+                android:layout_width="0dp"
+                android:layout_height="62dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_admin_action"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="Inventario"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_mid"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_inventory"
+                app:drawableTint="@color/clarys_mid"
+                android:drawablePadding="8dp" />
+
+        </LinearLayout>
+
+
+
+        <!-- ================================================= -->
+        <!-- CATÁLOGO -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Catálogo"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Productos disponibles"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_product_category"
+                android:paddingStart="11dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="11dp"
+                android:paddingBottom="6dp"
+                android:text="CATÁLOGO"
+                android:textColor="@color/clarys_light"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+
+        <!-- ================================================= -->
+        <!-- LISTA DE PRODUCTOS -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerAdminProducts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
+
+        </LinearLayout>
+
+
     </LinearLayout>
+
 </ScrollView>

@@ -1,10 +1,12 @@
 package com.clarys.app.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.clarys.app.model.CartItem;
 import com.clarys.app.model.Customer;
 import com.clarys.app.model.InventoryMovement;
+import com.clarys.app.model.OrderRequest;
 import com.clarys.app.model.Product;
 import com.clarys.app.model.Sale;
 
@@ -15,8 +17,10 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 
 /**
  * Repositorio principal de Clarys para autenticación, catálogo, inventario,
@@ -26,6 +30,11 @@ public class SupabaseStore {
     private static SupabaseStore instance;
     private static final String STORAGE_BUCKET_PRODUCT_IMAGES = "product-images";
 
+    private static final String STORAGE_BUCKET_ORDER_RECEIPTS = "order-receipts";
+
+    private static final int MAX_RECEIPT_SIZE =
+            10 * 1024 * 1024;
+
     private final SupabaseSession session;
     private final SupabaseClient client;
     private final List<Product> products = new ArrayList<>();
@@ -33,11 +42,14 @@ public class SupabaseStore {
     private final List<Sale> sales = new ArrayList<>();
     private final List<Customer> customers = new ArrayList<>();
     private final List<InventoryMovement> movements = new ArrayList<>();
+    private final List<OrderRequest> orderRequests = new ArrayList<>();
 
     private String businessName = "Taller Clarys";
     private String contactWhatsapp = "3001234567";
     private String currency = "COP";
     private int defaultMinStock = 5;
+
+
 
     private SupabaseStore(Context context) {
         session = SupabaseSession.getInstance(context);
@@ -88,7 +100,7 @@ public class SupabaseStore {
      * Registra un administrador y crea el taller asociado cuando Supabase confirma la sesión.
      */
     public void signUpAdmin(String email, String password, String workshopName, String whatsapp,
-            StoreCallback<Void> callback) {
+                            StoreCallback<Void> callback) {
         try {
             JSONObject body = new JSONObject()
                     .put("email", email)
@@ -126,12 +138,12 @@ public class SupabaseStore {
      * Registra un administrador con Google y vincula el usuario con un taller.
      */
     public void signUpAdminWithGoogle(String idToken, String workshopName, String whatsapp,
-            StoreCallback<Void> callback) {
+                                      StoreCallback<Void> callback) {
         authenticateWithGoogle(idToken, true, workshopName, whatsapp, callback);
     }
 
     private void authenticateWithGoogle(String idToken, boolean createMissingProfile, String workshopName,
-            String whatsapp, StoreCallback<Void> callback) {
+                                        String whatsapp, StoreCallback<Void> callback) {
         if (idToken == null || idToken.trim().isEmpty()) {
             callback.onError("Google no entregó un token válido");
             return;
@@ -242,7 +254,7 @@ public class SupabaseStore {
     }
 
     private void loadProfileOrHandleGoogleAdmin(boolean createMissingProfile, String workshopName, String whatsapp,
-            StoreCallback<Void> callback) {
+                                                StoreCallback<Void> callback) {
         loadProfile(new StoreCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
@@ -327,12 +339,20 @@ public class SupabaseStore {
     }
 
     public void signOut() {
+
         session.clear();
+
         products.clear();
+
         cart.clear();
+
         sales.clear();
+
         customers.clear();
+
         movements.clear();
+
+        orderRequests.clear();
     }
 
     /**
@@ -374,8 +394,8 @@ public class SupabaseStore {
      * Crea o actualiza productos del taller autenticado en Supabase.
      */
     public void saveProductAsync(Integer productId, String name, String description, String category,
-            int purchasePrice, int salePrice, int stock, int minStock, String sizes, String colors,
-            String sku, String imageUrl, boolean active, StoreCallback<Product> callback) {
+                                 int purchasePrice, int salePrice, int stock, int minStock, String sizes, String colors,
+                                 String sku, String imageUrl, boolean active, StoreCallback<Product> callback) {
         if (!isAuthenticated() || session.getWorkshopId() == null) {
             callback.onError("Inicia sesión para guardar productos");
             return;
@@ -425,8 +445,8 @@ public class SupabaseStore {
     }
 
     private JSONObject productJson(String name, String description, String category, int purchasePrice,
-            int salePrice, int stock, int minStock, String sizes, String colors, String sku,
-            String imageUrl, boolean active) throws Exception {
+                                   int salePrice, int stock, int minStock, String sizes, String colors, String sku,
+                                   String imageUrl, boolean active) throws Exception {
         return new JSONObject()
                 .put("name", safe(name, "Producto"))
                 .put("description", safe(description, ""))
@@ -474,7 +494,7 @@ public class SupabaseStore {
      * Registra un movimiento de inventario ejecutando la función RPC adjust_stock.
      */
     public void adjustStockAsync(int productId, String type, int quantity, String reason,
-            StoreCallback<Void> callback) {
+                                 StoreCallback<Void> callback) {
         try {
             JSONObject body = new JSONObject()
                     .put("p_product_id", productId)
@@ -511,7 +531,7 @@ public class SupabaseStore {
      * Confirma una venta administrativa y descuenta el stock mediante Supabase RPC.
      */
     public void confirmSaleAsync(String customerName, String phone, String paymentMethod, int discount,
-            String status, StoreCallback<Sale> callback) {
+                                 String status, StoreCallback<Sale> callback) {
         if (cart.isEmpty()) {
             callback.onError("Agrega productos antes de confirmar");
             return;
@@ -549,44 +569,839 @@ public class SupabaseStore {
     /**
      * Envía una solicitud pública de catálogo para que el taller contacte al cliente.
      */
-    public void submitCatalogRequestAsync(String customerName, String phone, StoreCallback<Void> callback) {
+    public void submitCatalogRequestAsync(
+            String customerName,
+            String phone,
+            StoreCallback<Void> callback) {
+
         if (cart.isEmpty()) {
-            callback.onError("Agrega productos antes de enviar la solicitud");
+
+            callback.onError(
+                    "Agrega productos antes de enviar la solicitud"
+            );
+
             return;
         }
 
-        try {
-            JSONObject body = new JSONObject()
-                    .put("customer_name", safe(customerName, "Cliente catálogo"))
-                    .put("customer_phone", safe(phone, ""))
-                    .put("items", cartItemsJson())
-                    .put("status", "new");
-            client.post("contact_requests", body, false, new StoreCallback<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    cart.clear();
-                    callback.onSuccess(null);
-                }
 
-                @Override
-                public void onError(String message) {
-                    callback.onError(message);
-                }
-            });
+        String workshopId =
+                getCartWorkshopId();
+
+
+        if (workshopId == null
+                || workshopId.trim().isEmpty()) {
+
+            callback.onError(
+                    "No se pudo identificar el taller del pedido"
+            );
+
+            return;
+        }
+
+
+        if (!cartBelongsToSingleWorkshop(
+                workshopId
+        )) {
+
+            callback.onError(
+                    "No puedes mezclar productos de diferentes talleres"
+            );
+
+            return;
+        }
+
+
+        try {
+
+            JSONObject body =
+                    new JSONObject()
+                            .put(
+                                    "p_customer_name",
+                                    safe(
+                                            customerName,
+                                            "Cliente catálogo"
+                                    )
+                            )
+                            .put(
+                                    "p_customer_phone",
+                                    safe(
+                                            phone,
+                                            ""
+                                    )
+                            )
+                            .put(
+                                    "p_items",
+                                    cartItemsJson()
+                            );
+
+
+            client.post(
+                    "rpc/submit_catalog_request",
+                    body,
+                    false,
+
+                    new StoreCallback<String>() {
+
+                        @Override
+                        public void onSuccess(
+                                String result) {
+
+                            cart.clear();
+
+                            callback.onSuccess(
+                                    null
+                            );
+                        }
+
+
+                        @Override
+                        public void onError(
+                                String message) {
+
+                            android.util.Log.e(
+                                    "CLARYS_ORDER",
+                                    "Error al crear pedido: "
+                                            + message
+                            );
+
+                            callback.onError(
+                                    message
+                            );
+                        }
+                    }
+            );
+
+
         } catch (Exception exception) {
-            callback.onError("No se pudo preparar la solicitud");
+
+            android.util.Log.e(
+                    "CLARYS_ORDER",
+                    "Error preparando pedido",
+                    exception
+            );
+
+            callback.onError(
+                    "No se pudo preparar la solicitud"
+            );
         }
     }
 
-    private JSONArray cartItemsJson() throws Exception {
-        JSONArray items = new JSONArray();
-        for (CartItem item : cart) {
-            items.put(new JSONObject()
-                    .put("product_id", item.getProduct().getId())
-                    .put("quantity", item.getQuantity())
-                    .put("unit_price", item.getProduct().getSalePrice()));
+    private String getCartWorkshopId() {
+
+        if (cart.isEmpty()) {
+            return null;
         }
+
+        Product product =
+                cart.get(0).getProduct();
+
+        if (product == null) {
+            return null;
+        }
+
+        return product.getWorkshopId();
+    }
+
+
+    private boolean cartBelongsToSingleWorkshop(
+            String workshopId) {
+
+        if (workshopId == null) {
+            return false;
+        }
+
+        for (CartItem item : cart) {
+
+            Product product =
+                    item.getProduct();
+
+            if (product == null
+                    || product.getWorkshopId() == null
+                    || !workshopId.equals(
+                    product.getWorkshopId()
+            )) {
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private JSONArray cartItemsJson() throws Exception {
+
+        JSONArray items =
+                new JSONArray();
+
+        for (CartItem item : cart) {
+
+            Product product =
+                    item.getProduct();
+
+            items.put(
+                    new JSONObject()
+                            .put(
+                                    "product_id",
+                                    product.getId()
+                            )
+                            .put(
+                                    "product_name",
+                                    product.getName()
+                            )
+                            .put(
+                                    "quantity",
+                                    item.getQuantity()
+                            )
+                            .put(
+                                    "unit_price",
+                                    product.getSalePrice()
+                            )
+            );
+        }
+
         return items;
+    }
+
+    public void refreshOrderRequests(
+            StoreCallback<List<OrderRequest>> callback) {
+
+        if (!isAuthenticated()
+                || session.getWorkshopId() == null) {
+
+            callback.onError(
+                    "Acceso administrativo requerido"
+            );
+
+            return;
+        }
+
+        String path =
+                "contact_requests"
+                        + "?select=*"
+                        + "&workshop_id=eq."
+                        + session.getWorkshopId()
+                        + "&order=created_at.desc";
+
+        client.get(
+                path,
+                true,
+                new StoreCallback<String>() {
+
+                    @Override
+                    public void onSuccess(String result) {
+
+                        try {
+
+                            JSONArray rows =
+                                    new JSONArray(result);
+
+                            orderRequests.clear();
+
+                            for (int i = 0;
+                                 i < rows.length();
+                                 i++) {
+
+                                orderRequests.add(
+                                        parseOrderRequest(
+                                                rows.getJSONObject(i)
+                                        )
+                                );
+                            }
+
+                            callback.onSuccess(
+                                    getOrderRequests()
+                            );
+
+                        } catch (Exception exception) {
+
+                            callback.onError(
+                                    "No se pudieron leer los pedidos"
+                            );
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+
+                        callback.onError(message);
+                    }
+                }
+        );
+    }
+
+
+    /**
+     * Consulta los pedidos públicos asociados a un número de teléfono.
+     *
+     * No requiere sesión administrativa.
+     * La consulta se realiza mediante la RPC:
+     * get_catalog_orders_by_phone
+     *
+     * Importante:
+     * Esta consulta NO modifica orderRequests, ya que esa lista
+     * se utiliza para los pedidos del panel administrativo.
+     */
+    public void findClientOrdersByPhone(
+            String phone,
+            StoreCallback<List<OrderRequest>> callback) {
+
+        // =========================================================
+        // VALIDACIÓN
+        // =========================================================
+
+        if (phone == null || phone.trim().isEmpty()) {
+
+            callback.onError(
+                    "Escribe un número de teléfono"
+            );
+
+            return;
+        }
+
+
+        String cleanPhone =
+                phone.trim();
+
+
+        /*
+         * Validación básica local.
+         *
+         * Supabase también realizará su propia validación,
+         * pero esto evita enviar solicitudes claramente inválidas.
+         */
+        String digits =
+                cleanPhone.replaceAll(
+                        "[^0-9]",
+                        ""
+                );
+
+
+        if (digits.length() < 7) {
+
+            callback.onError(
+                    "Escribe un número de teléfono válido"
+            );
+
+            return;
+        }
+
+
+        // =========================================================
+        // PREPARAR RPC
+        // =========================================================
+
+        try {
+
+            JSONObject body =
+                    new JSONObject()
+                            .put(
+                                    "p_customer_phone",
+                                    cleanPhone
+                            );
+
+
+            client.post(
+                    "rpc/get_catalog_orders_by_phone",
+                    body,
+
+                    // La consulta es pública.
+                    false,
+
+                    new StoreCallback<String>() {
+
+                        // =================================================
+                        // RESPUESTA CORRECTA
+                        // =================================================
+
+                        @Override
+                        public void onSuccess(
+                                String result) {
+
+                            try {
+
+                                JSONArray rows =
+                                        new JSONArray(
+                                                result
+                                        );
+
+
+                                List<OrderRequest> parsed =
+                                        new ArrayList<>();
+
+
+                                for (int i = 0;
+                                     i < rows.length();
+                                     i++) {
+
+                                    JSONObject row =
+                                            rows.optJSONObject(i);
+
+
+                                    if (row == null) {
+                                        continue;
+                                    }
+
+
+                                    OrderRequest request =
+                                            parseOrderRequest(
+                                                    row
+                                            );
+
+
+                                    if (request != null) {
+
+                                        parsed.add(
+                                                request
+                                        );
+                                    }
+                                }
+
+
+                                /*
+                                 * NO hacemos:
+                                 *
+                                 * orderRequests.clear();
+                                 * orderRequests.addAll(parsed);
+                                 *
+                                 * porque orderRequests corresponde al
+                                 * panel administrativo.
+                                 */
+
+                                callback.onSuccess(
+                                        parsed
+                                );
+
+
+                            } catch (Exception exception) {
+
+                                android.util.Log.e(
+                                        "CLARYS_CLIENT_ORDERS",
+                                        "Error leyendo pedidos del cliente",
+                                        exception
+                                );
+
+
+                                callback.onError(
+                                        "No se pudieron leer los pedidos"
+                                );
+                            }
+                        }
+
+
+                        // =================================================
+                        // ERROR SUPABASE
+                        // =================================================
+
+                        @Override
+                        public void onError(
+                                String message) {
+
+                            android.util.Log.e(
+                                    "CLARYS_CLIENT_ORDERS",
+                                    "Error consultando pedidos: "
+                                            + message
+                            );
+
+
+                            callback.onError(
+                                    message
+                            );
+                        }
+                    }
+            );
+
+
+        } catch (Exception exception) {
+
+            android.util.Log.e(
+                    "CLARYS_CLIENT_ORDERS",
+                    "Error preparando consulta",
+                    exception
+            );
+
+
+            callback.onError(
+                    "No se pudo preparar la consulta de pedidos"
+            );
+        }
+    }
+
+    private OrderRequest parseOrderRequest(
+            JSONObject row) {
+
+        List<CartItem> requestItems =
+                new ArrayList<>();
+
+        JSONArray items =
+                row.optJSONArray("items");
+
+        if (items != null) {
+
+            for (int i = 0;
+                 i < items.length();
+                 i++) {
+
+                JSONObject item =
+                        items.optJSONObject(i);
+
+                if (item == null) {
+                    continue;
+                }
+
+                int productId =
+                        item.optInt(
+                                "product_id",
+                                0
+                        );
+
+                int quantity =
+                        item.optInt(
+                                "quantity",
+                                1
+                        );
+
+                int unitPrice =
+                        item.optInt(
+                                "unit_price",
+                                0
+                        );
+
+                String productName =
+                        item.optString(
+                                "product_name",
+                                "Producto"
+                        );
+
+
+                Product product =
+                        getProduct(productId);
+
+
+                /*
+                 * Pedidos antiguos pueden apuntar a un producto
+                 * que todavía no está cargado en memoria.
+                 */
+                if (product == null) {
+
+                    product =
+                            new Product(
+                                    productId,
+                                    productName,
+                                    "",
+                                    "",
+                                    0,
+                                    unitPrice,
+                                    0,
+                                    0,
+                                    "",
+                                    "",
+                                    "",
+                                    true,
+                                    0
+                            );
+                }
+
+                requestItems.add(
+                        new CartItem(
+                                product,
+                                quantity
+                        )
+                );
+            }
+        }
+
+        return new OrderRequest(
+                row.optInt("id", 0),
+
+                row.optString(
+                        "workshop_id",
+                        ""
+                ),
+
+                row.optString(
+                        "customer_name",
+                        "Cliente"
+                ),
+
+                row.optString(
+                        "customer_phone",
+                        ""
+                ),
+
+                requestItems,
+
+                row.optString(
+                        "status",
+                        OrderRequest.STATUS_PENDING
+                ),
+
+                row.optString(
+                        "admin_notes",
+                        ""
+                ),
+
+                row.optString(
+                        "receipt_url",
+                        ""
+                ),
+
+                row.optString(
+                        "created_at",
+                        ""
+                ),
+
+                row.optString(
+                        "updated_at",
+                        ""
+                ),
+
+                row.optString(
+                        "approved_at",
+                        ""
+                ),
+
+                row.optString(
+                        "rejected_at",
+                        ""
+                ),
+
+                row.optString(
+                        "completed_at",
+                        ""
+                )
+        );
+    }
+
+    public List<OrderRequest> getOrderRequests() {
+
+        return new ArrayList<>(
+                orderRequests
+        );
+    }
+
+
+    public OrderRequest getOrderRequest(
+            int orderId) {
+
+        for (OrderRequest request :
+                orderRequests) {
+
+            if (request.getId() == orderId) {
+
+                return request;
+            }
+        }
+
+        return null;
+    }
+
+
+    public int getPendingOrderCount() {
+
+        int count = 0;
+
+        for (OrderRequest request :
+                orderRequests) {
+
+            if (request.isPending()) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public List<OrderRequest> getOrderRequestsByStatus(
+            String status) {
+
+        if (status == null
+                || status.trim().isEmpty()
+                || "all".equalsIgnoreCase(status)) {
+
+            return getOrderRequests();
+        }
+
+
+        List<OrderRequest> result =
+                new ArrayList<>();
+
+
+        for (OrderRequest request :
+                orderRequests) {
+
+            if (status.equalsIgnoreCase(
+                    request.getStatus()
+            )) {
+
+                result.add(request);
+            }
+        }
+
+
+        return result;
+    }
+
+    public void updateOrderRequestStatus(
+            int orderId,
+            String newStatus,
+            StoreCallback<Void> callback) {
+
+        if (!isAuthenticated()
+                || session.getWorkshopId() == null) {
+
+            callback.onError(
+                    "Acceso administrativo requerido"
+            );
+
+            return;
+        }
+
+
+        if (!isValidOrderStatus(newStatus)) {
+
+            callback.onError(
+                    "Estado de pedido no válido"
+            );
+
+            return;
+        }
+
+
+        try {
+
+            JSONObject body =
+                    new JSONObject();
+
+
+            body.put(
+                    "status",
+                    newStatus
+            );
+
+
+            body.put(
+                    "updated_at",
+                    currentTimestamp()
+            );
+
+
+            if (OrderRequest.STATUS_APPROVED
+                    .equals(newStatus)) {
+
+                body.put(
+                        "approved_at",
+                        currentTimestamp()
+                );
+            }
+
+
+            if (OrderRequest.STATUS_REJECTED
+                    .equals(newStatus)) {
+
+                body.put(
+                        "rejected_at",
+                        currentTimestamp()
+                );
+            }
+
+
+            if (OrderRequest.STATUS_COMPLETED
+                    .equals(newStatus)) {
+
+                body.put(
+                        "completed_at",
+                        currentTimestamp()
+                );
+            }
+
+
+            String path =
+                    "contact_requests"
+                            + "?id=eq."
+                            + orderId
+                            + "&workshop_id=eq."
+                            + session.getWorkshopId();
+
+
+            client.patch(
+                    path,
+                    body,
+                    true,
+                    new StoreCallback<String>() {
+
+                        @Override
+                        public void onSuccess(
+                                String result) {
+
+                            refreshOrderRequests(
+                                    new StoreCallback<List<OrderRequest>>() {
+
+                                        @Override
+                                        public void onSuccess(
+                                                List<OrderRequest> result) {
+
+                                            callback.onSuccess(null);
+                                        }
+
+                                        @Override
+                                        public void onError(
+                                                String message) {
+
+                                            /*
+                                             * El cambio ya se realizó.
+                                             * Solo falló el refresco local.
+                                             */
+                                            callback.onSuccess(null);
+                                        }
+                                    }
+                            );
+                        }
+
+
+                        @Override
+                        public void onError(
+                                String message) {
+
+                            callback.onError(message);
+                        }
+                    }
+            );
+
+        } catch (Exception exception) {
+
+            callback.onError(
+                    "No se pudo actualizar el pedido"
+            );
+        }
+    }
+
+    private boolean isValidOrderStatus(
+            String status) {
+
+        return OrderRequest.STATUS_PENDING
+                .equals(status)
+
+                || OrderRequest.STATUS_APPROVED
+                .equals(status)
+
+                || OrderRequest.STATUS_REJECTED
+                .equals(status)
+
+                || OrderRequest.STATUS_COMPLETED
+                .equals(status);
+    }
+
+    private String currentTimestamp() {
+
+        java.text.SimpleDateFormat format =
+                new java.text.SimpleDateFormat(
+                        "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+                        Locale.US
+                );
+
+        return format.format(
+                new Date()
+        );
     }
 
     private void refreshAfterSale(StoreCallback<Sale> callback) {
@@ -710,7 +1525,7 @@ public class SupabaseStore {
      * Guarda la configuración principal del taller en Supabase.
      */
     public void saveSettingsAsync(String businessName, String whatsapp, String currency, int minStock,
-            StoreCallback<Void> callback) {
+                                  StoreCallback<Void> callback) {
         if (!isAuthenticated() || session.getWorkshopId() == null) {
             callback.onError("Inicia sesión para guardar configuración");
             return;
@@ -788,7 +1603,7 @@ public class SupabaseStore {
                 JSONObject productJson = item.optJSONObject("products");
                 Product product = productJson == null
                         ? new Product(item.optInt("product_id", 0), "Producto", "", "", 0,
-                                item.optInt("unit_price", 0), 0, 0, "", "", "", true, 0)
+                        item.optInt("unit_price", 0), 0, 0, "", "", "", true, 0)
                         : parseProduct(productJson);
                 items.add(new CartItem(product, item.optInt("quantity", 1)));
             }
@@ -985,4 +1800,183 @@ public class SupabaseStore {
         public void onError(String message) {
         }
     }
+
+    // =============================================================
+    // PEDIDOS: NOTAS Y COMPROBANTES
+    // =============================================================
+
+    public void updateOrderRequestNotes(
+            int orderId,
+            String notes,
+            StoreCallback<Void> callback) {
+
+        if (!isAuthenticated() || session.getWorkshopId() == null) {
+            callback.onError("Acceso administrativo requerido");
+            return;
+        }
+
+        try {
+            JSONObject body = new JSONObject()
+                    .put("admin_notes", notes == null ? "" : notes.trim())
+                    .put("updated_at", currentTimestamp());
+
+            patchOrderRequest(orderId, body, callback);
+
+        } catch (Exception exception) {
+            callback.onError("No se pudieron guardar las notas");
+        }
+    }
+
+    public void uploadOrderReceipt(
+            int orderId,
+            byte[] fileBytes,
+            String mimeType,
+            StoreCallback<String> callback) {
+
+        if (!isAuthenticated() || session.getWorkshopId() == null) {
+            callback.onError("Acceso administrativo requerido");
+            return;
+        }
+
+        if (fileBytes == null || fileBytes.length == 0) {
+            callback.onError("El comprobante está vacío");
+            return;
+        }
+
+        if (fileBytes.length > MAX_RECEIPT_SIZE) {
+            callback.onError("El comprobante no puede superar 10 MB");
+            return;
+        }
+
+        String safeMime = mimeType == null
+                ? "application/octet-stream"
+                : mimeType;
+
+        String extension = receiptExtension(safeMime);
+
+        String storagePath =
+                session.getWorkshopId()
+                        + "/order-"
+                        + orderId
+                        + "/"
+                        + System.currentTimeMillis()
+                        + "."
+                        + extension;
+
+        client.uploadStorageObject(
+                STORAGE_BUCKET_ORDER_RECEIPTS,
+                storagePath,
+                fileBytes,
+                safeMime,
+                new StoreCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        saveOrderReceiptPath(orderId, storagePath, callback);
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        callback.onError(message);
+                    }
+                }
+        );
+    }
+
+    private void saveOrderReceiptPath(
+            int orderId,
+            String storagePath,
+            StoreCallback<String> callback) {
+
+        try {
+            JSONObject body = new JSONObject()
+                    .put("receipt_url", storagePath)
+                    .put("updated_at", currentTimestamp());
+
+            patchOrderRequest(
+                    orderId,
+                    body,
+                    new StoreCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            callback.onSuccess(storagePath);
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            callback.onError(message);
+                        }
+                    }
+            );
+
+        } catch (Exception exception) {
+            callback.onError(
+                    "El archivo fue enviado, pero no se pudo asociar al pedido"
+            );
+        }
+    }
+
+    private void patchOrderRequest(
+            int orderId,
+            JSONObject body,
+            StoreCallback<Void> callback) {
+
+        if (!isAuthenticated() || session.getWorkshopId() == null) {
+            callback.onError("Acceso administrativo requerido");
+            return;
+        }
+
+        String path =
+                "contact_requests"
+                        + "?id=eq."
+                        + orderId
+                        + "&workshop_id=eq."
+                        + session.getWorkshopId();
+
+        client.patch(
+                path,
+                body,
+                true,
+                new StoreCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        refreshOrderRequests(
+                                new StoreCallback<List<OrderRequest>>() {
+                                    @Override
+                                    public void onSuccess(List<OrderRequest> result) {
+                                        callback.onSuccess(null);
+                                    }
+
+                                    @Override
+                                    public void onError(String message) {
+                                        // El PATCH ya fue aplicado; solo falló el refresco local.
+                                        callback.onSuccess(null);
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        callback.onError(message);
+                    }
+                }
+        );
+    }
+
+    private String receiptExtension(String mimeType) {
+        if ("application/pdf".equalsIgnoreCase(mimeType)) {
+            return "pdf";
+        }
+
+        if ("image/png".equalsIgnoreCase(mimeType)) {
+            return "png";
+        }
+
+        if ("image/webp".equalsIgnoreCase(mimeType)) {
+            return "webp";
+        }
+
+        return "jpg";
+    }
+
 }
