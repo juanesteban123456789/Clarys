@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_soft_card"
+    android:orientation="vertical"
+    android:padding="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_detail_icon">
+
+            <ImageView
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_cart"
+                app:tint="@color/clarys_mid" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textOrderTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/clarys_dark"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textOrderCustomer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/clarys_muted"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textOrderStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_product_category"
+            android:paddingStart="9dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="9dp"
+            android:paddingBottom="5dp"
+            android:textColor="@color/clarys_mid"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_stock_badge"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="11dp">
+
+        <TextView
+            android:id="@+id/textOrderUnits"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/clarys_muted"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textOrderTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/clarys_mid"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonOrderManage"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_admin_action"
+        android:backgroundTint="@null"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:text="Gestionar pedido"
+        android:textAllCaps="false"
+        android:textColor="@color/clarys_mid"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_search"
+        app:drawableTint="@color/clarys_mid" />
+
+</LinearLayout>

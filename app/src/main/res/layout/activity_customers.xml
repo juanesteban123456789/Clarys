@@ -1,77 +1,277 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/clarys_bg">
+    android:background="@color/clarys_bg"
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="20dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="32dp">
+
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/buttonHeaderHome"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_secondary_button"
-                android:text="Inicio"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
-
-            <Button
+            <ImageButton
                 android:id="@+id/buttonHeaderBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Volver atrás"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/clarys_dark" />
+
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="44dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_secondary_button"
-                android:text="Atras"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Clientes"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Gestiona tus compradores"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/buttonHeaderHome"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Ir al inicio"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_home"
+                app:tint="@color/clarys_mid" />
+
         </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- INTRO -->
+        <!-- ================================================= -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/bg_product_category"
+            android:paddingStart="12dp"
+            android:paddingTop="7dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="7dp"
+            android:text="CLIENTES"
+            android:textColor="@color/clarys_mid"
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="Clientes"
+            android:layout_marginTop="10dp"
+            android:text="Tus clientes"
             android:textColor="@color/clarys_dark"
-            android:textSize="24sp"
+            android:textSize="27sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textCustomerCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Consulta tus clientes registrados y crea rápidamente una nueva venta."
+            android:textColor="@color/clarys_muted"
+            android:textSize="14sp" />
+
+
+        <!-- ================================================= -->
+        <!-- RESUMEN -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_stock_badge"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp">
+
+            <FrameLayout
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_detail_icon">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_customer"
+                    app:tint="@color/clarys_mid" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clientes registrados"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textCustomerCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:textColor="@color/clarys_mid"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- NUEVA VENTA -->
+        <!-- ================================================= -->
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonCustomerNewSale"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_action_client"
+            android:backgroundTint="@null"
+            android:drawablePadding="10dp"
+            android:elevation="6dp"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Nueva venta"
+            android:textAllCaps="false"
+            android:textColor="@color/clarys_light"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_cart"
+            app:drawableTint="@color/clarys_light" />
+
+
+        <!-- ================================================= -->
+        <!-- LISTADO -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Listado de clientes"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Personas que han comprado en tu taller"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_product_category"
+                android:paddingStart="11dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="11dp"
+                android:paddingBottom="6dp"
+                android:text="REGISTROS"
+                android:textColor="@color/clarys_mid"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- RECYCLER -->
+        <!-- ================================================= -->
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card"
-            android:padding="16dp"
-            android:textColor="@color/clarys_dark"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="8dp">
 
-        <Button
-            android:id="@+id/buttonCustomerNewSale"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/bg_primary_button"
-            android:text="Nueva venta"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerCustomers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerCustomers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:nestedScrollingEnabled="false" />
+        </LinearLayout>
+
     </LinearLayout>
+
 </ScrollView>

@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/clarys_bg"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="36dp">
+
+
+        <!-- HEADER -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/buttonHeaderBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Volver"
+                android:padding="13dp"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/clarys_dark" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Detalle del pedido"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Gestión de la solicitud del cliente"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/buttonHeaderHome"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Inicio"
+                android:padding="13dp"
+                android:src="@drawable/ic_home"
+                app:tint="@color/clarys_mid" />
+
+        </LinearLayout>
+
+
+        <!-- ESTADO -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textOrderDetailNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Pedido #0"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textOrderDetailStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_product_category"
+                    android:paddingStart="11dp"
+                    android:paddingTop="7dp"
+                    android:paddingEnd="11dp"
+                    android:paddingBottom="7dp"
+                    android:text="PENDIENTE"
+                    android:textColor="@color/clarys_mid"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textOrderDetailDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+
+        <!-- CLIENTE -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cliente"
+                android:textColor="@color/clarys_muted"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textOrderDetailCustomer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/clarys_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textOrderDetailPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/clarys_mid"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+
+        <!-- PRODUCTOS -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:text="Productos"
+            android:textColor="@color/clarys_dark"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/layoutOrderDetailItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="6dp" />
+
+
+        <!-- TOTAL -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_stock_badge"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/textOrderDetailUnits"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0 unidades"
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textOrderDetailTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$ 0"
+                android:textColor="@color/clarys_mid"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+        <!-- NOTAS -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Notas administrativas"
+            android:textColor="@color/clarys_dark"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/inputOrderAdminNotes"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_input"
+            android:gravity="top|start"
+            android:hint="Ej. Cliente solicita entrega el viernes..."
+            android:inputType="textCapSentences|textMultiLine"
+            android:padding="14dp"
+            android:textColor="@color/clarys_dark"
+            android:textColorHint="@color/clarys_muted"
+            android:textSize="13sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonSaveOrderNotes"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_admin_action"
+            android:backgroundTint="@null"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center"
+            android:text="Guardar notas"
+            android:textAllCaps="false"
+            android:textColor="@color/clarys_mid"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_edit"
+            app:drawableTint="@color/clarys_mid" />
+
+
+        <!-- COMPROBANTE -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Comprobante"
+            android:textColor="@color/clarys_dark"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/textOrderReceiptStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aún no hay comprobante"
+                android:textColor="@color/clarys_muted"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buttonUploadOrderReceipt"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_admin_action"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="Adjuntar comprobante"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_mid"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_upload_image"
+                app:drawableTint="@color/clarys_mid" />
+
+        </LinearLayout>
+
+
+        <!-- ACCIONES -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Gestionar pedido"
+            android:textColor="@color/clarys_dark"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonApproveOrder"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_action_client"
+            android:backgroundTint="@null"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Aprobar pedido"
+            android:textAllCaps="false"
+            android:textColor="@color/clarys_light"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_check_circle"
+            app:drawableTint="@color/clarys_light" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonRejectOrder"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_soft_button"
+            android:backgroundTint="@null"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Denegar pedido"
+            android:textAllCaps="false"
+            android:textColor="@color/clarys_mid"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_warning"
+            app:drawableTint="@color/clarys_mid" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonCompleteOrder"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_action_client"
+            android:backgroundTint="@null"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Marcar como completado"
+            android:textAllCaps="false"
+            android:textColor="@color/clarys_light"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_check_circle"
+            app:drawableTint="@color/clarys_light"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</ScrollView>

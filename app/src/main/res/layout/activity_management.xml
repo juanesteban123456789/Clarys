@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/clarys_bg"
-    android:fillViewport="true">
+    android:background="@drawable/bg_login_canvas"
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="20dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="32dp">
+
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -17,262 +28,531 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/buttonHeaderHome"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/bg_soft_button"
-                android:text="Inicio"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
-
-            <Button
+            <ImageButton
                 android:id="@+id/buttonHeaderBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Volver atrás"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/clarys_dark" />
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="14dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_soft_button"
-                android:text="Atrás"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nuevo producto"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Gestión de productos"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/buttonHeaderHome"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Ir al inicio"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_home"
+                app:tint="@color/clarys_mid" />
+
         </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- HERO -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_login_hero"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="88dp"
+                android:layout_height="72dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="Logo Clarys"
+                android:scaleType="fitCenter"
+                android:src="@drawable/logo_taller_clarys" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_login_badge"
+                    android:paddingStart="11dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="11dp"
+                    android:paddingBottom="6dp"
+                    android:text="PRODUCTOS"
+                    android:textColor="@color/clarys_mid"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Agrega un nuevo artículo"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Completa los datos para publicarlo en tu catálogo."
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- INFORMACIÓN PRINCIPAL -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Información del producto"
+                android:textColor="@color/clarys_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Datos que verán tus clientes"
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp" />
+
+
+            <!-- NOMBRE -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Nombre"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:hint="Ej. Camiseta deportiva"
+                android:inputType="textCapSentences"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+
+            <!-- DESCRIPCIÓN -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Descripción"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="112dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:gravity="top|start"
+                android:hint="Describe brevemente el producto..."
+                android:inputType="textCapSentences|textMultiLine"
+                android:padding="14dp"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- PRECIO + STOCK -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:background="@drawable/bg_phone"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_logo_strip"
-                android:gravity="center"
-                android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:contentDescription="Logo Clarys"
-                    android:src="@drawable/logo_taller_clarys" />
-            </LinearLayout>
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_status"
-                android:gravity="center"
-                android:padding="12dp"
-                android:text="Gestión de productos"
-                android:textColor="@color/clarys_mid"
+                android:text="Precio e inventario"
+                android:textColor="@color/clarys_dark"
+                android:textSize="17sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Define el precio y la disponibilidad inicial"
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp" />
+
+
+            <!-- LABELS -->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Agregar producto"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="Precio"
                     android:textColor="@color/clarys_dark"
-                    android:textSize="22sp"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:text="Nombre"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:text="Stock"
                     android:textColor="@color/clarys_dark"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/bg_input"
-                    android:hint="Nombre del producto"
-                    android:padding="14dp"
-                    android:textColor="@color/clarys_text"
-                    android:textColorHint="@color/clarys_muted" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Descripción"
-                    android:textColor="@color/clarys_dark"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/bg_input"
-                    android:gravity="top|start"
-                    android:hint="Descripción corta"
-                    android:padding="14dp"
-                    android:textColor="@color/clarys_text"
-                    android:textColorHint="@color/clarys_muted" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Precio"
-                            android:textColor="@color/clarys_dark"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:background="@drawable/bg_input"
-                            android:hint="$0"
-                            android:padding="14dp"
-                            android:textColor="@color/clarys_text"
-                            android:textColorHint="@color/clarys_muted" />
-                    </LinearLayout>
-
-                    <Space
-                        android:layout_width="10dp"
-                        android:layout_height="wrap_content" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Stock"
-                            android:textColor="@color/clarys_dark"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:background="@drawable/bg_input"
-                            android:hint="0"
-                            android:inputType="number"
-                            android:padding="14dp"
-                            android:textColor="@color/clarys_text"
-                            android:textColorHint="@color/clarys_muted" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Talla"
-                            android:textColor="@color/clarys_dark"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:background="@drawable/bg_input"
-                            android:hint="S, M, L"
-                            android:padding="14dp"
-                            android:textColor="@color/clarys_text"
-                            android:textColorHint="@color/clarys_muted" />
-                    </LinearLayout>
-
-                    <Space
-                        android:layout_width="10dp"
-                        android:layout_height="wrap_content" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Color"
-                            android:textColor="@color/clarys_dark"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:background="@drawable/bg_input"
-                            android:hint="Blanco"
-                            android:padding="14dp"
-                            android:textColor="@color/clarys_text"
-                            android:textColorHint="@color/clarys_muted" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/buttonUploadImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_secondary_button"
-                    android:text="Cargar imagen"
-                    android:textAllCaps="false"
-                    android:textColor="@color/clarys_light" />
-
-                <Button
-                    android:id="@+id/buttonSaveProduct"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_primary_button"
-                    android:text="Guardar producto"
-                    android:textAllCaps="false"
-                    android:textColor="@color/clarys_light" />
-
-                <Button
-                    android:id="@+id/buttonViewInventory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_soft_button"
-                    android:text="Ver inventario"
-                    android:textAllCaps="false"
-                    android:textColor="@color/clarys_mid" />
             </LinearLayout>
+
+
+            <!-- INPUTS -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_input"
+                    android:hint="$ 0"
+                    android:inputType="number"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:singleLine="true"
+                    android:textColor="@color/clarys_text"
+                    android:textColorHint="@color/clarys_muted"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_input"
+                    android:hint="0"
+                    android:inputType="number"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:singleLine="true"
+                    android:textColor="@color/clarys_text"
+                    android:textColorHint="@color/clarys_muted"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
         </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- VARIANTES -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Variantes"
+                android:textColor="@color/clarys_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Opciones disponibles para tus clientes"
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp" />
+
+
+            <!-- TALLA -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_detail_icon">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_size"
+                        app:tint="@color/clarys_mid" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Tallas disponibles"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input"
+                android:hint="Ej. S, M, L, XL"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+
+            <!-- COLOR -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_detail_icon">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_palette"
+                        app:tint="@color/clarys_mid" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Colores disponibles"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input"
+                android:hint="Ej. Blanco, negro, azul"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- IMAGEN -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Imagen del producto"
+                android:textColor="@color/clarys_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Selecciona una fotografía clara del artículo"
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buttonUploadImage"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_admin_action"
+                android:backgroundTint="@null"
+                android:drawablePadding="10dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:gravity="center"
+                android:text="Seleccionar imagen"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_mid"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_upload_image"
+                app:drawableTint="@color/clarys_mid" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- GUARDAR -->
+        <!-- ================================================= -->
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonSaveProduct"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_action_client"
+            android:backgroundTint="@null"
+            android:drawablePadding="10dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:elevation="7dp"
+            android:gravity="center"
+            android:text="Guardar producto"
+            android:textAllCaps="false"
+            android:textColor="@color/clarys_light"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_check_circle"
+            app:drawableTint="@color/clarys_light" />
+
+
+        <!-- ================================================= -->
+        <!-- INVENTARIO -->
+        <!-- ================================================= -->
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonViewInventory"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_soft_button"
+            android:backgroundTint="@null"
+            android:drawablePadding="9dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center"
+            android:text="Ver inventario"
+            android:textAllCaps="false"
+            android:textColor="@color/clarys_mid"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_inventory"
+            app:drawableTint="@color/clarys_mid" />
+
     </LinearLayout>
+
 </ScrollView>

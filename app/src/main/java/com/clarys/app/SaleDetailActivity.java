@@ -4,17 +4,18 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.CartItem;
 import com.clarys.app.model.Sale;
 
 public class SaleDetailActivity extends BaseScreenActivity {
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sale_detail);
+        store = SupabaseStore.getInstance(this);
 
         setupHeader(R.id.buttonHeaderHome, R.id.buttonHeaderBack);
         bindNavigation(R.id.buttonNewSaleFromDetail, SaleActivity.class);
@@ -24,7 +25,9 @@ public class SaleDetailActivity extends BaseScreenActivity {
 
     private void renderSale() {
         int saleId = getIntent().getIntExtra("saleId", -1);
-        Sale sale = store.getSale(saleId);
+        Sale sale = saleId == -1 && !store.getSales().isEmpty()
+                ? store.getSales().get(0)
+                : store.getSale(saleId);
         if (sale == null) {
             ((TextView) findViewById(R.id.textSaleDetailTitle)).setText("Venta no encontrada");
             return;

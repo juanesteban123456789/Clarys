@@ -2,180 +2,557 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/clarys_bg">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/clarys_bg"
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="20dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="32dp">
+
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/buttonHeaderHome"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_secondary_button"
-                android:text="Inicio"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
-
-            <Button
+            <ImageButton
                 android:id="@+id/buttonHeaderBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Volver atrás"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="@color/clarys_dark" />
+
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="44dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_secondary_button"
-                android:text="Atras"
-                android:textAllCaps="false"
-                android:textColor="@color/clarys_mid" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nueva venta"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Punto de venta Clarys"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/buttonHeaderHome"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Ir al inicio"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_home"
+                android:tint="@color/clarys_mid" />
+
         </LinearLayout>
 
+
+        <!-- ================================================= -->
+        <!-- INTRO -->
+        <!-- ================================================= -->
+
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="Nueva venta"
-            android:textColor="@color/clarys_dark"
-            android:textSize="24sp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/bg_product_category"
+            android:paddingStart="12dp"
+            android:paddingTop="7dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="7dp"
+            android:text="PUNTO DE VENTA"
+            android:textColor="@color/clarys_mid"
+            android:textSize="11sp"
             android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/inputSaleSearch"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_input"
-            android:hint="Buscar producto"
-            android:paddingHorizontal="14dp"
-            android:textColor="@color/clarys_text"
-            android:textColorHint="@color/clarys_muted" />
-
-        <Button
-            android:id="@+id/buttonSaleSearch"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_primary_button"
-            android:text="Buscar productos"
-            android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerSaleProducts"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:nestedScrollingEnabled="false" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Carrito de venta"
+            android:layout_marginTop="10dp"
+            android:text="Crear nueva venta"
             android:textColor="@color/clarys_dark"
-            android:textSize="20sp"
+            android:textSize="27sp"
             android:textStyle="bold" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerSaleCart"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:nestedScrollingEnabled="false" />
+            android:layout_marginTop="5dp"
+            android:text="Busca productos, agrégalos al carrito y completa la información de la venta."
+            android:textColor="@color/clarys_muted"
+            android:textSize="14sp" />
+
+
+        <!-- ================================================= -->
+        <!-- BUSCAR PRODUCTOS -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_card"
-            android:orientation="horizontal"
-            android:padding="14dp">
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Buscar productos"
+                android:textColor="@color/clarys_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Encuentra artículos para agregarlos a la venta"
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Producto"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/inputSaleSearch"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:hint="Nombre, categoría o código"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buttonSaleSearch"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_admin_action"
+                android:backgroundTint="@null"
+                android:drawablePadding="9dp"
+                android:gravity="center"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="Buscar productos"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_mid"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_search"
+                app:drawableTint="@color/clarys_mid" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- RESULTADOS -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Total"
-                android:textColor="@color/clarys_dark"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Productos"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Selecciona los que deseas vender"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_product_category"
+                android:paddingStart="11dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="11dp"
+                android:paddingBottom="6dp"
+                android:text="RESULTADOS"
+                android:textColor="@color/clarys_mid"
+                android:textSize="10sp"
                 android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerSaleProducts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- CARRITO -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Carrito de venta"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Productos incluidos en esta venta"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_product_category"
+                android:paddingStart="11dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="11dp"
+                android:paddingBottom="6dp"
+                android:text="CARRITO"
+                android:textColor="@color/clarys_mid"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerSaleCart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- TOTAL -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_stock_badge"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total de la venta"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Importe a cobrar"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/textSaleCartTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/clarys_dark"
-                android:textSize="18sp"
+                android:textColor="@color/clarys_mid"
+                android:textSize="24sp"
                 android:textStyle="bold" />
+
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/inputSaleCustomer"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/bg_input"
-            android:hint="Cliente"
-            android:paddingHorizontal="14dp"
-            android:textColor="@color/clarys_text"
-            android:textColorHint="@color/clarys_muted" />
 
-        <EditText
-            android:id="@+id/inputSalePhone"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_input"
-            android:hint="Telefono"
-            android:inputType="phone"
-            android:paddingHorizontal="14dp"
-            android:textColor="@color/clarys_text"
-            android:textColorHint="@color/clarys_muted" />
+        <!-- ================================================= -->
+        <!-- INFORMACIÓN DE LA VENTA -->
+        <!-- ================================================= -->
 
-        <Spinner
-            android:id="@+id/spinnerPaymentMethod"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_input"
-            android:paddingHorizontal="10dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
 
-        <EditText
-            android:id="@+id/inputSaleDiscount"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_input"
-            android:hint="Descuento"
-            android:inputType="number"
-            android:paddingHorizontal="14dp"
-            android:textColor="@color/clarys_text"
-            android:textColorHint="@color/clarys_muted" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Información de la venta"
+                android:textColor="@color/clarys_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Datos del cliente y forma de pago"
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp" />
+
+
+            <!-- CLIENTE -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Cliente"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/inputSaleCustomer"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:hint="Nombre del cliente"
+                android:inputType="textCapWords"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+
+            <!-- TELÉFONO -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Teléfono"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/inputSalePhone"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:hint="Número de contacto"
+                android:inputType="phone"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+
+            <!-- MÉTODO DE PAGO -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Método de pago"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinnerPaymentMethod"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:popupElevation="8dp" />
+
+
+            <!-- DESCUENTO -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Descuento"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/inputSaleDiscount"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:hint="0"
+                android:inputType="number"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- CONFIRMAR -->
+        <!-- ================================================= -->
 
         <Button
             android:id="@+id/buttonConfirmSale"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/bg_primary_button"
+            android:layout_height="64dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_action_client"
+            android:backgroundTint="@null"
+            android:elevation="7dp"
             android:text="Confirmar venta"
             android:textAllCaps="false"
-            android:textColor="@color/clarys_light" />
+            android:textColor="@color/clarys_light"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
+        <!-- ================================================= -->
+        <!-- VACIAR CARRITO -->
+        <!-- ================================================= -->
 
         <Button
             android:id="@+id/buttonClearSaleCart"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_secondary_button"
+            android:layout_height="54dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_soft_button"
+            android:backgroundTint="@null"
             android:text="Vaciar carrito"
             android:textAllCaps="false"
-            android:textColor="@color/clarys_mid" />
+            android:textColor="@color/clarys_mid"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
     </LinearLayout>
+
 </ScrollView>

@@ -1,6 +1,5 @@
 package com.clarys.app;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,13 +8,13 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.StoreCallback;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.CartItem;
-import com.clarys.app.model.Sale;
 import com.clarys.app.ui.CartAdapter;
 
 public class CartActivity extends BaseScreenActivity {
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private CartAdapter cartAdapter;
     private TextView totalText;
     private TextView emptyText;
@@ -26,6 +25,7 @@ public class CartActivity extends BaseScreenActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+        store = SupabaseStore.getInstance(this);
 
         setupHeader(R.id.buttonHeaderHome, R.id.buttonHeaderBack);
         bindNavigation(R.id.buttonKeepBuying, CatalogActivity.class);
@@ -44,18 +44,7 @@ public class CartActivity extends BaseScreenActivity {
         cartList.setAdapter(cartAdapter);
 
         Button confirmButton = findViewById(R.id.buttonConfirmOrder);
-        confirmButton.setOnClickListener(view -> {
-            Sale sale = store.confirmSale(nameInput.getText().toString(), phoneInput.getText().toString(),
-                    "Pendiente por WhatsApp", 0, "Pedido pendiente");
-            if (sale == null) {
-                showMessage("Agrega productos antes de confirmar");
-                return;
-            }
-            showMessage("Pedido confirmado");
-            Intent intent = new Intent(this, SaleDetailActivity.class);
-            intent.putExtra("saleId", sale.getId());
-            startActivity(intent);
-        });
+        confirmButton.setOnClickListener(view -> confirmOrder());
     }
 
     @Override
@@ -64,11 +53,51 @@ public class CartActivity extends BaseScreenActivity {
         refreshCart();
     }
 
+    @Override
+    protected boolean isPublicScreen() {
+        return true;
+    }
+
     private void refreshCart() {
         cartAdapter.submitList(store.getCartItems());
         totalText.setText(store.formatMoney(store.getCartTotal()));
         emptyText.setText(store.getCartItems().isEmpty()
-                ? "El carrito esta vacio. Agrega productos desde catalogo o nueva venta."
+                ? "El carrito está vacío. Agrega productos desde el catálogo."
                 : "");
+    }
+
+    private void confirmOrder() {
+        String customerName = nameInput.getText().toString().trim();
+        String phone = ValidationUtils.digitsOnly(phoneInput.getText().toString());
+        if (store.getCartItems().isEmpty()) {
+            showMessage("Agrega productos antes de confirmar");
+            return;
+        }
+        if (customerName.isEmpty()) {
+            showMessage("Escribe tu nombre para el pedido");
+            return;
+        }
+        if (!ValidationUtils.hasReasonableTextLength(customerName, ValidationUtils.MAX_SHORT_TEXT_LENGTH)) {
+            showMessage("El nombre es demasiado largo");
+            return;
+        }
+        if (!ValidationUtils.isValidPhone(phone)) {
+            showMessage("Escribe un WhatsApp válido");
+            return;
+        }
+
+        store.submitCatalogRequestAsync(customerName, phone, new StoreCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                showMessage("Solicitud enviada. El taller contactará al cliente.");
+                refreshCart();
+                openScreen(CatalogActivity.class);
+            }
+
+            @Override
+            public void onError(String message) {
+                showMessage(message);
+            }
+        });
     }
 }

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_login_canvas"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="32dp">
+
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/buttonHeaderBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Volver atrás"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="@color/clarys_dark" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Acceso administrador"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Panel de gestión Clarys"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/buttonHeaderHome"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Ir al inicio"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_home"
+                android:tint="@color/clarys_mid" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- HERO CLARYS -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_login_hero"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <ImageView
+                android:layout_width="118dp"
+                android:layout_height="118dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="Logo Clarys"
+                android:src="@drawable/logo_taller_clarys" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_login_badge"
+                android:drawableStart="@drawable/ic_store"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:paddingStart="14dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="8dp"
+                android:text="Acceso del taller"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- LOGIN -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_login_panel"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+
+            <!-- BADGE -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_product_category"
+                android:paddingStart="11dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="11dp"
+                android:paddingBottom="6dp"
+                android:text="ADMINISTRACIÓN"
+                android:textColor="@color/clarys_mid"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+
+            <!-- TÍTULO -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Ingresa como administrador"
+                android:textColor="@color/clarys_dark"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:lineSpacingExtra="2dp"
+                android:text="Administra inventario, productos, pedidos y configuración de tu taller."
+                android:textColor="@color/clarys_muted"
+                android:textSize="14sp" />
+
+
+            <!-- ================================================= -->
+            <!-- CORREO -->
+            <!-- ================================================= -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="Correo del taller"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/inputLoginEmail"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:hint="correo@taller.com"
+                android:inputType="textEmailAddress"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+
+            <!-- ================================================= -->
+            <!-- CONTRASEÑA -->
+            <!-- ================================================= -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Contraseña"
+                android:textColor="@color/clarys_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/inputLoginPassword"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:hint="Ingresa tu contraseña"
+                android:inputType="textPassword"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:singleLine="true"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="14sp" />
+
+
+            <!-- ================================================= -->
+            <!-- LOGIN PRINCIPAL -->
+            <!-- ================================================= -->
+
+            <Button
+                android:id="@+id/buttonLogin"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_action_client"
+                android:backgroundTint="@null"
+                android:drawableStart="@drawable/ic_mail"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/clarys_light"
+                android:elevation="7dp"
+                android:gravity="center"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="Ingresar al taller"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <!-- ================================================= -->
+            <!-- SEPARADOR -->
+            <!-- ================================================= -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/clarys_muted"
+                    android:alpha="0.25" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:text="o continúa con"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/clarys_muted"
+                    android:alpha="0.25" />
+
+            </LinearLayout>
+
+
+            <!-- ================================================= -->
+            <!-- ACCIONES SECUNDARIAS -->
+            <!-- ================================================= -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+
+                <!-- GOOGLE -->
+
+                <TextView
+                    android:id="@+id/buttonGoogleLogin"
+                    android:layout_width="0dp"
+                    android:layout_height="82dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_admin_action"
+                    android:clickable="true"
+                    android:contentDescription="Iniciar taller con Google"
+                    android:drawablePadding="7dp"
+                    android:drawableTop="@drawable/ic_google_color"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:paddingStart="8dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="10dp"
+                    android:text="Google"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+
+                <!-- REGISTRO -->
+
+                <TextView
+                    android:id="@+id/buttonRegisterAdmin"
+                    android:layout_width="0dp"
+                    android:layout_height="82dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_admin_action"
+                    android:clickable="true"
+                    android:contentDescription="Registrar taller"
+                    android:drawablePadding="7dp"
+                    android:drawableTop="@drawable/ic_register"
+                    android:drawableTint="@color/clarys_mid"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:paddingStart="8dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="10dp"
+                    android:text="Crear taller"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <!-- TEXTO DE APOYO -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="El acceso administrativo está reservado al personal autorizado."
+                android:textColor="@color/clarys_muted"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

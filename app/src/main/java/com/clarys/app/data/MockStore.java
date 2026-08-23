@@ -42,7 +42,7 @@ public class MockStore {
                 "Blusas", 38000, 65000, 12, 4, "S, M, L", "Blanco, Negro, Beige", "CLA-BLU-001", 8);
         addSeedProduct("Vestido casual", "Vestido liviano para uso diario con acabado suave.",
                 "Vestidos", 54000, 89000, 8, 3, "S, M", "Azul, Rosa", "CLA-VES-002", 5);
-        addSeedProduct("Conjunto lino", "Conjunto en lino para clima calido y ocasiones casuales.",
+        addSeedProduct("Conjunto lino", "Conjunto en lino para clima cálido y ocasiones casuales.",
                 "Conjuntos", 78000, 120000, 4, 5, "M, L", "Arena, Blanco", "CLA-CON-003", 3);
         addSeedProduct("Falda midi", "Falda midi comoda para combinar con prendas basicas.",
                 "Faldas", 33000, 58000, 0, 4, "S, M, L", "Negro, Verde", "CLA-FAL-004", 6);
@@ -113,7 +113,7 @@ public class MockStore {
                     salePrice, stock, minStock, sizes, colors, sku, active, 0);
             products.add(product);
             movements.add(0, new InventoryMovement(product.getName(), "Entrada", stock, 0, stock,
-                    "Creacion de producto"));
+                    "Creación de producto"));
             return product;
         }
 
@@ -132,7 +132,7 @@ public class MockStore {
 
         if (previousStock != stock) {
             movements.add(0, new InventoryMovement(product.getName(), "Ajuste", Math.abs(stock - previousStock),
-                    previousStock, stock, "Edicion de producto"));
+                    previousStock, stock, "Edición de producto"));
         }
         return product;
     }

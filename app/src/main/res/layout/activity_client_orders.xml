@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/clarys_bg"
+    android:orientation="vertical">
+
+
+    <!-- ===================================================== -->
+    <!-- CONTENIDO SUPERIOR -->
+    <!-- ===================================================== -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="20dp">
+
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+
+            <!-- VOLVER -->
+
+            <ImageButton
+                android:id="@+id/buttonHeaderBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Volver atrás"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/clarys_dark" />
+
+
+            <!-- TÍTULO -->
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mis pedidos"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Consulta el estado de tus pedidos"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+
+            <!-- INICIO -->
+
+            <ImageButton
+                android:id="@+id/buttonHeaderHome"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_header_action"
+                android:backgroundTint="@null"
+                android:contentDescription="Ir al catálogo"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_home"
+                app:tint="@color/clarys_mid" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- INTRODUCCIÓN -->
+        <!-- ================================================= -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/bg_product_category"
+            android:paddingStart="12dp"
+            android:paddingTop="7dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="7dp"
+            android:text="SEGUIMIENTO"
+            android:textColor="@color/clarys_mid"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Consulta tus pedidos"
+            android:textColor="@color/clarys_dark"
+            android:textSize="27sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Utiliza el mismo número de teléfono que ingresaste cuando realizaste tu pedido."
+            android:textColor="@color/clarys_muted"
+            android:textSize="14sp" />
+
+
+        <!-- ================================================= -->
+        <!-- BUSCADOR -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/bg_product_info_card"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+
+            <!-- TÍTULO DEL CARD -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Número de teléfono"
+                android:textColor="@color/clarys_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Buscaremos los pedidos asociados a este número."
+                android:textColor="@color/clarys_muted"
+                android:textSize="12sp" />
+
+
+            <!-- INPUT -->
+
+            <EditText
+                android:id="@+id/inputClientOrdersPhone"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_input"
+                android:hint="Ej. 300 123 4567"
+                android:imeOptions="actionSearch"
+                android:inputType="phone"
+                android:maxLines="1"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textColor="@color/clarys_text"
+                android:textColorHint="@color/clarys_muted"
+                android:textSize="15sp" />
+
+
+            <!-- BOTÓN CONSULTAR -->
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buttonClientOrdersSearch"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_action_client"
+                android:backgroundTint="@null"
+                android:elevation="6dp"
+                android:gravity="center"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="Consultar pedidos"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_light"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_search"
+                app:drawableTint="@color/clarys_light"
+                android:drawablePadding="10dp" />
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- ESTADO DE LA CONSULTA -->
+        <!-- ================================================= -->
+
+        <TextView
+            android:id="@+id/textClientOrdersStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Ingresa el número utilizado al realizar tu pedido."
+            android:textColor="@color/clarys_muted"
+            android:textSize="13sp" />
+
+
+    </LinearLayout>
+
+
+    <!-- ===================================================== -->
+    <!-- RESULTADOS -->
+    <!-- ===================================================== -->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp">
+
+
+        <!-- ================================================= -->
+        <!-- LISTA -->
+        <!-- ================================================= -->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerClientOrders"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="20dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="32dp"
+            android:scrollbars="none" />
+
+
+        <!-- ================================================= -->
+        <!-- CARGANDO -->
+        <!-- ================================================= -->
+
+        <ProgressBar
+            android:id="@+id/progressClientOrders"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone"
+            android:backgroundTint="@color/clarys_light" />
+
+
+        <!-- ================================================= -->
+        <!-- SIN RESULTADOS / ERROR -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp">
+
+
+            <TextView
+                android:id="@+id/textClientOrdersEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_soft_card"
+                android:gravity="center"
+                android:minHeight="110dp"
+                android:padding="20dp"
+                android:text="No encontramos pedidos asociados a este número."
+                android:textColor="@color/clarys_muted"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+
+</LinearLayout>

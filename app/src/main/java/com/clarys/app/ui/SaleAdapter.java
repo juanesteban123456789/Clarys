@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.clarys.app.R;
-import com.clarys.app.data.MockStore;
+import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.Sale;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.SaleViewHolder
         void onOpenSale(Sale sale);
     }
 
-    private final MockStore store = MockStore.getInstance();
+    private SupabaseStore store;
     private final SaleActionListener listener;
     private List<Sale> sales = new ArrayList<>();
 
@@ -39,6 +39,9 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.SaleViewHolder
     public SaleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_sale, parent, false);
+        if (store == null) {
+            store = SupabaseStore.getInstance(parent.getContext());
+        }
         return new SaleViewHolder(view);
     }
 
