@@ -89,6 +89,7 @@ create table if not exists public.contact_requests (
     customer_name text not null,
     customer_phone text,
     items jsonb not null default '[]'::jsonb,
+    ai_description text,
     status text not null default 'new',
     created_at timestamptz not null default now()
 );

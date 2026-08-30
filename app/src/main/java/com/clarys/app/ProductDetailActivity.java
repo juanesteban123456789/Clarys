@@ -468,8 +468,13 @@ public class ProductDetailActivity extends BaseScreenActivity {
                 R.id.textDetailCategory
         )).setText(
                 product.getCategory()
-                        + " | SKU "
-                        + product.getSku()
+                        + (product.getInternalCode() == null
+                        || product.getInternalCode()
+                        .trim()
+                        .isEmpty()
+                        ? ""
+                        : " | Código "
+                        + product.getInternalCode())
         );
 
 

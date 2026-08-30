@@ -17,6 +17,7 @@ public class OrderRequest {
     private final List<CartItem> items;
 
     private String status;
+    private String aiDescription;
     private String adminNotes;
     private String receiptUrl;
     private String createdAt;
@@ -32,6 +33,7 @@ public class OrderRequest {
             String customerPhone,
             List<CartItem> items,
             String status,
+            String aiDescription,
             String adminNotes,
             String receiptUrl,
             String createdAt,
@@ -48,6 +50,7 @@ public class OrderRequest {
                 ? new ArrayList<>()
                 : new ArrayList<>(items);
         this.status = status;
+        this.aiDescription = aiDescription;
         this.adminNotes = adminNotes;
         this.receiptUrl = receiptUrl;
         this.createdAt = createdAt;
@@ -85,6 +88,10 @@ public class OrderRequest {
         return adminNotes;
     }
 
+    public String getAiDescription() {
+        return aiDescription;
+    }
+
     public String getReceiptUrl() {
         return receiptUrl;
     }
@@ -115,6 +122,10 @@ public class OrderRequest {
 
     public void setAdminNotes(String adminNotes) {
         this.adminNotes = adminNotes;
+    }
+
+    public void setAiDescription(String aiDescription) {
+        this.aiDescription = aiDescription;
     }
 
     public void setReceiptUrl(String receiptUrl) {

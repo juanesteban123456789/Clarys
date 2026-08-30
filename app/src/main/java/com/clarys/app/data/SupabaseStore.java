@@ -67,6 +67,15 @@ public class SupabaseStore {
         return session.isAuthenticated();
     }
 
+    /**
+     * Comprueba que la sesión administrativa siga vigente y la renueva cuando
+     * el token esté próximo a vencer o corresponda la validación periódica.
+     */
+    public void validateAdminSession(boolean forceRefresh,
+                                     StoreCallback<Boolean> callback) {
+        client.ensureValidSession(forceRefresh, callback);
+    }
+
     public String getWorkshopId() {
         return session.getWorkshopId();
     }
@@ -174,9 +183,24 @@ public class SupabaseStore {
         String accessToken = result.optString("access_token", null);
         String refreshToken = result.optString("refresh_token", null);
         JSONObject user = result.optJSONObject("user");
-        String userId = user == null ? null : user.optString("id", null);
-        if (accessToken != null && userId != null) {
-            session.saveAuth(accessToken, refreshToken, userId);
+        String userId = user == null
+                ? session.getUserId()
+                : user.optString("id", session.getUserId());
+        long expiresAt = result.optLong("expires_at", 0L);
+
+        if (expiresAt <= 0L) {
+            long expiresIn = result.optLong("expires_in", 0L);
+            if (expiresIn > 0L) {
+                expiresAt = System.currentTimeMillis() / 1000L + expiresIn;
+            }
+        }
+
+        if (expiresAt <= 0L) {
+            expiresAt = JwtUtils.readExpirationEpochSeconds(accessToken);
+        }
+
+        if (accessToken != null && refreshToken != null && userId != null) {
+            session.saveAuth(accessToken, refreshToken, userId, expiresAt);
         }
     }
 
@@ -1136,6 +1160,11 @@ public class SupabaseStore {
                 ),
 
                 row.optString(
+                        "ai_description",
+                        ""
+                ),
+
+                row.optString(
                         "admin_notes",
                         ""
                 ),
@@ -1804,6 +1833,133 @@ public class SupabaseStore {
     // =============================================================
     // PEDIDOS: NOTAS Y COMPROBANTES
     // =============================================================
+
+    /**
+     * Solicita a una Edge Function una descripción administrativa
+     * del pedido. Si la función no está configurada, la pantalla
+     * conserva su descripción local de respaldo.
+     */
+    public void generateOrderDescriptionAsync(
+            int orderId,
+            StoreCallback<String> callback) {
+
+        if (!isAuthenticated()
+                || session.getWorkshopId() == null) {
+
+            callback.onError(
+                    "Acceso administrativo requerido"
+            );
+
+            return;
+        }
+
+        try {
+            JSONObject body =
+                    new JSONObject()
+                            .put(
+                                    "order_id",
+                                    orderId
+                            );
+
+            client.invokeFunction(
+                    "generate-order-description",
+                    body,
+                    true,
+                    new StoreCallback<String>() {
+
+                        @Override
+                        public void onSuccess(
+                                String result) {
+
+                            try {
+                                String description =
+                                        new JSONObject(result)
+                                                .optString(
+                                                        "description",
+                                                        ""
+                                                )
+                                                .trim();
+
+                                if (description.isEmpty()) {
+                                    callback.onError(
+                                            "La IA no devolvió una descripción"
+                                    );
+
+                                    return;
+                                }
+
+                                callback.onSuccess(
+                                        description
+                                );
+
+                            } catch (Exception exception) {
+                                callback.onError(
+                                        "La respuesta de la IA no es válida"
+                                );
+                            }
+                        }
+
+                        @Override
+                        public void onError(
+                                String message) {
+
+                            callback.onError(message);
+                        }
+                    }
+            );
+
+        } catch (Exception exception) {
+            callback.onError(
+                    "No se pudo preparar la descripción automática"
+            );
+        }
+    }
+
+    /**
+     * Guarda la descripción automática separada de las notas
+     * privadas que escribe el administrador.
+     */
+    public void updateOrderRequestDescription(
+            int orderId,
+            String description,
+            StoreCallback<Void> callback) {
+
+        if (!isAuthenticated()
+                || session.getWorkshopId() == null) {
+
+            callback.onError(
+                    "Acceso administrativo requerido"
+            );
+
+            return;
+        }
+
+        try {
+            JSONObject body =
+                    new JSONObject()
+                            .put(
+                                    "ai_description",
+                                    description == null
+                                            ? ""
+                                            : description.trim()
+                            )
+                            .put(
+                                    "updated_at",
+                                    currentTimestamp()
+                            );
+
+            patchOrderRequest(
+                    orderId,
+                    body,
+                    callback
+            );
+
+        } catch (Exception exception) {
+            callback.onError(
+                    "No se pudo guardar la descripción"
+            );
+        }
+    }
 
     public void updateOrderRequestNotes(
             int orderId,

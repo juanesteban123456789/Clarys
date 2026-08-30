@@ -37,7 +37,7 @@
                 android:padding="13dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="@color/clarys_dark" />
+                app:tint="@color/clarys_dark" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -49,7 +49,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nueva venta"
+                    android:text="Venta en mostrador"
                     android:textColor="@color/clarys_dark"
                     android:textSize="19sp"
                     android:textStyle="bold" />
@@ -74,7 +74,7 @@
                 android:padding="13dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_home"
-                android:tint="@color/clarys_mid" />
+                app:tint="@color/clarys_mid" />
 
         </LinearLayout>
 
@@ -101,7 +101,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Crear nueva venta"
+            android:text="Registrar venta en mostrador"
             android:textColor="@color/clarys_dark"
             android:textSize="27sp"
             android:textStyle="bold" />

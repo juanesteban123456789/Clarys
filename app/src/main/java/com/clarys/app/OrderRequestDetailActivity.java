@@ -33,11 +33,16 @@ public class OrderRequestDetailActivity
     private OrderRequest order;
 
     private EditText notesInput;
+    private TextView descriptionText;
 
     private View approveButton;
     private View rejectButton;
     private View completeButton;
     private View uploadReceiptButton;
+    private View generateDescriptionButton;
+    private View whatsappButton;
+
+    private boolean automaticDescriptionRequested;
 
 
     private final ActivityResultLauncher<String>
@@ -101,6 +106,12 @@ public class OrderRequestDetailActivity
                 );
 
 
+        descriptionText =
+                findViewById(
+                        R.id.textOrderAutomaticDescription
+                );
+
+
         approveButton =
                 findViewById(
                         R.id.buttonApproveOrder
@@ -125,6 +136,18 @@ public class OrderRequestDetailActivity
                 );
 
 
+        generateDescriptionButton =
+                findViewById(
+                        R.id.buttonGenerateOrderDescription
+                );
+
+
+        whatsappButton =
+                findViewById(
+                        R.id.buttonOrderWhatsapp
+                );
+
+
         // =========================================================
         // NOTAS
         // =========================================================
@@ -134,6 +157,18 @@ public class OrderRequestDetailActivity
         ).setOnClickListener(
                 view -> saveNotes()
         );
+
+
+        generateDescriptionButton
+                .setOnClickListener(
+                        view -> generateDescription(true)
+                );
+
+
+        whatsappButton
+                .setOnClickListener(
+                        view -> openWhatsAppChat()
+                );
 
 
         // =========================================================
@@ -311,11 +346,49 @@ public class OrderRequestDetailActivity
         );
 
 
+        renderDescription();
+
+        whatsappButton.setVisibility(
+                order.getCustomerPhone() == null
+                        || order.getCustomerPhone()
+                        .trim()
+                        .isEmpty()
+                        ? View.GONE
+                        : View.VISIBLE
+        );
+
+
         renderItems();
 
         renderReceipt();
 
         renderActions();
+    }
+
+
+    private void renderDescription() {
+
+        String savedDescription =
+                order.getAiDescription() == null
+                        ? ""
+                        : order.getAiDescription().trim();
+
+        if (!savedDescription.isEmpty()) {
+            descriptionText.setText(
+                    savedDescription
+            );
+
+            return;
+        }
+
+        descriptionText.setText(
+                buildLocalDescription()
+        );
+
+        if (!automaticDescriptionRequested) {
+            automaticDescriptionRequested = true;
+            generateDescription(false);
+        }
     }
 
 
@@ -443,6 +516,14 @@ public class OrderRequestDetailActivity
                                 ? "Reemplazar comprobante"
                                 : "Adjuntar comprobante"
                 );
+
+
+        uploadReceiptButton.setVisibility(
+                order.isPending()
+                        || order.isApproved()
+                        ? View.VISIBLE
+                        : View.GONE
+        );
     }
 
 
@@ -453,6 +534,18 @@ public class OrderRequestDetailActivity
 
         boolean approved =
                 order.isApproved();
+
+        boolean manageable =
+                pending || approved;
+
+
+        findViewById(
+                R.id.textOrderManagementTitle
+        ).setVisibility(
+                manageable
+                        ? View.VISIBLE
+                        : View.GONE
+        );
 
 
         approveButton.setVisibility(
@@ -480,6 +573,152 @@ public class OrderRequestDetailActivity
     // =============================================================
     // NOTAS
     // =============================================================
+
+    private void generateDescription(
+            boolean requestedByUser) {
+
+        if (order == null) {
+            return;
+        }
+
+        String localDescription =
+                buildLocalDescription();
+
+        descriptionText.setText(
+                localDescription
+        );
+
+        setDescriptionLoading(true);
+
+        store.generateOrderDescriptionAsync(
+                orderId,
+                new StoreCallback<String>() {
+
+                    @Override
+                    public void onSuccess(
+                            String description) {
+
+                        descriptionText.setText(
+                                description
+                        );
+
+                        persistDescription(
+                                description,
+                                requestedByUser,
+                                true
+                        );
+                    }
+
+                    @Override
+                    public void onError(
+                            String message) {
+
+                        persistDescription(
+                                localDescription,
+                                requestedByUser,
+                                false
+                        );
+                    }
+                }
+        );
+    }
+
+
+    private void persistDescription(
+            String description,
+            boolean requestedByUser,
+            boolean generatedWithAi) {
+
+        store.updateOrderRequestDescription(
+                orderId,
+                description,
+                new StoreCallback<Void>() {
+
+                    @Override
+                    public void onSuccess(
+                            Void result) {
+
+                        setDescriptionLoading(false);
+
+                        if (requestedByUser) {
+                            showMessage(
+                                    generatedWithAi
+                                            ? "Descripción mejorada con IA"
+                                            : "La IA no está disponible; se creó una descripción local"
+                            );
+                        }
+                    }
+
+                    @Override
+                    public void onError(
+                            String message) {
+
+                        setDescriptionLoading(false);
+
+                        if (requestedByUser) {
+                            showMessage(
+                                    "Descripción lista. Aplica la actualización de Supabase para conservarla"
+                            );
+                        }
+                    }
+                }
+        );
+    }
+
+
+    private String buildLocalDescription() {
+        return OrderDescriptionBuilder.build(
+                order,
+                store.formatMoney(
+                        order == null
+                                ? 0
+                                : order.getTotal()
+                )
+        );
+    }
+
+
+    private void setDescriptionLoading(
+            boolean loading) {
+
+        generateDescriptionButton.setEnabled(
+                !loading
+        );
+
+        ((TextView) generateDescriptionButton)
+                .setText(
+                        loading
+                                ? "Generando descripción..."
+                                : "Mejorar descripción con IA"
+                );
+    }
+
+
+    private void openWhatsAppChat() {
+
+        if (order == null) {
+            return;
+        }
+
+        String message =
+                "Hola "
+                        + order.getCustomerName()
+                        + ", te escribimos de "
+                        + store.getBusinessName()
+                        + " sobre tu pedido #"
+                        + order.getId()
+                        + ".";
+
+        if (!WhatsAppUtils.openChat(
+                this,
+                order.getCustomerPhone(),
+                message
+        )) {
+            showMessage(
+                    "No se pudo abrir WhatsApp"
+            );
+        }
+    }
 
     private void saveNotes() {
 

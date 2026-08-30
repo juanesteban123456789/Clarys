@@ -145,16 +145,6 @@ public class CatalogActivity extends BaseScreenActivity {
 
 
         // =========================================================
-        // BÚSQUEDA VISUAL
-        // =========================================================
-
-        bindMessage(
-                R.id.buttonSearchVisual,
-                "Búsqueda visual disponible, lógica pendiente"
-        );
-
-
-        // =========================================================
         // BUSCADOR
         // =========================================================
 

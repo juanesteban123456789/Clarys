@@ -121,8 +121,19 @@ public class Product {
         return sku;
     }
 
+    /**
+     * Nombre funcional del código SKU mostrado en la interfaz.
+     */
+    public String getInternalCode() {
+        return sku;
+    }
+
     public void setSku(String sku) {
         this.sku = sku;
+    }
+
+    public void setInternalCode(String internalCode) {
+        this.sku = internalCode;
     }
 
     public boolean isActive() {

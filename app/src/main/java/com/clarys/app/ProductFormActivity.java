@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -17,6 +18,8 @@ import com.clarys.app.model.Product;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.Normalizer;
+import java.util.Locale;
 
 public class ProductFormActivity extends BaseScreenActivity {
     private static final int MAX_IMAGE_SIZE = 900;
@@ -36,9 +39,13 @@ public class ProductFormActivity extends BaseScreenActivity {
     private EditText minStockInput;
     private EditText sizesInput;
     private EditText colorsInput;
-    private EditText skuInput;
+    private EditText internalCodeInput;
     private CheckBox activeInput;
     private Button imageButton;
+    private Button advancedFieldsButton;
+    private View internalCodeSection;
+    private View advancedFieldsSection;
+    private boolean advancedFieldsVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +71,13 @@ public class ProductFormActivity extends BaseScreenActivity {
         minStockInput = findViewById(R.id.inputProductMinStock);
         sizesInput = findViewById(R.id.inputProductSizes);
         colorsInput = findViewById(R.id.inputProductColors);
-        skuInput = findViewById(R.id.inputProductSku);
+        internalCodeInput = findViewById(R.id.inputProductInternalCode);
         activeInput = findViewById(R.id.checkProductActive);
+        advancedFieldsButton = findViewById(R.id.buttonToggleProductAdvanced);
+        internalCodeSection = findViewById(R.id.layoutProductInternalCode);
+        advancedFieldsSection = findViewById(R.id.layoutProductAdvancedFields);
+        advancedFieldsButton.setOnClickListener(view -> toggleAdvancedFields());
+        renderAdvancedFields();
 
         int extraProductId = getIntent().getIntExtra("productId", -1);
         productId = extraProductId == -1 ? null : extraProductId;
@@ -100,7 +112,7 @@ public class ProductFormActivity extends BaseScreenActivity {
         minStockInput.setText(String.valueOf(product.getMinStock()));
         sizesInput.setText(product.getSizes());
         colorsInput.setText(product.getColors());
-        skuInput.setText(product.getSku());
+        internalCodeInput.setText(product.getInternalCode());
         activeInput.setChecked(product.isActive());
         productImageUrl = product.getImageUrl();
         if (!productImageUrl.isEmpty()) {
@@ -145,9 +157,9 @@ public class ProductFormActivity extends BaseScreenActivity {
             showMessage("La categoría es demasiado larga");
             return false;
         }
-        if (!ValidationUtils.hasReasonableTextLength(skuInput.getText().toString(),
+        if (!ValidationUtils.hasReasonableTextLength(internalCodeInput.getText().toString(),
                 ValidationUtils.MAX_SHORT_TEXT_LENGTH)) {
-            showMessage("El SKU es demasiado largo");
+            showMessage("El código interno es demasiado largo");
             return false;
         }
         if (!ValidationUtils.hasReasonableTextLength(sizesInput.getText().toString(),
@@ -190,6 +202,17 @@ public class ProductFormActivity extends BaseScreenActivity {
     }
 
     private void saveProductWithImage(String name, String imageUrl) {
+        String internalCode =
+                internalCodeInput
+                        .getText()
+                        .toString()
+                        .trim();
+
+        if (internalCode.isEmpty()) {
+            internalCode = generateInternalCode(name);
+            internalCodeInput.setText(internalCode);
+        }
+
         store.saveProductAsync(productId, name,
                 descriptionInput.getText().toString(),
                 categoryInput.getText().toString(),
@@ -199,7 +222,7 @@ public class ProductFormActivity extends BaseScreenActivity {
                 parseInt(minStockInput),
                 sizesInput.getText().toString(),
                 colorsInput.getText().toString(),
-                skuInput.getText().toString(),
+                internalCode,
                 imageUrl,
                 activeInput.isChecked(), new StoreCallback<Product>() {
                     @Override
@@ -214,6 +237,81 @@ public class ProductFormActivity extends BaseScreenActivity {
                         showMessage(message);
                     }
                 });
+    }
+
+    private void toggleAdvancedFields() {
+        advancedFieldsVisible =
+                !advancedFieldsVisible;
+        renderAdvancedFields();
+    }
+
+    private void renderAdvancedFields() {
+        int visibility =
+                advancedFieldsVisible
+                        ? View.VISIBLE
+                        : View.GONE;
+
+        internalCodeSection.setVisibility(
+                visibility
+        );
+        advancedFieldsSection.setVisibility(
+                visibility
+        );
+        advancedFieldsButton.setText(
+                advancedFieldsVisible
+                        ? "Ocultar detalles opcionales"
+                        : "Mostrar detalles opcionales"
+        );
+        advancedFieldsButton.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                0,
+                0,
+                advancedFieldsVisible
+                        ? R.drawable.ic_expand_less
+                        : R.drawable.ic_expand_more,
+                0
+        );
+    }
+
+    private String generateInternalCode(
+            String productName) {
+
+        String normalized =
+                Normalizer.normalize(
+                                productName,
+                                Normalizer.Form.NFD
+                        )
+                        .replaceAll(
+                                "\\p{M}",
+                                ""
+                        )
+                        .replaceAll(
+                                "[^A-Za-z0-9]",
+                                ""
+                        )
+                        .toUpperCase(
+                                Locale.ROOT
+                        );
+
+        String prefix =
+                normalized.length() >= 3
+                        ? normalized.substring(0, 3)
+                        : String.format(
+                        Locale.ROOT,
+                        "%-3s",
+                        normalized
+                ).replace(' ', 'X');
+
+        long suffix =
+                productId == null
+                        ? System.currentTimeMillis() % 100000
+                        : productId;
+
+        return String.format(
+                Locale.ROOT,
+                "%s-%05d",
+                prefix,
+                suffix
+        );
     }
 
     private byte[] compressSelectedImage() {

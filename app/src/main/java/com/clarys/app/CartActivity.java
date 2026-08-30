@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.clarys.app.data.ClientPreferences;
 import com.clarys.app.data.StoreCallback;
 import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.CartItem;
@@ -20,12 +21,14 @@ public class CartActivity extends BaseScreenActivity {
     private TextView emptyText;
     private EditText nameInput;
     private EditText phoneInput;
+    private ClientPreferences clientPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         store = SupabaseStore.getInstance(this);
+        clientPreferences = new ClientPreferences(this);
 
         setupHeader(R.id.buttonHeaderHome, R.id.buttonHeaderBack);
         bindNavigation(R.id.buttonKeepBuying, CatalogActivity.class);
@@ -34,6 +37,7 @@ public class CartActivity extends BaseScreenActivity {
         emptyText = findViewById(R.id.textCartEmpty);
         nameInput = findViewById(R.id.inputCustomerName);
         phoneInput = findViewById(R.id.inputCustomerPhone);
+        restoreClientContact();
 
         RecyclerView cartList = findViewById(R.id.recyclerCartItems);
         cartList.setLayoutManager(new LinearLayoutManager(this));
@@ -89,6 +93,10 @@ public class CartActivity extends BaseScreenActivity {
         store.submitCatalogRequestAsync(customerName, phone, new StoreCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
+                clientPreferences.saveContact(
+                        customerName,
+                        phone
+                );
                 showMessage("Solicitud enviada. El taller contactará al cliente.");
                 refreshCart();
                 openScreen(CatalogActivity.class);
@@ -99,5 +107,14 @@ public class CartActivity extends BaseScreenActivity {
                 showMessage(message);
             }
         });
+    }
+
+    private void restoreClientContact() {
+        nameInput.setText(
+                clientPreferences.getLastName()
+        );
+        phoneInput.setText(
+                clientPreferences.getLastPhone()
+        );
     }
 }

@@ -12,4 +12,6 @@
     <color name="clarys_danger">#B63D3D</color>
     <color name="clarys_divider">#E7EEF5</color>
     <color name="clarys_launcher_background">#F4F7FB</color>
+    <color name="whatsapp_green">#25D366</color>
+    <color name="whatsapp_green_pressed">#1EAE54</color>
 </resources>

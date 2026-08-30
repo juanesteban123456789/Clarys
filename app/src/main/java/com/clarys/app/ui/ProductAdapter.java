@@ -60,7 +60,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = products.get(position);
         holder.name.setText(product.getName());
-        holder.category.setText(product.getCategory() + " | SKU " + product.getSku());
+        String internalCode =
+                product.getInternalCode() == null
+                        ? ""
+                        : product.getInternalCode().trim();
+
+        holder.category.setText(
+                product.getCategory()
+                        + (internalCode.isEmpty()
+                        ? ""
+                        : " | Código " + internalCode)
+        );
         holder.price.setText(store.formatMoney(product.getSalePrice()));
         holder.description.setText(product.getDescription());
         holder.stock.setText(buildStockLabel(product));

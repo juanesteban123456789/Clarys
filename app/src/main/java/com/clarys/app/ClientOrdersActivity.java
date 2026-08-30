@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.clarys.app.data.ClientPreferences;
 import com.clarys.app.data.StoreCallback;
 import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.CartItem;
@@ -32,14 +33,9 @@ import java.util.Locale;
 
 public class ClientOrdersActivity extends BaseScreenActivity {
 
-    private static final String PREFS_NAME =
-            "clarys_client_orders";
-
-    private static final String KEY_LAST_PHONE =
-            "last_phone";
-
-
     private SupabaseStore store;
+
+    private ClientPreferences clientPreferences;
 
     private EditText inputPhone;
 
@@ -72,6 +68,10 @@ public class ClientOrdersActivity extends BaseScreenActivity {
 
         store =
                 SupabaseStore.getInstance(this);
+
+
+        clientPreferences =
+                new ClientPreferences(this);
 
 
         bindViews();
@@ -294,14 +294,7 @@ public class ClientOrdersActivity extends BaseScreenActivity {
         }
 
 
-        String digits =
-                phone.replaceAll(
-                        "[^0-9]",
-                        ""
-                );
-
-
-        if (digits.length() < 7) {
+        if (!ValidationUtils.isValidPhone(phone)) {
 
             showMessage(
                     "Escribe un número de teléfono válido"
@@ -548,30 +541,16 @@ public class ClientOrdersActivity extends BaseScreenActivity {
     private void saveLastPhone(
             String phone) {
 
-        getSharedPreferences(
-                PREFS_NAME,
-                MODE_PRIVATE
-        )
-                .edit()
-                .putString(
-                        KEY_LAST_PHONE,
-                        phone
-                )
-                .apply();
+        clientPreferences.savePhone(
+                phone
+        );
     }
 
 
     private void restoreLastPhone() {
 
         String phone =
-                getSharedPreferences(
-                        PREFS_NAME,
-                        MODE_PRIVATE
-                )
-                        .getString(
-                                KEY_LAST_PHONE,
-                                ""
-                        );
+                clientPreferences.getLastPhone();
 
 
         if (phone != null

@@ -218,7 +218,7 @@
                     android:layout_height="56dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_input"
-                    android:hint="Prenda, categoría o SKU"
+                    android:hint="Prenda, categoría o código"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
                     android:paddingStart="15dp"
@@ -276,7 +276,8 @@
                         android:textSize="13sp"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_visual_search"
-                        app:drawableTint="@color/clarys_mid" />
+                        app:drawableTint="@color/clarys_mid"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
@@ -298,7 +299,7 @@
                 android:gravity="center"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Abrir venta rápida"
+                android:text="Abrir venta en mostrador"
                 android:textAllCaps="false"
                 android:textColor="@color/clarys_mid"
                 android:textSize="14sp"

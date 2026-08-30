@@ -8,6 +8,9 @@ import com.clarys.app.BuildConfig;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,6 +36,13 @@ public class SupabaseClient {
             new Handler(Looper.getMainLooper());
 
     private final SupabaseSession session;
+    private final Object refreshLock = new Object();
+    private final List<StoreCallback<Boolean>> refreshCallbacks = new ArrayList<>();
+    private boolean refreshInProgress;
+
+    private interface RequestFactory {
+        Request create();
+    }
 
 
     public SupabaseClient(
@@ -84,6 +94,118 @@ public class SupabaseClient {
         );
     }
 
+    /**
+     * Verifica la sesión almacenada y la renueva de forma preventiva. Las
+     * solicitudes simultáneas comparten una sola renovación porque Supabase
+     * rota el refresh token después de usarlo.
+     */
+    public void ensureValidSession(boolean forceRefresh,
+                                   StoreCallback<Boolean> callback) {
+        if (!session.isAuthenticated()) {
+            callback.onSuccess(false);
+            return;
+        }
+
+        if (!forceRefresh && !session.shouldRefreshSession()) {
+            callback.onSuccess(true);
+            return;
+        }
+
+        refreshSession(callback);
+    }
+
+    private void refreshSession(StoreCallback<Boolean> callback) {
+        synchronized (refreshLock) {
+            refreshCallbacks.add(callback);
+            if (refreshInProgress) {
+                return;
+            }
+            refreshInProgress = true;
+        }
+
+        String refreshToken = session.getRefreshToken();
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+            session.clear();
+            completeRefresh(false, null);
+            return;
+        }
+
+        try {
+            JSONObject body = new JSONObject()
+                    .put("refresh_token", refreshToken);
+
+            auth("token?grant_type=refresh_token", body,
+                    new StoreCallback<JSONObject>() {
+                        @Override
+                        public void onSuccess(JSONObject result) {
+                            if (saveRefreshedSession(result)) {
+                                completeRefresh(true, null);
+                            } else {
+                                session.clear();
+                                completeRefresh(false, null);
+                            }
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            if (isDefinitiveRefreshError(message)) {
+                                session.clear();
+                                completeRefresh(false, null);
+                                return;
+                            }
+                            completeRefresh(false, message);
+                        }
+                    });
+        } catch (Exception exception) {
+            completeRefresh(false, "No se pudo renovar la sesión administrativa");
+        }
+    }
+
+    private boolean saveRefreshedSession(JSONObject result) {
+        String accessToken = result.optString("access_token", null);
+        String refreshToken = result.optString("refresh_token", session.getRefreshToken());
+        JSONObject user = result.optJSONObject("user");
+        String userId = user == null
+                ? session.getUserId()
+                : user.optString("id", session.getUserId());
+        long expiresAt = result.optLong("expires_at", 0L);
+
+        if (expiresAt <= 0L) {
+            long expiresIn = result.optLong("expires_in", 0L);
+            if (expiresIn > 0L) {
+                expiresAt = System.currentTimeMillis() / 1000L + expiresIn;
+            }
+        }
+
+        if (expiresAt <= 0L) {
+            expiresAt = JwtUtils.readExpirationEpochSeconds(accessToken);
+        }
+
+        if (!hasText(accessToken) || !hasText(refreshToken) || !hasText(userId)) {
+            return false;
+        }
+
+        session.saveAuth(accessToken, refreshToken, userId, expiresAt);
+        return true;
+    }
+
+    private void completeRefresh(boolean active, String errorMessage) {
+        List<StoreCallback<Boolean>> callbacks;
+        synchronized (refreshLock) {
+            callbacks = new ArrayList<>(refreshCallbacks);
+            refreshCallbacks.clear();
+            refreshInProgress = false;
+        }
+
+        for (StoreCallback<Boolean> callback : callbacks) {
+            if (errorMessage == null) {
+                callback.onSuccess(active);
+            } else {
+                callback.onError(errorMessage);
+            }
+        }
+    }
+
 
     // =============================================================
     // GET
@@ -97,16 +219,11 @@ public class SupabaseClient {
             boolean authenticated,
             StoreCallback<String> callback) {
 
-        Request request =
-                baseBuilder(
-                        path,
-                        authenticated
-                )
+        executeWithSessionRetry(
+                () -> baseBuilder(path, authenticated)
                         .get()
-                        .build();
-
-        executeString(
-                request,
+                        .build(),
+                authenticated,
                 callback
         );
     }
@@ -128,21 +245,16 @@ public class SupabaseClient {
             boolean authenticated,
             StoreCallback<String> callback) {
 
-        Request request =
-                baseBuilder(
-                        path,
-                        authenticated
-                )
+        executeWithSessionRetry(
+                () -> baseBuilder(path, authenticated)
                         .post(
                                 RequestBody.create(
                                         body.toString(),
                                         JSON
                                 )
                         )
-                        .build();
-
-        executeString(
-                request,
+                        .build(),
+                authenticated,
                 callback
         );
     }
@@ -168,11 +280,8 @@ public class SupabaseClient {
             boolean authenticated,
             StoreCallback<String> callback) {
 
-        Request request =
-                baseBuilder(
-                        path,
-                        authenticated
-                )
+        executeWithSessionRetry(
+                () -> baseBuilder(path, authenticated)
                         .header(
                                 "Prefer",
                                 "return=minimal"
@@ -183,10 +292,8 @@ public class SupabaseClient {
                                         JSON
                                 )
                         )
-                        .build();
-
-        executeString(
-                request,
+                        .build(),
+                authenticated,
                 callback
         );
     }
@@ -205,21 +312,16 @@ public class SupabaseClient {
             boolean authenticated,
             StoreCallback<String> callback) {
 
-        Request request =
-                baseBuilder(
-                        path,
-                        authenticated
-                )
+        executeWithSessionRetry(
+                () -> baseBuilder(path, authenticated)
                         .patch(
                                 RequestBody.create(
                                         body.toString(),
                                         JSON
                                 )
                         )
-                        .build();
-
-        executeString(
-                request,
+                        .build(),
+                authenticated,
                 callback
         );
     }
@@ -237,16 +339,62 @@ public class SupabaseClient {
             boolean authenticated,
             StoreCallback<String> callback) {
 
-        Request request =
-                baseBuilder(
-                        path,
-                        authenticated
-                )
+        executeWithSessionRetry(
+                () -> baseBuilder(path, authenticated)
                         .delete()
-                        .build();
+                        .build(),
+                authenticated,
+                callback
+        );
+    }
 
-        executeString(
-                request,
+
+    // =============================================================
+    // EDGE FUNCTIONS
+    // =============================================================
+
+    /**
+     * Invoca una Edge Function de Supabase sin exponer secretos
+     * de servicios externos dentro de la aplicación Android.
+     */
+    public void invokeFunction(
+            String functionName,
+            JSONObject body,
+            boolean authenticated,
+            StoreCallback<String> callback) {
+
+        String url =
+                BuildConfig.SUPABASE_URL
+                        + "/functions/v1/"
+                        + functionName;
+
+        executeWithSessionRetry(
+                () -> new Request.Builder()
+                        .url(url)
+                        .addHeader(
+                                "apikey",
+                                BuildConfig.SUPABASE_PUBLISHABLE_KEY
+                        )
+                        .addHeader(
+                                "Authorization",
+                                "Bearer " + tokenFor(authenticated)
+                        )
+                        .addHeader(
+                                "Content-Type",
+                                "application/json"
+                        )
+                        .addHeader(
+                                "Accept",
+                                "application/json"
+                        )
+                        .post(
+                                RequestBody.create(
+                                        body.toString(),
+                                        JSON
+                                )
+                        )
+                        .build(),
+                authenticated,
                 callback
         );
     }
@@ -273,8 +421,8 @@ public class SupabaseClient {
                         + "/"
                         + path;
 
-        Request request =
-                new Request.Builder()
+        executeWithSessionRetry(
+                () -> new Request.Builder()
                         .url(url)
                         .addHeader(
                                 "apikey",
@@ -299,10 +447,8 @@ public class SupabaseClient {
                                         MediaType.get(contentType)
                                 )
                         )
-                        .build();
-
-        executeString(
-                request,
+                        .build(),
+                true,
                 callback
         );
     }
@@ -343,15 +489,6 @@ public class SupabaseClient {
                         + path;
 
 
-        String token =
-                authenticated
-                        && session.isAuthenticated()
-
-                        ? session.getAccessToken()
-
-                        : BuildConfig.SUPABASE_PUBLISHABLE_KEY;
-
-
         return new Request.Builder()
                 .url(url)
 
@@ -362,7 +499,7 @@ public class SupabaseClient {
 
                 .addHeader(
                         "Authorization",
-                        "Bearer " + token
+                        "Bearer " + tokenFor(authenticated)
                 )
 
                 .addHeader(
@@ -379,6 +516,138 @@ public class SupabaseClient {
                         "Prefer",
                         "return=representation"
                 );
+    }
+
+    private String tokenFor(boolean authenticated) {
+        if (authenticated && session.isAuthenticated()) {
+            return session.getAccessToken();
+        }
+        return BuildConfig.SUPABASE_PUBLISHABLE_KEY;
+    }
+
+    // =============================================================
+    // SESSION-AWARE REQUESTS
+    // =============================================================
+
+    private void executeWithSessionRetry(RequestFactory requestFactory,
+                                         boolean authenticated,
+                                         StoreCallback<String> callback) {
+        if (!authenticated) {
+            executeRequest(requestFactory, false, false, callback);
+            return;
+        }
+
+        ensureValidSession(false, new StoreCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean active) {
+                if (!Boolean.TRUE.equals(active)) {
+                    callback.onError(expiredSessionMessage());
+                    return;
+                }
+                executeRequest(requestFactory, true, true, callback);
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
+    }
+
+    private void executeRequest(RequestFactory requestFactory,
+                                boolean authenticated,
+                                boolean allowSessionRetry,
+                                StoreCallback<String> callback) {
+        Request request;
+        try {
+            request = requestFactory.create();
+        } catch (Exception exception) {
+            postError(callback, "No se pudo preparar la petición a Supabase");
+            return;
+        }
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException exception) {
+                postError(callback,
+                        "No se pudo conectar con Supabase: " + exception.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try (Response safeResponse = response) {
+                    String body = safeResponse.body() == null
+                            ? ""
+                            : safeResponse.body().string();
+
+                    if (safeResponse.isSuccessful()) {
+                        postSuccess(callback, body);
+                        return;
+                    }
+
+                    if (authenticated
+                            && allowSessionRetry
+                            && isExpiredJwtResponse(safeResponse.code(), body)) {
+                        mainHandler.post(() -> refreshAndRetry(requestFactory, callback));
+                        return;
+                    }
+
+                    postError(callback, extractError(body, safeResponse.code()));
+                }
+            }
+        });
+    }
+
+    private void refreshAndRetry(RequestFactory requestFactory,
+                                 StoreCallback<String> callback) {
+        ensureValidSession(true, new StoreCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean active) {
+                if (!Boolean.TRUE.equals(active)) {
+                    callback.onError(expiredSessionMessage());
+                    return;
+                }
+                executeRequest(requestFactory, true, false, callback);
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
+    }
+
+    private boolean isExpiredJwtResponse(int code, String body) {
+        String normalized = body == null
+                ? ""
+                : body.toLowerCase(Locale.ROOT);
+        boolean expiredMessage = normalized.contains("jwt expired")
+                || normalized.contains("invalid jwt")
+                || normalized.contains("token is expired")
+                || normalized.contains("token has expired");
+        return expiredMessage && (code == 400 || code == 401 || code == 403);
+    }
+
+    private boolean isDefinitiveRefreshError(String message) {
+        String normalized = message == null
+                ? ""
+                : message.toLowerCase(Locale.ROOT);
+        return normalized.contains("invalid refresh token")
+                || normalized.contains("refresh token not found")
+                || normalized.contains("refresh_token_not_found")
+                || normalized.contains("refresh token has expired")
+                || normalized.contains("session not found")
+                || normalized.contains("already used")
+                || normalized.contains("refresh_token_already_used")
+                || normalized.contains("refresh token revoked");
+    }
+
+    private String expiredSessionMessage() {
+        return "La sesión administrativa expiró. Inicia sesión nuevamente.";
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 
 

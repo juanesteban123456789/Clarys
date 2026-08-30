@@ -171,7 +171,7 @@
                 android:layout_height="54dp"
                 android:layout_marginTop="7dp"
                 android:background="@drawable/bg_input"
-                android:hint="Nombre, categoría o SKU"
+                android:hint="Nombre, categoría o código"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:paddingStart="14dp"

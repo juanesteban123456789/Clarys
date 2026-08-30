@@ -219,29 +219,38 @@
                 android:textSize="14sp" />
 
 
-            <!-- SKU -->
+            <!-- CÓDIGO INTERNO OPCIONAL -->
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/layoutProductInternalCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="SKU o código"
-                android:textColor="@color/clarys_dark"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <EditText
-                android:id="@+id/inputProductSku"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_marginTop="7dp"
-                android:background="@drawable/bg_input"
-                android:hint="Ej. CAM-001"
-                android:inputType="textCapCharacters"
-                android:paddingHorizontal="14dp"
-                android:textColor="@color/clarys_text"
-                android:textColorHint="@color/clarys_muted"
-                android:textSize="14sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Código interno del producto"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/inputProductInternalCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="7dp"
+                    android:background="@drawable/bg_input"
+                    android:hint="Se crea automáticamente si lo dejas vacío"
+                    android:inputType="textCapCharacters"
+                    android:paddingHorizontal="14dp"
+                    android:textColor="@color/clarys_text"
+                    android:textColorHint="@color/clarys_muted"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -444,17 +453,38 @@
         </LinearLayout>
 
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonToggleProductAdvanced"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_admin_action"
+            android:backgroundTint="@null"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Mostrar detalles opcionales"
+            android:textAllCaps="false"
+            android:textColor="@color/clarys_mid"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:drawableEndCompat="@drawable/ic_expand_more"
+            app:drawableTint="@color/clarys_mid" />
+
+
         <!-- ================================================= -->
-        <!-- VARIANTES -->
+        <!-- VARIANTES OPCIONALES -->
         <!-- ================================================= -->
 
         <LinearLayout
+            android:id="@+id/layoutProductAdvancedFields"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/bg_product_info_card"
             android:orientation="vertical"
-            android:padding="18dp">
+            android:padding="18dp"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
@@ -640,7 +670,6 @@
                     android:background="@null"
                     android:buttonTint="@color/clarys_mid"
                     android:gravity="center_vertical"
-                    android:textAlignment="center"
                     android:text="Producto activo"
                     android:textColor="@color/clarys_dark"
                     android:textSize="14sp"
