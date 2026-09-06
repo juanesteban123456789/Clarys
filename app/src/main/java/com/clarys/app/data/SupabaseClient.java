@@ -21,8 +21,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * Centraliza las peticiones HTTP hacia Supabase Auth,
- * REST API y Storage.
+ * Servicio HTTP de Clarys. Centraliza con OkHttp las rutas de Supabase Auth,
+ * PostgREST, RPC, Edge Functions y Storage, además de renovar la sesión JWT.
  */
 public class SupabaseClient {
 

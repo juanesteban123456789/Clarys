@@ -12,7 +12,7 @@ supabase_order_ai_description.sql
 
 2. SECRETO DE OPENAI
 
-Configurar OPENAI_API_KEY como secreto de la Edge Function. La clave
+Configurar OPENIA_API_SECRET como secreto de la Edge Function. La clave
 debe permanecer en Supabase y nunca debe copiarse en local.properties,
 BuildConfig, Java ni dentro del APK.
 
@@ -21,7 +21,7 @@ usa gpt-4o-mini.
 
 Ejemplo mediante Supabase CLI:
 
-supabase secrets set OPENAI_API_KEY=SU_CLAVE_PRIVADA
+supabase secrets set OPENIA_API_SECRET=SU_CLAVE_PRIVADA
 supabase secrets set OPENAI_MODEL=gpt-4o-mini
 
 3. DESPLEGAR LA FUNCIÓN

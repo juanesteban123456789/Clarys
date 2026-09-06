@@ -1,5 +1,7 @@
 package com.clarys.app.model;
 
+import com.clarys.app.util.TextSanitizer;
+
 public class Product {
     private final int id;
     private String name;
@@ -23,16 +25,16 @@ public class Product {
             int salePrice, int stock, int minStock, String sizes, String colors, String sku,
             boolean active, int soldUnits) {
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.category = category;
+        this.name = TextSanitizer.orDefault(name, "Producto");
+        this.description = TextSanitizer.emptyIfNull(description);
+        this.category = TextSanitizer.orDefault(category, "General");
         this.purchasePrice = purchasePrice;
         this.salePrice = salePrice;
         this.stock = stock;
         this.minStock = minStock;
-        this.sizes = sizes;
-        this.colors = colors;
-        this.sku = sku;
+        this.sizes = TextSanitizer.emptyIfNull(sizes);
+        this.colors = TextSanitizer.emptyIfNull(colors);
+        this.sku = TextSanitizer.emptyIfNull(sku);
         this.active = active;
         this.soldUnits = soldUnits;
         this.workshopId = "";
@@ -50,7 +52,7 @@ public class Product {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = TextSanitizer.orDefault(name, "Producto");
     }
 
     public String getDescription() {
@@ -58,7 +60,7 @@ public class Product {
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = TextSanitizer.emptyIfNull(description);
     }
 
     public String getCategory() {
@@ -66,7 +68,7 @@ public class Product {
     }
 
     public void setCategory(String category) {
-        this.category = category;
+        this.category = TextSanitizer.orDefault(category, "General");
     }
 
     public int getPurchasePrice() {
@@ -106,7 +108,7 @@ public class Product {
     }
 
     public void setSizes(String sizes) {
-        this.sizes = sizes;
+        this.sizes = TextSanitizer.emptyIfNull(sizes);
     }
 
     public String getColors() {
@@ -114,7 +116,7 @@ public class Product {
     }
 
     public void setColors(String colors) {
-        this.colors = colors;
+        this.colors = TextSanitizer.emptyIfNull(colors);
     }
 
     public String getSku() {
@@ -129,11 +131,11 @@ public class Product {
     }
 
     public void setSku(String sku) {
-        this.sku = sku;
+        this.sku = TextSanitizer.emptyIfNull(sku);
     }
 
     public void setInternalCode(String internalCode) {
-        this.sku = internalCode;
+        this.sku = TextSanitizer.emptyIfNull(internalCode);
     }
 
     public boolean isActive() {
@@ -169,7 +171,7 @@ public class Product {
     }
 
     public void setWorkshopId(String workshopId) {
-        this.workshopId = workshopId == null ? "" : workshopId;
+        this.workshopId = TextSanitizer.emptyIfNull(workshopId);
     }
 
     public String getWorkshopName() {
@@ -177,7 +179,7 @@ public class Product {
     }
 
     public void setWorkshopName(String workshopName) {
-        this.workshopName = workshopName == null ? "" : workshopName;
+        this.workshopName = TextSanitizer.emptyIfNull(workshopName);
     }
 
     public String getWorkshopWhatsapp() {
@@ -185,7 +187,7 @@ public class Product {
     }
 
     public void setWorkshopWhatsapp(String workshopWhatsapp) {
-        this.workshopWhatsapp = workshopWhatsapp == null ? "" : workshopWhatsapp;
+        this.workshopWhatsapp = TextSanitizer.emptyIfNull(workshopWhatsapp);
     }
 
     public String getImageUrl() {
@@ -193,6 +195,6 @@ public class Product {
     }
 
     public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl == null ? "" : imageUrl;
+        this.imageUrl = TextSanitizer.emptyIfNull(imageUrl);
     }
 }

@@ -1,5 +1,7 @@
 package com.clarys.app.model;
 
+import com.clarys.app.util.TextSanitizer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,21 +45,21 @@ public class OrderRequest {
             String completedAt
     ) {
         this.id = id;
-        this.workshopId = workshopId;
-        this.customerName = customerName;
-        this.customerPhone = customerPhone;
+        this.workshopId = TextSanitizer.emptyIfNull(workshopId);
+        this.customerName = TextSanitizer.orDefault(customerName, "Cliente");
+        this.customerPhone = TextSanitizer.emptyIfNull(customerPhone);
         this.items = items == null
                 ? new ArrayList<>()
                 : new ArrayList<>(items);
-        this.status = status;
-        this.aiDescription = aiDescription;
-        this.adminNotes = adminNotes;
-        this.receiptUrl = receiptUrl;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.approvedAt = approvedAt;
-        this.rejectedAt = rejectedAt;
-        this.completedAt = completedAt;
+        this.status = TextSanitizer.orDefault(status, STATUS_PENDING);
+        this.aiDescription = TextSanitizer.emptyIfNull(aiDescription);
+        this.adminNotes = TextSanitizer.emptyIfNull(adminNotes);
+        this.receiptUrl = TextSanitizer.emptyIfNull(receiptUrl);
+        this.createdAt = TextSanitizer.emptyIfNull(createdAt);
+        this.updatedAt = TextSanitizer.emptyIfNull(updatedAt);
+        this.approvedAt = TextSanitizer.emptyIfNull(approvedAt);
+        this.rejectedAt = TextSanitizer.emptyIfNull(rejectedAt);
+        this.completedAt = TextSanitizer.emptyIfNull(completedAt);
     }
 
     public int getId() {
@@ -117,19 +119,19 @@ public class OrderRequest {
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status = TextSanitizer.orDefault(status, STATUS_PENDING);
     }
 
     public void setAdminNotes(String adminNotes) {
-        this.adminNotes = adminNotes;
+        this.adminNotes = TextSanitizer.emptyIfNull(adminNotes);
     }
 
     public void setAiDescription(String aiDescription) {
-        this.aiDescription = aiDescription;
+        this.aiDescription = TextSanitizer.emptyIfNull(aiDescription);
     }
 
     public void setReceiptUrl(String receiptUrl) {
-        this.receiptUrl = receiptUrl;
+        this.receiptUrl = TextSanitizer.emptyIfNull(receiptUrl);
     }
 
     public int getTotal() {

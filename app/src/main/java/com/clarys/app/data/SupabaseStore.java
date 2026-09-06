@@ -9,6 +9,7 @@ import com.clarys.app.model.InventoryMovement;
 import com.clarys.app.model.OrderRequest;
 import com.clarys.app.model.Product;
 import com.clarys.app.model.Sale;
+import com.clarys.app.util.TextSanitizer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,8 +24,9 @@ import java.util.Locale;
 
 
 /**
- * Repositorio principal de Clarys para autenticación, catálogo, inventario,
- * ventas, clientes y configuración usando Supabase como backend.
+ * Repositorio y servicio principal de Clarys. Define los recursos consumidos,
+ * aplica reglas de negocio y transforma las respuestas JSON de Supabase para
+ * autenticación, catálogo, inventario, ventas, clientes y configuración.
  */
 public class SupabaseStore {
     private static SupabaseStore instance;
@@ -314,12 +316,12 @@ public class SupabaseStore {
                             }
                             JSONObject row = rows.getJSONObject(0);
                             String workshopId = row.getString("workshop_id");
-                            session.saveProfile(workshopId, row.optString("role", "admin"));
+                            session.saveProfile(workshopId, jsonText(row, "role", "admin"));
                             JSONObject workshop = row.optJSONObject("workshops");
                             if (workshop != null) {
-                                businessName = workshop.optString("name", businessName);
-                                contactWhatsapp = workshop.optString("whatsapp", contactWhatsapp);
-                                currency = workshop.optString("currency", currency);
+                                businessName = jsonText(workshop, "name", businessName);
+                                contactWhatsapp = jsonText(workshop, "whatsapp", contactWhatsapp);
+                                currency = jsonText(workshop, "currency", currency);
                                 defaultMinStock = workshop.optInt("default_min_stock", defaultMinStock);
                             }
                             callback.onSuccess(null);
@@ -344,9 +346,9 @@ public class SupabaseStore {
                             JSONArray rows = new JSONArray(result);
                             if (rows.length() > 0) {
                                 JSONObject workshop = rows.getJSONObject(0);
-                                businessName = workshop.optString("name", businessName);
-                                contactWhatsapp = workshop.optString("whatsapp", contactWhatsapp);
-                                currency = workshop.optString("currency", currency);
+                                businessName = jsonText(workshop, "name", businessName);
+                                contactWhatsapp = jsonText(workshop, "whatsapp", contactWhatsapp);
+                                currency = jsonText(workshop, "currency", currency);
                                 defaultMinStock = workshop.optInt("default_min_stock", defaultMinStock);
                             }
                         } catch (Exception ignored) {
@@ -1090,11 +1092,11 @@ public class SupabaseStore {
                                 0
                         );
 
-                String productName =
-                        item.optString(
-                                "product_name",
-                                "Producto"
-                        );
+                String productName = jsonText(
+                        item,
+                        "product_name",
+                        "Producto"
+                );
 
 
                 Product product =
@@ -1137,67 +1139,31 @@ public class SupabaseStore {
         return new OrderRequest(
                 row.optInt("id", 0),
 
-                row.optString(
-                        "workshop_id",
-                        ""
-                ),
+                jsonText(row, "workshop_id", ""),
 
-                row.optString(
-                        "customer_name",
-                        "Cliente"
-                ),
+                jsonText(row, "customer_name", "Cliente"),
 
-                row.optString(
-                        "customer_phone",
-                        ""
-                ),
+                jsonText(row, "customer_phone", ""),
 
                 requestItems,
 
-                row.optString(
-                        "status",
-                        OrderRequest.STATUS_PENDING
-                ),
+                jsonText(row, "status", OrderRequest.STATUS_PENDING),
 
-                row.optString(
-                        "ai_description",
-                        ""
-                ),
+                jsonText(row, "ai_description", ""),
 
-                row.optString(
-                        "admin_notes",
-                        ""
-                ),
+                jsonText(row, "admin_notes", ""),
 
-                row.optString(
-                        "receipt_url",
-                        ""
-                ),
+                jsonText(row, "receipt_url", ""),
 
-                row.optString(
-                        "created_at",
-                        ""
-                ),
+                jsonText(row, "created_at", ""),
 
-                row.optString(
-                        "updated_at",
-                        ""
-                ),
+                jsonText(row, "updated_at", ""),
 
-                row.optString(
-                        "approved_at",
-                        ""
-                ),
+                jsonText(row, "approved_at", ""),
 
-                row.optString(
-                        "rejected_at",
-                        ""
-                ),
+                jsonText(row, "rejected_at", ""),
 
-                row.optString(
-                        "completed_at",
-                        ""
-                )
+                jsonText(row, "completed_at", "")
         );
     }
 
@@ -1498,8 +1464,8 @@ public class SupabaseStore {
                     JSONArray rows = new JSONArray(result);
                     for (int i = 0; i < rows.length(); i++) {
                         JSONObject row = rows.getJSONObject(i);
-                        customers.add(new Customer(row.optString("name", "Cliente"),
-                                row.optString("phone", ""), row.optInt("total_orders", 0),
+                        customers.add(new Customer(jsonText(row, "name", "Cliente"),
+                                jsonText(row, "phone", ""), row.optInt("total_orders", 0),
                                 row.optInt("total_spent", 0)));
                     }
                     callback.onSuccess(getCustomers());
@@ -1530,12 +1496,12 @@ public class SupabaseStore {
                                 JSONObject row = rows.getJSONObject(i);
                                 JSONObject product = row.optJSONObject("products");
                                 movements.add(new InventoryMovement(
-                                        product == null ? "Producto" : product.optString("name", "Producto"),
-                                        row.optString("movement_type", ""),
+                                        product == null ? "Producto" : jsonText(product, "name", "Producto"),
+                                        jsonText(row, "movement_type", ""),
                                         row.optInt("quantity", 0),
                                         row.optInt("previous_stock", 0),
                                         row.optInt("new_stock", 0),
-                                        row.optString("reason", "")));
+                                        jsonText(row, "reason", "")));
                             }
                             callback.onSuccess(null);
                         } catch (Exception exception) {
@@ -1595,32 +1561,32 @@ public class SupabaseStore {
 
     private Product parseProduct(JSONObject row) {
         Product product = new Product(row.optInt("id", 0),
-                row.optString("name", "Producto"),
-                row.optString("description", ""),
-                row.optString("category", "General"),
+                jsonText(row, "name", "Producto"),
+                jsonText(row, "description", ""),
+                jsonText(row, "category", "General"),
                 row.optInt("purchase_price", 0),
                 row.optInt("sale_price", 0),
                 row.optInt("stock", 0),
                 row.optInt("min_stock", 0),
-                row.optString("sizes", ""),
-                row.optString("colors", ""),
-                row.optString("sku", ""),
+                jsonText(row, "sizes", ""),
+                jsonText(row, "colors", ""),
+                jsonText(row, "sku", ""),
                 row.optBoolean("active", true),
                 row.optInt("sold_units", 0));
-        product.setWorkshopId(row.optString("workshop_id", null));
-        product.setImageUrl(row.optString("image_url", ""));
+        product.setWorkshopId(jsonText(row, "workshop_id", ""));
+        product.setImageUrl(jsonText(row, "image_url", ""));
         JSONObject workshop = row.optJSONObject("workshops");
         if (workshop != null) {
-            product.setWorkshopName(workshop.optString("name", ""));
-            product.setWorkshopWhatsapp(workshop.optString("whatsapp", ""));
+            product.setWorkshopName(jsonText(workshop, "name", ""));
+            product.setWorkshopWhatsapp(jsonText(workshop, "whatsapp", ""));
         }
         return product;
     }
 
     private Sale parseSale(JSONObject row) {
         JSONObject customer = row.optJSONObject("customers");
-        String customerName = customer == null ? "Cliente" : customer.optString("name", "Cliente");
-        String customerPhone = customer == null ? "" : customer.optString("phone", "");
+        String customerName = customer == null ? "Cliente" : jsonText(customer, "name", "Cliente");
+        String customerPhone = customer == null ? "" : jsonText(customer, "phone", "");
         List<CartItem> items = new ArrayList<>();
         JSONArray saleItems = row.optJSONArray("sale_items");
         if (saleItems != null) {
@@ -1638,8 +1604,8 @@ public class SupabaseStore {
             }
         }
         return new Sale(row.optInt("id", 0), customerName, customerPhone,
-                row.optString("payment_method", "Pendiente"),
-                row.optString("status", "Confirmada"),
+                jsonText(row, "payment_method", "Pendiente"),
+                jsonText(row, "status", "Confirmada"),
                 row.optInt("discount", 0), items);
     }
 
@@ -1799,7 +1765,15 @@ public class SupabaseStore {
     }
 
     private String safe(String value, String fallback) {
-        return value == null || value.trim().isEmpty() ? fallback : value.trim();
+        String sanitized = TextSanitizer.emptyIfNull(value).trim();
+        return sanitized.isEmpty() ? fallback : sanitized;
+    }
+
+    private String jsonText(JSONObject object, String key, String fallback) {
+        if (object == null || object.isNull(key)) {
+            return TextSanitizer.emptyIfNull(fallback);
+        }
+        return TextSanitizer.orDefault(object.optString(key, fallback), fallback);
     }
 
     private String slug(String value) {
@@ -1872,13 +1846,11 @@ public class SupabaseStore {
                                 String result) {
 
                             try {
-                                String description =
-                                        new JSONObject(result)
-                                                .optString(
-                                                        "description",
-                                                        ""
-                                                )
-                                                .trim();
+                                String description = jsonText(
+                                        new JSONObject(result),
+                                        "description",
+                                        ""
+                                ).trim();
 
                                 if (description.isEmpty()) {
                                     callback.onError(

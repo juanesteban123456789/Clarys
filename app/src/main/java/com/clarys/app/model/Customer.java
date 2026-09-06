@@ -1,5 +1,7 @@
 package com.clarys.app.model;
 
+import com.clarys.app.util.TextSanitizer;
+
 public class Customer {
     private final String name;
     private final String phone;
@@ -7,8 +9,8 @@ public class Customer {
     private int totalSpent;
 
     public Customer(String name, String phone, int totalOrders, int totalSpent) {
-        this.name = name;
-        this.phone = phone;
+        this.name = TextSanitizer.orDefault(name, "Cliente");
+        this.phone = TextSanitizer.emptyIfNull(phone);
         this.totalOrders = totalOrders;
         this.totalSpent = totalSpent;
     }

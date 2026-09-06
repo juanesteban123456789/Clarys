@@ -1,5 +1,7 @@
 package com.clarys.app.model;
 
+import com.clarys.app.util.TextSanitizer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,10 +18,10 @@ public class Sale {
     public Sale(int id, String customerName, String customerPhone, String paymentMethod,
             String status, int discount, List<CartItem> items) {
         this.id = id;
-        this.customerName = customerName;
-        this.customerPhone = customerPhone;
-        this.paymentMethod = paymentMethod;
-        this.status = status;
+        this.customerName = TextSanitizer.orDefault(customerName, "Cliente");
+        this.customerPhone = TextSanitizer.emptyIfNull(customerPhone);
+        this.paymentMethod = TextSanitizer.orDefault(paymentMethod, "Pendiente");
+        this.status = TextSanitizer.orDefault(status, "Confirmada");
         this.discount = Math.max(0, discount);
         this.items = new ArrayList<>(items);
     }

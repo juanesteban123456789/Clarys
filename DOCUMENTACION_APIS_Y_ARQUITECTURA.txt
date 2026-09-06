@@ -1,0 +1,79 @@
+CLARYS - APIS Y ESTRUCTURA DEL PROYECTO
+
+1. CONFIRMACIÓN DEL USO DE APIS
+
+Clarys se comunica con Supabase mediante APIs HTTP usando OkHttp.
+
+- Supabase Auth API (/auth/v1): registro, inicio de sesión con correo,
+  inicio con Google, renovación del JWT y control de la sesión administrativa.
+- Supabase REST API / PostgREST (/rest/v1): consultas y operaciones sobre
+  talleres, perfiles, productos, inventario, clientes, ventas y pedidos.
+- Supabase RPC (/rest/v1/rpc): operaciones transaccionales como ajustar stock
+  y confirmar ventas.
+- Supabase Edge Functions API (/functions/v1): generación de la descripción
+  administrativa de pedidos mediante generate-order-description.
+- Supabase Storage API (/storage/v1): subida y consulta de imágenes de
+  productos y comprobantes.
+
+Los métodos HTTP principales son GET, POST y PATCH. DELETE está implementado
+en SupabaseClient, aunque no participa actualmente en los flujos principales.
+
+2. EQUIVALENCIA CON LA ESTRUCTURA PROPUESTA
+
+La estructura es equivalente a la referencia, adaptada a una aplicación
+Android nativa. No necesita copiar literalmente carpetas propias de un
+backend web.
+
+ROUTES - DEFINICIÓN DE RUTAS O ENDPOINTS
+- SupabaseClient construye las rutas base /auth/v1, /rest/v1,
+  /functions/v1 y /storage/v1.
+- SupabaseStore declara los recursos y filtros concretos consumidos.
+- AndroidManifest.xml registra las pantallas navegables de la aplicación.
+
+CONTROLLERS - RECEPCIÓN DE SOLICITUDES Y RESPUESTAS
+- Las clases Activity reciben las acciones del usuario, validan el resultado
+  visible y actualizan cada pantalla.
+- SupabaseStore recibe callbacks de Supabase y transforma las respuestas JSON
+  en modelos utilizados por las Activities.
+
+SERVICES - REGLAS Y LÓGICA DEL NEGOCIO
+- SupabaseStore centraliza autenticación, productos, stock, ventas, clientes,
+  pedidos, configuración y almacenamiento.
+- SupabaseClient centraliza el transporte HTTP con OkHttp.
+- OrderDescriptionBuilder y WhatsAppUtils contienen servicios especializados.
+
+MODELS - ESTRUCTURA DE LOS DATOS
+- El paquete com.clarys.app.model contiene Product, Customer, Sale,
+  OrderRequest, CartItem e InventoryMovement.
+
+MIDDLEWARES - VALIDACIONES Y CONTROL DE SOLICITUDES
+- ValidationUtils valida correos, teléfonos, longitudes y rangos.
+- BaseScreenActivity controla el acceso a pantallas administrativas.
+- SupabaseSession, SessionRefreshPolicy y JwtUtils administran y renuevan JWT.
+- TextSanitizer impide mostrar valores null en la interfaz.
+- Supabase protege el backend mediante JWT, verify_jwt y políticas RLS.
+
+CONFIG - CONFIGURACIÓN DEL PROYECTO
+- build.gradle, app/build.gradle, settings.gradle y gradle.properties.
+- AndroidManifest.xml y recursos XML de Android.
+- BuildConfig expone al cliente la URL y clave pública de Supabase.
+- local.properties mantiene configuración local y no se versiona.
+- supabase/config.toml configura las Edge Functions.
+
+3. FLUJO GENERAL
+
+Pantalla Activity
+  -> validaciones y control de sesión
+  -> SupabaseStore
+  -> SupabaseClient / OkHttp
+  -> API de Supabase
+  -> respuesta JSON
+  -> modelos Java
+  -> actualización de la pantalla
+
+4. CONCLUSIÓN
+
+Clarys cumple una separación por responsabilidades similar a routes,
+controllers, services, models, middlewares y config. La nomenclatura cambia
+porque el proyecto es Android nativo y Supabase proporciona el backend, pero
+las funciones arquitectónicas solicitadas están presentes y documentadas.

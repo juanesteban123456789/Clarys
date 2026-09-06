@@ -3,6 +3,8 @@ package com.clarys.app.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.clarys.app.util.TextSanitizer;
+
 /**
  * Conserva localmente los datos de contacto que el cliente usa
  * en el carrito y en la consulta pública de pedidos.
@@ -55,22 +57,18 @@ public final class ClientPreferences {
     }
 
     public String getLastName() {
-        return preferences.getString(
-                KEY_LAST_NAME,
-                ""
+        return TextSanitizer.emptyIfNull(
+                preferences.getString(KEY_LAST_NAME, "")
         );
     }
 
     public String getLastPhone() {
-        return preferences.getString(
-                KEY_LAST_PHONE,
-                ""
+        return TextSanitizer.emptyIfNull(
+                preferences.getString(KEY_LAST_PHONE, "")
         );
     }
 
     private String safe(String value) {
-        return value == null
-                ? ""
-                : value.trim();
+        return TextSanitizer.emptyIfNull(value).trim();
     }
 }

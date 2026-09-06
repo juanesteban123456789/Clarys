@@ -12,6 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.data.StoreCallback;
 
+/**
+ * Controlador base de navegación y acceso. Protege las pantallas privadas y
+ * verifica periódicamente que la sesión administrativa permanezca vigente.
+ */
 public abstract class BaseScreenActivity extends AppCompatActivity {
 
     private static final long SESSION_CHECK_INTERVAL_MILLIS = 2L * 60L * 1000L;

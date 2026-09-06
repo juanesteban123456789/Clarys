@@ -29,7 +29,7 @@ Deno.serve(async (request) => {
   const authorization = request.headers.get("Authorization") ?? "";
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-  const openAiApiKey = Deno.env.get("OPENAI_API_KEY") ?? "";
+  const openAiApiKey = Deno.env.get("OPENIA_API_SECRET") ?? "";
   const openAiModel = Deno.env.get("OPENAI_MODEL") ?? "gpt-4o-mini";
 
   if (!authorization.startsWith("Bearer ")) {
