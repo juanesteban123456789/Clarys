@@ -1,5 +1,10 @@
 package com.clarys.app.model;
 
+import com.clarys.app.util.TextSanitizer;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Product {
     private final int id;
     private String name;
@@ -8,6 +13,8 @@ public class Product {
     private int purchasePrice;
     private int salePrice;
     private int stock;
+    private int reservedStock;
+    private List<ProductVariant> variants = new ArrayList<>();
     private int minStock;
     private String sizes;
     private String colors;
@@ -23,16 +30,16 @@ public class Product {
             int salePrice, int stock, int minStock, String sizes, String colors, String sku,
             boolean active, int soldUnits) {
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.category = category;
+        this.name = TextSanitizer.orDefault(name, "Producto");
+        this.description = TextSanitizer.emptyIfNull(description);
+        this.category = TextSanitizer.orDefault(category, "General");
         this.purchasePrice = purchasePrice;
         this.salePrice = salePrice;
         this.stock = stock;
         this.minStock = minStock;
-        this.sizes = sizes;
-        this.colors = colors;
-        this.sku = sku;
+        this.sizes = TextSanitizer.emptyIfNull(sizes);
+        this.colors = TextSanitizer.emptyIfNull(colors);
+        this.sku = TextSanitizer.emptyIfNull(sku);
         this.active = active;
         this.soldUnits = soldUnits;
         this.workshopId = "";
@@ -50,7 +57,7 @@ public class Product {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = TextSanitizer.orDefault(name, "Producto");
     }
 
     public String getDescription() {
@@ -58,7 +65,7 @@ public class Product {
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = TextSanitizer.emptyIfNull(description);
     }
 
     public String getCategory() {
@@ -66,7 +73,7 @@ public class Product {
     }
 
     public void setCategory(String category) {
-        this.category = category;
+        this.category = TextSanitizer.orDefault(category, "General");
     }
 
     public int getPurchasePrice() {
@@ -86,7 +93,19 @@ public class Product {
     }
 
     public int getStock() {
-        return stock;
+        return Math.max(0, stock - reservedStock);
+    }
+
+    public int getTotalStock() { return stock; }
+    public int getReservedStock() { return reservedStock; }
+    public void setReservedStock(int value) { reservedStock = Math.max(0, value); }
+    public List<ProductVariant> getVariants() { return new ArrayList<>(variants); }
+    public void setVariants(List<ProductVariant> values) { variants = new ArrayList<>(values); }
+    public ProductVariant getVariant(String id) {
+        for (ProductVariant variant : variants) {
+            if (variant.getId().equals(id)) { return variant; }
+        }
+        return null;
     }
 
     public void setStock(int stock) {
@@ -106,7 +125,7 @@ public class Product {
     }
 
     public void setSizes(String sizes) {
-        this.sizes = sizes;
+        this.sizes = TextSanitizer.emptyIfNull(sizes);
     }
 
     public String getColors() {
@@ -114,15 +133,26 @@ public class Product {
     }
 
     public void setColors(String colors) {
-        this.colors = colors;
+        this.colors = TextSanitizer.emptyIfNull(colors);
     }
 
     public String getSku() {
         return sku;
     }
 
+    /**
+     * Nombre funcional del código SKU mostrado en la interfaz.
+     */
+    public String getInternalCode() {
+        return sku;
+    }
+
     public void setSku(String sku) {
-        this.sku = sku;
+        this.sku = TextSanitizer.emptyIfNull(sku);
+    }
+
+    public void setInternalCode(String internalCode) {
+        this.sku = TextSanitizer.emptyIfNull(internalCode);
     }
 
     public boolean isActive() {
@@ -142,11 +172,16 @@ public class Product {
     }
 
     public boolean isLowStock() {
-        return stock > 0 && stock <= minStock;
+        return getStock() > 0 && getStock() <= minStock;
     }
 
     public boolean isOutOfStock() {
-        return stock == 0;
+        return getStock() == 0;
+    }
+
+    /** Los productos archivados no requieren alertas de reposicion en el panel. */
+    public boolean needsStockReplenishment() {
+        return active && (isLowStock() || isOutOfStock());
     }
 
     public int getPotentialProfit() {
@@ -158,7 +193,7 @@ public class Product {
     }
 
     public void setWorkshopId(String workshopId) {
-        this.workshopId = workshopId == null ? "" : workshopId;
+        this.workshopId = TextSanitizer.emptyIfNull(workshopId);
     }
 
     public String getWorkshopName() {
@@ -166,7 +201,7 @@ public class Product {
     }
 
     public void setWorkshopName(String workshopName) {
-        this.workshopName = workshopName == null ? "" : workshopName;
+        this.workshopName = TextSanitizer.emptyIfNull(workshopName);
     }
 
     public String getWorkshopWhatsapp() {
@@ -174,7 +209,7 @@ public class Product {
     }
 
     public void setWorkshopWhatsapp(String workshopWhatsapp) {
-        this.workshopWhatsapp = workshopWhatsapp == null ? "" : workshopWhatsapp;
+        this.workshopWhatsapp = TextSanitizer.emptyIfNull(workshopWhatsapp);
     }
 
     public String getImageUrl() {
@@ -182,6 +217,6 @@ public class Product {
     }
 
     public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl == null ? "" : imageUrl;
+        this.imageUrl = TextSanitizer.emptyIfNull(imageUrl);
     }
 }

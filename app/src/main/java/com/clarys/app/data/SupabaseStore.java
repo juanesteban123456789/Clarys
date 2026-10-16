@@ -7,8 +7,11 @@ import com.clarys.app.model.CartItem;
 import com.clarys.app.model.Customer;
 import com.clarys.app.model.InventoryMovement;
 import com.clarys.app.model.OrderRequest;
+import com.clarys.app.model.OrderEvent;
 import com.clarys.app.model.Product;
+import com.clarys.app.model.ProductVariant;
 import com.clarys.app.model.Sale;
+import com.clarys.app.util.TextSanitizer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,8 +26,9 @@ import java.util.Locale;
 
 
 /**
- * Repositorio principal de Clarys para autenticación, catálogo, inventario,
- * ventas, clientes y configuración usando Supabase como backend.
+ * Repositorio y servicio principal de Clarys. Define los recursos consumidos,
+ * aplica reglas de negocio y transforma las respuestas JSON de Supabase para
+ * autenticación, catálogo, inventario, ventas, clientes y configuración.
  */
 public class SupabaseStore {
     private static SupabaseStore instance;
@@ -37,6 +41,7 @@ public class SupabaseStore {
 
     private final SupabaseSession session;
     private final SupabaseClient client;
+    private final ShoppingPreferences shoppingPreferences;
     private final List<Product> products = new ArrayList<>();
     private final List<CartItem> cart = new ArrayList<>();
     private final List<Sale> sales = new ArrayList<>();
@@ -54,6 +59,8 @@ public class SupabaseStore {
     private SupabaseStore(Context context) {
         session = SupabaseSession.getInstance(context);
         client = new SupabaseClient(session);
+        shoppingPreferences = new ShoppingPreferences(context);
+        cart.addAll(shoppingPreferences.loadCart());
     }
 
     public static synchronized SupabaseStore getInstance(Context context) {
@@ -67,8 +74,28 @@ public class SupabaseStore {
         return session.isAuthenticated();
     }
 
+    /**
+     * Comprueba que la sesión administrativa siga vigente y la renueva cuando
+     * el token esté próximo a vencer o corresponda la validación periódica.
+     */
+    public void validateAdminSession(boolean forceRefresh,
+                                     StoreCallback<Boolean> callback) {
+        client.ensureValidSession(forceRefresh, callback);
+    }
+
     public String getWorkshopId() {
         return session.getWorkshopId();
+    }
+
+    public void deleteAccount(String password,StoreCallback<Void> callback) {
+        if (!isAuthenticated()) { callback.onError("Inicia sesión nuevamente"); return; }
+        try {
+            client.invokeFunction("delete-account",new JSONObject().put("confirmation","ELIMINAR")
+                    .put("password",password),true,new StoreCallback<String>() {
+                @Override public void onSuccess(String result) { signOut(); callback.onSuccess(null); }
+                @Override public void onError(String message) { callback.onError(message); }
+            });
+        } catch(Exception error) { callback.onError("No se pudo preparar la solicitud"); }
     }
 
     /**
@@ -82,7 +109,10 @@ public class SupabaseStore {
             client.auth("token?grant_type=password", body, new StoreCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject result) {
-                    saveSessionFromAuth(result);
+                    if (!saveSessionFromAuth(result)) {
+                        callback.onError("No se pudo proteger la sesión en este dispositivo");
+                        return;
+                    }
                     loadProfileOrCreatePending(email, callback);
                 }
 
@@ -108,7 +138,12 @@ public class SupabaseStore {
             client.auth("signup", body, new StoreCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject result) {
-                    saveSessionFromAuth(result);
+                    boolean authResponseContainsSession = result.has("access_token")
+                            && result.has("refresh_token");
+                    if (authResponseContainsSession && !saveSessionFromAuth(result)) {
+                        callback.onError("No se pudo proteger la sesión en este dispositivo");
+                        return;
+                    }
                     if (!session.isAuthenticated()) {
                         session.savePendingAdmin(email, workshopName, whatsapp);
                         callback.onError("Registro creado. Confirma el correo e inicia sesión.");
@@ -156,7 +191,10 @@ public class SupabaseStore {
             client.auth("token?grant_type=id_token", body, new StoreCallback<JSONObject>() {
                 @Override
                 public void onSuccess(JSONObject result) {
-                    saveSessionFromAuth(result);
+                    if (!saveSessionFromAuth(result)) {
+                        callback.onError("No se pudo proteger la sesión en este dispositivo");
+                        return;
+                    }
                     loadProfileOrHandleGoogleAdmin(createMissingProfile, workshopName, whatsapp, callback);
                 }
 
@@ -170,32 +208,48 @@ public class SupabaseStore {
         }
     }
 
-    private void saveSessionFromAuth(JSONObject result) {
+    private boolean saveSessionFromAuth(JSONObject result) {
         String accessToken = result.optString("access_token", null);
         String refreshToken = result.optString("refresh_token", null);
         JSONObject user = result.optJSONObject("user");
-        String userId = user == null ? null : user.optString("id", null);
-        if (accessToken != null && userId != null) {
-            session.saveAuth(accessToken, refreshToken, userId);
+        String userId = user == null
+                ? session.getUserId()
+                : user.optString("id", session.getUserId());
+        long expiresAt = result.optLong("expires_at", 0L);
+
+        if (expiresAt <= 0L) {
+            long expiresIn = result.optLong("expires_in", 0L);
+            if (expiresIn > 0L) {
+                expiresAt = System.currentTimeMillis() / 1000L + expiresIn;
+            }
         }
+
+        if (expiresAt <= 0L) {
+            expiresAt = JwtUtils.readExpirationEpochSeconds(accessToken);
+        }
+
+        if (accessToken != null && refreshToken != null && userId != null) {
+            return session.saveAuth(accessToken, refreshToken, userId, expiresAt);
+        }
+        return false;
     }
 
     private void createWorkshopAndProfile(String workshopName, String whatsapp, StoreCallback<Void> callback) {
         try {
-            JSONObject workshop = new JSONObject()
-                    .put("owner_user_id", session.getUserId())
-                    .put("name", safe(workshopName, "Taller Clarys"))
-                    .put("whatsapp", safe(whatsapp, "3001234567"))
-                    .put("is_active", true);
-            client.post("workshops", workshop, true, new StoreCallback<String>() {
+            JSONObject body = new JSONObject()
+                    .put("p_name", safe(workshopName, "Taller Clarys"))
+                    .put("p_whatsapp", safe(whatsapp, ""));
+            client.post("rpc/setup_admin_workshop", body, true, new StoreCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     try {
                         JSONArray rows = new JSONArray(result);
-                        String workshopId = rows.getJSONObject(0).getString("id");
-                        insertProfile(workshopId, callback);
+                        String workshopId = rows.getJSONObject(0).getString("workshop_id");
+                        session.saveProfile(workshopId, "admin");
+                        session.clearPendingAdmin();
+                        loadSettingsFromWorkshop(workshopId, callback);
                     } catch (Exception exception) {
-                        callback.onError("No se pudo leer el taller creado");
+                        callback.onError("No se pudo leer el taller configurado");
                     }
                 }
 
@@ -206,30 +260,6 @@ public class SupabaseStore {
             });
         } catch (Exception exception) {
             callback.onError("No se pudo crear el taller");
-        }
-    }
-
-    private void insertProfile(String workshopId, StoreCallback<Void> callback) {
-        try {
-            JSONObject profile = new JSONObject()
-                    .put("user_id", session.getUserId())
-                    .put("workshop_id", workshopId)
-                    .put("role", "admin");
-            client.post("profiles", profile, true, new StoreCallback<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    session.saveProfile(workshopId, "admin");
-                    session.clearPendingAdmin();
-                    loadSettingsFromWorkshop(workshopId, callback);
-                }
-
-                @Override
-                public void onError(String message) {
-                    callback.onError(message);
-                }
-            });
-        } catch (Exception exception) {
-            callback.onError("No se pudo crear el perfil administrador");
         }
     }
 
@@ -290,12 +320,12 @@ public class SupabaseStore {
                             }
                             JSONObject row = rows.getJSONObject(0);
                             String workshopId = row.getString("workshop_id");
-                            session.saveProfile(workshopId, row.optString("role", "admin"));
+                            session.saveProfile(workshopId, jsonText(row, "role", "admin"));
                             JSONObject workshop = row.optJSONObject("workshops");
                             if (workshop != null) {
-                                businessName = workshop.optString("name", businessName);
-                                contactWhatsapp = workshop.optString("whatsapp", contactWhatsapp);
-                                currency = workshop.optString("currency", currency);
+                                businessName = jsonText(workshop, "name", businessName);
+                                contactWhatsapp = jsonText(workshop, "whatsapp", contactWhatsapp);
+                                currency = jsonText(workshop, "currency", currency);
                                 defaultMinStock = workshop.optInt("default_min_stock", defaultMinStock);
                             }
                             callback.onSuccess(null);
@@ -320,9 +350,9 @@ public class SupabaseStore {
                             JSONArray rows = new JSONArray(result);
                             if (rows.length() > 0) {
                                 JSONObject workshop = rows.getJSONObject(0);
-                                businessName = workshop.optString("name", businessName);
-                                contactWhatsapp = workshop.optString("whatsapp", contactWhatsapp);
-                                currency = workshop.optString("currency", currency);
+                                businessName = jsonText(workshop, "name", businessName);
+                                contactWhatsapp = jsonText(workshop, "whatsapp", contactWhatsapp);
+                                currency = jsonText(workshop, "currency", currency);
                                 defaultMinStock = workshop.optInt("default_min_stock", defaultMinStock);
                             }
                         } catch (Exception ignored) {
@@ -344,7 +374,7 @@ public class SupabaseStore {
 
         products.clear();
 
-        cart.clear();
+        clearCart();
 
         sales.clear();
 
@@ -367,7 +397,10 @@ public class SupabaseStore {
             }
             path = "products?select=*&workshop_id=eq." + session.getWorkshopId() + "&order=name.asc";
         } else {
-            path = "products?select=*,workshops(name,whatsapp)&active=eq.true&order=name.asc";
+            // El catálogo público no solicita costos de compra ni métricas internas.
+            path = "products?select=id,workshop_id,name,description,category,"
+                    + "sale_price,stock,reserved_stock,variants,sizes,colors,sku,image_url,active,"
+                    + "workshops(name,whatsapp)&active=eq.true&order=name.asc";
         }
 
         client.get(path, adminOnly, new StoreCallback<String>() {
@@ -396,6 +429,14 @@ public class SupabaseStore {
     public void saveProductAsync(Integer productId, String name, String description, String category,
                                  int purchasePrice, int salePrice, int stock, int minStock, String sizes, String colors,
                                  String sku, String imageUrl, boolean active, StoreCallback<Product> callback) {
+        saveProductAsync(productId, name, description, category, purchasePrice, salePrice, stock,
+                minStock, sizes, colors, sku, imageUrl, active, null, callback);
+    }
+
+    public void saveProductAsync(Integer productId, String name, String description, String category,
+                                 int purchasePrice, int salePrice, int stock, int minStock, String sizes, String colors,
+                                 String sku, String imageUrl, boolean active, List<ProductVariant> variants,
+                                 StoreCallback<Product> callback) {
         if (!isAuthenticated() || session.getWorkshopId() == null) {
             callback.onError("Inicia sesión para guardar productos");
             return;
@@ -404,7 +445,16 @@ public class SupabaseStore {
         try {
             JSONObject body = productJson(name, description, category, purchasePrice, salePrice, stock,
                     minStock, sizes, colors, sku, imageUrl, active);
-            String path = productId == null ? "products" : "products?id=eq." + productId;
+            if (variants != null) {
+                JSONArray rows = new JSONArray();
+                for (ProductVariant variant : variants) {
+                    rows.put(new JSONObject().put("id", variant.getId()).put("size", variant.getSize())
+                            .put("color", variant.getColor()).put("stock", variant.getStock()));
+                }
+                body.put("variants", rows);
+            }
+            String path = productId == null ? "products" : "products?id=eq." + productId
+                    + "&workshop_id=eq." + session.getWorkshopId();
             StoreCallback<String> response = new StoreCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -495,13 +545,19 @@ public class SupabaseStore {
      */
     public void adjustStockAsync(int productId, String type, int quantity, String reason,
                                  StoreCallback<Void> callback) {
+        adjustStockAsync(productId,"",type,quantity,reason,callback);
+    }
+
+    public void adjustStockAsync(int productId,String variantId,String type,int quantity,String reason,
+                                 StoreCallback<Void> callback) {
         try {
             JSONObject body = new JSONObject()
                     .put("p_product_id", productId)
                     .put("p_movement_type", type)
                     .put("p_quantity", quantity)
                     .put("p_reason", safe(reason, "Movimiento manual"));
-            client.post("rpc/adjust_stock", body, true, new StoreCallback<String>() {
+            body.put("p_variant_id",variantId);
+            client.post("rpc/adjust_variant_stock", body, true, new StoreCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     refreshProducts(true, new StoreCallback<List<Product>>() {
@@ -549,11 +605,15 @@ public class SupabaseStore {
                     .put("p_discount", Math.max(0, discount))
                     .put("p_status", safe(status, "Confirmada"))
                     .put("p_items", cartItemsJson());
+            body.put("p_submission_key",shoppingPreferences.submissionKey(body.toString()));
             client.post("rpc/confirm_sale", body, true, new StoreCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    cart.clear();
-                    refreshAfterSale(callback);
+                    int saleId;
+                    try { saleId=((Number)new org.json.JSONTokener(result).nextValue()).intValue(); }
+                    catch(Exception error) { callback.onError("La venta se registró; consulta su historial antes de reintentar"); return; }
+                    clearCart();
+                    refreshAfterSale(saleId,callback);
                 }
 
                 @Override
@@ -572,7 +632,7 @@ public class SupabaseStore {
     public void submitCatalogRequestAsync(
             String customerName,
             String phone,
-            StoreCallback<Void> callback) {
+            StoreCallback<String> callback) {
 
         if (cart.isEmpty()) {
 
@@ -635,6 +695,7 @@ public class SupabaseStore {
                             );
 
 
+            body.put("p_submission_key",shoppingPreferences.submissionKey(body.toString()));
             client.post(
                     "rpc/submit_catalog_request",
                     body,
@@ -645,12 +706,20 @@ public class SupabaseStore {
                         @Override
                         public void onSuccess(
                                 String result) {
-
-                            cart.clear();
-
-                            callback.onSuccess(
-                                    null
-                            );
+                            try {
+                                JSONArray rows = new JSONArray(result);
+                                String trackingToken = rows.length() == 0
+                                        ? ""
+                                        : jsonText(rows.getJSONObject(0), "tracking_token", "");
+                                if (trackingToken.isEmpty()) {
+                                    callback.onError("El pedido no devolvió un código de seguimiento");
+                                    return;
+                                }
+                                clearCart();
+                                callback.onSuccess(trackingToken);
+                            } catch (Exception exception) {
+                                callback.onError("La respuesta del pedido no es válida");
+                            }
                         }
 
 
@@ -756,6 +825,8 @@ public class SupabaseStore {
                                     "unit_price",
                                     product.getSalePrice()
                             )
+                            .put("variant_id", item.getVariantId())
+                            .put("variant_label", item.getVariantLabel())
             );
         }
 
@@ -777,7 +848,7 @@ public class SupabaseStore {
 
         String path =
                 "contact_requests"
-                        + "?select=*"
+                        + "?select=*,order_events(*)"
                         + "&workshop_id=eq."
                         + session.getWorkshopId()
                         + "&order=created_at.desc";
@@ -831,55 +902,21 @@ public class SupabaseStore {
 
 
     /**
-     * Consulta los pedidos públicos asociados a un número de teléfono.
-     *
-     * No requiere sesión administrativa.
-     * La consulta se realiza mediante la RPC:
-     * get_catalog_orders_by_phone
-     *
-     * Importante:
-     * Esta consulta NO modifica orderRequests, ya que esa lista
-     * se utiliza para los pedidos del panel administrativo.
+     * Consulta pedidos públicos mediante tokens aleatorios guardados en el
+     * dispositivo. El número telefónico no se utiliza como credencial.
      */
-    public void findClientOrdersByPhone(
-            String phone,
+    public void findClientOrdersByTrackingTokens(
+            List<String> trackingTokens,
             StoreCallback<List<OrderRequest>> callback) {
 
         // =========================================================
         // VALIDACIÓN
         // =========================================================
 
-        if (phone == null || phone.trim().isEmpty()) {
+        if (trackingTokens == null || trackingTokens.isEmpty()) {
 
             callback.onError(
-                    "Escribe un número de teléfono"
-            );
-
-            return;
-        }
-
-
-        String cleanPhone =
-                phone.trim();
-
-
-        /*
-         * Validación básica local.
-         *
-         * Supabase también realizará su propia validación,
-         * pero esto evita enviar solicitudes claramente inválidas.
-         */
-        String digits =
-                cleanPhone.replaceAll(
-                        "[^0-9]",
-                        ""
-                );
-
-
-        if (digits.length() < 7) {
-
-            callback.onError(
-                    "Escribe un número de teléfono válido"
+                    "No hay pedidos guardados en este dispositivo"
             );
 
             return;
@@ -895,13 +932,13 @@ public class SupabaseStore {
             JSONObject body =
                     new JSONObject()
                             .put(
-                                    "p_customer_phone",
-                                    cleanPhone
+                                    "p_tracking_tokens",
+                                    new JSONArray(trackingTokens)
                             );
 
 
             client.post(
-                    "rpc/get_catalog_orders_by_phone",
+                    "rpc/get_catalog_orders_by_tokens",
                     body,
 
                     // La consulta es pública.
@@ -1066,15 +1103,18 @@ public class SupabaseStore {
                                 0
                         );
 
-                String productName =
-                        item.optString(
-                                "product_name",
-                                "Producto"
-                        );
+                String productName = jsonText(
+                        item,
+                        "product_name",
+                        "Producto"
+                );
 
 
                 Product product =
                         getProduct(productId);
+
+                boolean inventoryKnown =
+                        product != null;
 
 
                 /*
@@ -1101,75 +1141,62 @@ public class SupabaseStore {
                             );
                 }
 
-                requestItems.add(
-                        new CartItem(
-                                product,
-                                quantity
-                        )
-                );
+                Product snapshot = new Product(productId, productName, product.getDescription(),
+                        product.getCategory(), product.getPurchasePrice(), unitPrice,
+                        product.getTotalStock(), product.getMinStock(), product.getSizes(),
+                        product.getColors(), product.getSku(), product.isActive(), product.getSoldUnits());
+                snapshot.setReservedStock(product.getReservedStock());
+                snapshot.setVariants(product.getVariants());
+                CartItem requestItem = new CartItem(snapshot, quantity, inventoryKnown);
+                requestItem.setVariant(jsonText(item, "variant_id", ""), jsonText(item, "variant_label", ""));
+                requestItems.add(requestItem);
             }
         }
 
-        return new OrderRequest(
+        OrderRequest request = new OrderRequest(
                 row.optInt("id", 0),
 
-                row.optString(
-                        "workshop_id",
-                        ""
-                ),
+                jsonText(row, "workshop_id", ""),
 
-                row.optString(
-                        "customer_name",
-                        "Cliente"
-                ),
+                jsonText(row, "customer_name", "Cliente"),
 
-                row.optString(
-                        "customer_phone",
-                        ""
-                ),
+                jsonText(row, "customer_phone", ""),
 
                 requestItems,
 
-                row.optString(
-                        "status",
-                        OrderRequest.STATUS_PENDING
-                ),
+                jsonText(row, "status", OrderRequest.STATUS_PENDING),
 
-                row.optString(
-                        "admin_notes",
-                        ""
-                ),
+                jsonText(row, "ai_description", ""),
 
-                row.optString(
-                        "receipt_url",
-                        ""
-                ),
+                jsonText(row, "admin_notes", ""),
 
-                row.optString(
-                        "created_at",
-                        ""
-                ),
+                jsonText(row, "receipt_url", ""),
 
-                row.optString(
-                        "updated_at",
-                        ""
-                ),
+                jsonText(row, "created_at", ""),
 
-                row.optString(
-                        "approved_at",
-                        ""
-                ),
+                jsonText(row, "updated_at", ""),
 
-                row.optString(
-                        "rejected_at",
-                        ""
-                ),
+                jsonText(row, "approved_at", ""),
 
-                row.optString(
-                        "completed_at",
-                        ""
-                )
+                jsonText(row, "rejected_at", ""),
+
+                jsonText(row, "completed_at", "")
         );
+        request.setSaleId(row.optInt("sale_id",0));
+        List<OrderEvent> events = new ArrayList<>();
+        JSONArray history = row.optJSONArray("order_events");
+        if (history != null) {
+            for (int index=0; index<history.length(); index++) {
+                JSONObject event=history.optJSONObject(index);
+                if (event != null) {
+                    events.add(new OrderEvent(jsonText(event,"status",""),jsonText(event,"actor_id",""),
+                            jsonText(event,"created_at","")));
+                }
+            }
+        }
+        events.sort(Comparator.comparing(OrderEvent::getCreatedAt));
+        request.setEvents(events);
+        return request;
     }
 
     public List<OrderRequest> getOrderRequests() {
@@ -1381,7 +1408,13 @@ public class SupabaseStore {
         return OrderRequest.STATUS_PENDING
                 .equals(status)
 
+                || OrderRequest.STATUS_CONTACTED
+                .equals(status)
+
                 || OrderRequest.STATUS_APPROVED
+                .equals(status)
+
+                || OrderRequest.STATUS_PREPARING
                 .equals(status)
 
                 || OrderRequest.STATUS_REJECTED
@@ -1404,7 +1437,7 @@ public class SupabaseStore {
         );
     }
 
-    private void refreshAfterSale(StoreCallback<Sale> callback) {
+    private void refreshAfterSale(int saleId,StoreCallback<Sale> callback) {
         refreshProducts(true, new StoreCallback<List<Product>>() {
             @Override
             public void onSuccess(List<Product> ignored) {
@@ -1413,7 +1446,7 @@ public class SupabaseStore {
                     public void onSuccess(List<Sale> refreshedSales) {
                         refreshCustomers(new EmptyListCallback<>());
                         refreshMovements(new EmptyVoidCallback());
-                        callback.onSuccess(refreshedSales.isEmpty() ? null : refreshedSales.get(0));
+                        callback.onSuccess(getSale(saleId));
                     }
 
                     @Override
@@ -1469,9 +1502,9 @@ public class SupabaseStore {
                     JSONArray rows = new JSONArray(result);
                     for (int i = 0; i < rows.length(); i++) {
                         JSONObject row = rows.getJSONObject(i);
-                        customers.add(new Customer(row.optString("name", "Cliente"),
-                                row.optString("phone", ""), row.optInt("total_orders", 0),
-                                row.optInt("total_spent", 0)));
+                        customers.add(new Customer(jsonText(row, "name", "Cliente"),
+                                jsonText(row, "phone", ""), row.optInt("total_orders", 0),
+                                row.optLong("total_spent", 0)));
                     }
                     callback.onSuccess(getCustomers());
                 } catch (Exception exception) {
@@ -1500,13 +1533,15 @@ public class SupabaseStore {
                             for (int i = 0; i < rows.length(); i++) {
                                 JSONObject row = rows.getJSONObject(i);
                                 JSONObject product = row.optJSONObject("products");
-                                movements.add(new InventoryMovement(
-                                        product == null ? "Producto" : product.optString("name", "Producto"),
-                                        row.optString("movement_type", ""),
+                                InventoryMovement movement=new InventoryMovement(
+                                        product == null ? "Producto" : jsonText(product, "name", "Producto"),
+                                        jsonText(row, "movement_type", ""),
                                         row.optInt("quantity", 0),
                                         row.optInt("previous_stock", 0),
                                         row.optInt("new_stock", 0),
-                                        row.optString("reason", "")));
+                                        jsonText(row, "reason", ""));
+                                movement.setCreatedAt(jsonText(row,"created_at",""));
+                                movements.add(movement);
                             }
                             callback.onSuccess(null);
                         } catch (Exception exception) {
@@ -1566,32 +1601,48 @@ public class SupabaseStore {
 
     private Product parseProduct(JSONObject row) {
         Product product = new Product(row.optInt("id", 0),
-                row.optString("name", "Producto"),
-                row.optString("description", ""),
-                row.optString("category", "General"),
+                jsonText(row, "name", "Producto"),
+                jsonText(row, "description", ""),
+                jsonText(row, "category", "General"),
                 row.optInt("purchase_price", 0),
                 row.optInt("sale_price", 0),
                 row.optInt("stock", 0),
                 row.optInt("min_stock", 0),
-                row.optString("sizes", ""),
-                row.optString("colors", ""),
-                row.optString("sku", ""),
+                jsonText(row, "sizes", ""),
+                jsonText(row, "colors", ""),
+                jsonText(row, "sku", ""),
                 row.optBoolean("active", true),
                 row.optInt("sold_units", 0));
-        product.setWorkshopId(row.optString("workshop_id", null));
-        product.setImageUrl(row.optString("image_url", ""));
+        product.setWorkshopId(jsonText(row, "workshop_id", ""));
+        product.setImageUrl(jsonText(row, "image_url", ""));
+        product.setReservedStock(row.optInt("reserved_stock", 0));
+        product.setVariants(parseVariants(row.optJSONArray("variants")));
         JSONObject workshop = row.optJSONObject("workshops");
         if (workshop != null) {
-            product.setWorkshopName(workshop.optString("name", ""));
-            product.setWorkshopWhatsapp(workshop.optString("whatsapp", ""));
+            product.setWorkshopName(jsonText(workshop, "name", ""));
+            product.setWorkshopWhatsapp(jsonText(workshop, "whatsapp", ""));
         }
         return product;
     }
 
+    private List<ProductVariant> parseVariants(JSONArray rows) {
+        List<ProductVariant> variants = new ArrayList<>();
+        if (rows != null) {
+            for (int index = 0; index < rows.length(); index++) {
+                JSONObject row = rows.optJSONObject(index);
+                if (row != null) {
+                    variants.add(new ProductVariant(jsonText(row, "id", ""), jsonText(row, "size", ""),
+                            jsonText(row, "color", ""), row.optInt("stock", 0), row.optInt("reserved_stock", 0)));
+                }
+            }
+        }
+        return variants;
+    }
+
     private Sale parseSale(JSONObject row) {
         JSONObject customer = row.optJSONObject("customers");
-        String customerName = customer == null ? "Cliente" : customer.optString("name", "Cliente");
-        String customerPhone = customer == null ? "" : customer.optString("phone", "");
+        String customerName = customer == null ? "Cliente" : jsonText(customer, "name", "Cliente");
+        String customerPhone = customer == null ? "" : jsonText(customer, "phone", "");
         List<CartItem> items = new ArrayList<>();
         JSONArray saleItems = row.optJSONArray("sale_items");
         if (saleItems != null) {
@@ -1605,13 +1656,22 @@ public class SupabaseStore {
                         ? new Product(item.optInt("product_id", 0), "Producto", "", "", 0,
                         item.optInt("unit_price", 0), 0, 0, "", "", "", true, 0)
                         : parseProduct(productJson);
-                items.add(new CartItem(product, item.optInt("quantity", 1)));
+                product.setSalePrice(item.optInt("unit_price", 0));
+                if (item.has("unit_cost")) { product.setPurchasePrice(item.optInt("unit_cost", 0)); }
+                if (item.has("product_name") && !item.isNull("product_name")) {
+                    product.setName(jsonText(item, "product_name", product.getName()));
+                }
+                CartItem saleItem = new CartItem(product, item.optInt("quantity", 1));
+                saleItem.setVariant(jsonText(item, "variant_id", ""), jsonText(item, "variant_label", ""));
+                items.add(saleItem);
             }
         }
-        return new Sale(row.optInt("id", 0), customerName, customerPhone,
-                row.optString("payment_method", "Pendiente"),
-                row.optString("status", "Confirmada"),
+        Sale sale = new Sale(row.optInt("id", 0), customerName, customerPhone,
+                jsonText(row, "payment_method", "Pendiente"),
+                jsonText(row, "status", "Confirmada"),
                 row.optInt("discount", 0), items);
+        sale.setCreatedAt(jsonText(row, "created_at", ""));
+        return sale;
     }
 
     public List<Product> getProducts() {
@@ -1648,18 +1708,35 @@ public class SupabaseStore {
     }
 
     public boolean addToCart(int productId, int quantity) {
+        return addToCart(productId, "", quantity);
+    }
+
+    public boolean addToCart(int productId, String variantId, int quantity) {
         Product product = getProduct(productId);
         if (product == null || !product.isActive() || product.getStock() <= 0) {
             return false;
         }
-        int safeQuantity = Math.max(1, Math.min(quantity, product.getStock()));
+        ProductVariant variant = product.getVariant(variantId);
+        if (!product.getVariants().isEmpty() && variant == null) { return false; }
+        int available = variant == null ? product.getStock() : variant.getAvailableStock();
+        if (quantity <= 0 || available < quantity) { return false; }
+        int safeQuantity = quantity;
         for (CartItem item : cart) {
-            if (item.getProduct().getId() == productId) {
-                item.setQuantity(Math.min(product.getStock(), item.getQuantity() + safeQuantity));
+            if (item.getProduct().getId() == productId && item.getVariantId().equals(variantId)) {
+                if (item.getQuantity() + safeQuantity > available) { return false; }
+                item.setQuantity(item.getQuantity() + safeQuantity);
+                shoppingPreferences.saveCart(cart);
                 return true;
             }
         }
-        cart.add(new CartItem(product, safeQuantity));
+        if (!cart.isEmpty() && !cart.get(0).getProduct().getWorkshopId().equals(product.getWorkshopId())) {
+            return false;
+        }
+        if (cart.size() >= 30) { return false; }
+        CartItem added = new CartItem(product, safeQuantity);
+        added.setVariant(variantId, variant == null ? "" : variant.getLabel());
+        cart.add(added);
+        shoppingPreferences.saveCart(cart);
         return true;
     }
 
@@ -1668,21 +1745,28 @@ public class SupabaseStore {
     }
 
     public void updateCartQuantity(int productId, int quantity) {
+        updateCartQuantity(productId, "", quantity);
+    }
+
+    public void updateCartQuantity(int productId, String variantId, int quantity) {
         for (int i = 0; i < cart.size(); i++) {
             CartItem item = cart.get(i);
-            if (item.getProduct().getId() == productId) {
+            if (item.getProduct().getId() == productId && item.getVariantId().equals(variantId)) {
                 if (quantity <= 0) {
                     cart.remove(i);
                 } else {
-                    item.setQuantity(Math.min(quantity, item.getProduct().getStock()));
+                    int available = item.getAvailableStock();
+                    if (available <= 0) { return; }
+                    item.setQuantity(Math.min(quantity, available));
                 }
+                shoppingPreferences.saveCart(cart);
                 return;
             }
         }
     }
 
-    public int getCartTotal() {
-        int total = 0;
+    public long getCartTotal() {
+        long total = 0;
         for (CartItem item : cart) {
             total += item.getSubtotal();
         }
@@ -1691,7 +1775,53 @@ public class SupabaseStore {
 
     public void clearCart() {
         cart.clear();
+        shoppingPreferences.saveCart(cart);
     }
+
+    /** Relee el catalogo antes de confirmar; informa cambios para que el cliente revise el total. */
+    public void revalidateCart(StoreCallback<List<String>> callback) {
+        refreshProducts(false, new StoreCallback<List<Product>>() {
+            @Override public void onSuccess(List<Product> result) {
+                List<String> changes = new ArrayList<>();
+                List<CartItem> refreshed = new ArrayList<>();
+                for (CartItem oldItem : cart) {
+                    Product current = getProduct(oldItem.getProduct().getId());
+                    if (current == null || !current.isActive()) {
+                        changes.add(oldItem.getProduct().getName() + ": ya no está disponible");
+                        continue;
+                    }
+                    CartItem item = new CartItem(current, oldItem.getQuantity());
+                    ProductVariant variant = current.getVariant(oldItem.getVariantId());
+                    if (!current.getVariants().isEmpty() && variant == null) {
+                        changes.add(current.getName() + ": selecciona nuevamente talla y color");
+                        continue;
+                    }
+                    item.setVariant(oldItem.getVariantId(), variant == null ? "" : variant.getLabel());
+                    int available = item.getAvailableStock();
+                    if (available <= 0) {
+                        changes.add(current.getName() + ": agotado");
+                        continue;
+                    }
+                    if (available < item.getQuantity()) {
+                        item.setQuantity(available);
+                        changes.add(current.getName() + ": cantidad reducida a " + available);
+                    }
+                    if (current.getSalePrice() != oldItem.getProduct().getSalePrice()) {
+                        changes.add(current.getName() + ": precio actualizado a " + formatMoney(current.getSalePrice()));
+                    }
+                    refreshed.add(item);
+                }
+                cart.clear();
+                cart.addAll(refreshed);
+                shoppingPreferences.saveCart(cart);
+                callback.onSuccess(changes);
+            }
+            @Override public void onError(String message) { callback.onError(message); }
+        });
+    }
+
+    public boolean isFavorite(int productId) { return shoppingPreferences.isFavorite(productId); }
+    public boolean toggleFavorite(int productId) { return shoppingPreferences.toggleFavorite(productId); }
 
     public List<Sale> getSales() {
         return new ArrayList<>(sales);
@@ -1717,25 +1847,26 @@ public class SupabaseStore {
     public int getLowStockCount() {
         int count = 0;
         for (Product product : products) {
-            if (product.isLowStock() || product.isOutOfStock()) {
+            if (product.needsStockReplenishment()) {
                 count++;
             }
         }
         return count;
     }
 
-    public int getTodaySalesTotal() {
-        int total = 0;
-        for (Sale sale : sales) {
+    public long getTodaySalesTotal() {
+        long total = 0;
+        for (Sale sale : com.clarys.app.util.SalesPeriod.filter(sales,1,System.currentTimeMillis(),
+                java.util.TimeZone.getDefault())) {
             total += sale.getTotal();
         }
         return total;
     }
 
-    public int getInventoryValue() {
-        int total = 0;
+    public long getInventoryValue() {
+        long total = 0;
         for (Product product : products) {
-            total += product.getStock() * product.getPurchasePrice();
+            total += (long) product.getTotalStock() * product.getPurchasePrice();
         }
         return total;
     }
@@ -1744,10 +1875,11 @@ public class SupabaseStore {
         if (products.isEmpty()) {
             return null;
         }
-        return Collections.max(products, Comparator.comparingInt(Product::getSoldUnits));
+        Product best = Collections.max(products, Comparator.comparingInt(Product::getSoldUnits));
+        return best.getSoldUnits() == 0 ? null : best;
     }
 
-    public String formatMoney(int value) {
+    public String formatMoney(long value) {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
         formatter.setMaximumFractionDigits(0);
         return formatter.format(value);
@@ -1770,7 +1902,15 @@ public class SupabaseStore {
     }
 
     private String safe(String value, String fallback) {
-        return value == null || value.trim().isEmpty() ? fallback : value.trim();
+        String sanitized = TextSanitizer.emptyIfNull(value).trim();
+        return sanitized.isEmpty() ? fallback : sanitized;
+    }
+
+    private String jsonText(JSONObject object, String key, String fallback) {
+        if (object == null || object.isNull(key)) {
+            return TextSanitizer.emptyIfNull(fallback);
+        }
+        return TextSanitizer.orDefault(object.optString(key, fallback), fallback);
     }
 
     private String slug(String value) {
@@ -1804,6 +1944,130 @@ public class SupabaseStore {
     // =============================================================
     // PEDIDOS: NOTAS Y COMPROBANTES
     // =============================================================
+
+    /**
+     * Solicita a una Edge Function la descripción administrativa
+     * generada con reglas locales y con el inventario actual.
+     */
+    public void generateOrderDescriptionAsync(
+            int orderId,
+            StoreCallback<String> callback) {
+
+        if (!isAuthenticated()
+                || session.getWorkshopId() == null) {
+
+            callback.onError(
+                    "Acceso administrativo requerido"
+            );
+
+            return;
+        }
+
+        try {
+            JSONObject body =
+                    new JSONObject()
+                            .put(
+                                    "order_id",
+                                    orderId
+                            );
+
+            client.invokeFunction(
+                    "generate-order-description",
+                    body,
+                    true,
+                    new StoreCallback<String>() {
+
+                        @Override
+                        public void onSuccess(
+                                String result) {
+
+                            try {
+                                String description = jsonText(
+                                        new JSONObject(result),
+                                        "description",
+                                        ""
+                                ).trim();
+
+                                if (description.isEmpty()) {
+                                    callback.onError(
+                                    "El servicio no devolvió una descripción"
+                                    );
+
+                                    return;
+                                }
+
+                                callback.onSuccess(
+                                        description
+                                );
+
+                            } catch (Exception exception) {
+                                callback.onError(
+                                    "La respuesta del servicio no es válida"
+                                );
+                            }
+                        }
+
+                        @Override
+                        public void onError(
+                                String message) {
+
+                            callback.onError(message);
+                        }
+                    }
+            );
+
+        } catch (Exception exception) {
+            callback.onError(
+                    "No se pudo preparar la descripción automática"
+            );
+        }
+    }
+
+    /**
+     * Guarda la descripción automática separada de las notas
+     * privadas que escribe el administrador.
+     */
+    public void updateOrderRequestDescription(
+            int orderId,
+            String description,
+            StoreCallback<Void> callback) {
+
+        if (!isAuthenticated()
+                || session.getWorkshopId() == null) {
+
+            callback.onError(
+                    "Acceso administrativo requerido"
+            );
+
+            return;
+        }
+
+        try {
+            JSONObject body =
+                    new JSONObject()
+                            .put(
+                                    "ai_description",
+                                    description == null
+                                            ? ""
+                                            : description.trim()
+                            )
+                            .put(
+                                    "updated_at",
+                                    currentTimestamp()
+                            );
+
+            patchOrderRequest(
+                    orderId,
+                    body,
+                    callback
+            );
+
+        } catch (Exception exception) {
+            callback.onError(
+                    "No se pudo guardar la descripción"
+            );
+        }
+    }
 
     public void updateOrderRequestNotes(
             int orderId,

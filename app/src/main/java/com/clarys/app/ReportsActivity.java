@@ -5,6 +5,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import com.clarys.app.util.SalesPeriod;
+import com.clarys.app.util.CsvExporter;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,10 +27,13 @@ import com.clarys.app.ui.OrderRequestAdapter;
 import com.clarys.app.ui.SaleAdapter;
 
 import java.util.List;
+import java.util.ArrayList;
+import com.clarys.app.util.OrderStatusUtils;
 
 public class ReportsActivity extends BaseScreenActivity {
 
     private static final String FILTER_ALL = "all";
+    public static final String FILTER_ACTIVE = "active";
 
     private SupabaseStore store;
 
@@ -35,6 +45,17 @@ public class ReportsActivity extends BaseScreenActivity {
             FILTER_ALL;
 
     private boolean scrollToOrders;
+    private int selectedPeriod;
+    private String pendingExport = "";
+    private final ActivityResultLauncher<String> exportFile =
+            registerForActivityResult(new ActivityResultContracts.CreateDocument("text/csv"),uri -> {
+                if(uri==null) { return; }
+                try(java.io.OutputStream stream=getContentResolver().openOutputStream(uri)) {
+                    if(stream==null) { throw new java.io.IOException("Archivo no disponible"); }
+                    stream.write(pendingExport.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    showMessage("Archivo exportado");
+                } catch(java.io.IOException error) { showMessage("No se pudo guardar el archivo"); }
+            });
 
 
     @Override
@@ -47,6 +68,13 @@ public class ReportsActivity extends BaseScreenActivity {
 
         store =
                 SupabaseStore.getInstance(this);
+
+        String notificationWorkshop = getIntent().getStringExtra("notificationWorkshopId");
+        if (notificationWorkshop != null && !notificationWorkshop.equals(store.getWorkshopId())) {
+            openScreen(MainActivity.class);
+            finish();
+            return;
+        }
 
 
         setupHeader(
@@ -162,6 +190,23 @@ public class ReportsActivity extends BaseScreenActivity {
 
 
         setupOrderFilters();
+        Spinner period = findViewById(R.id.spinnerReportPeriod);
+        period.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
+                new String[]{"Todas las fechas","Hoy","Esta semana","Este mes"}));
+        period.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent,View view,int position,long id) {
+                selectedPeriod=position; renderReports();
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
+        });
+        findViewById(R.id.buttonExportSales).setOnClickListener(view -> {
+            pendingExport=CsvExporter.sales(periodSales());
+            exportFile.launch("Clarys_ventas.csv");
+        });
+        findViewById(R.id.buttonExportInventory).setOnClickListener(view -> {
+            pendingExport=CsvExporter.inventory(store.getProducts());
+            exportFile.launch("Clarys_inventario.csv");
+        });
     }
 
 
@@ -170,6 +215,8 @@ public class ReportsActivity extends BaseScreenActivity {
     // =============================================================
 
     private void setupOrderFilters() {
+
+        findViewById(R.id.filterOrderActive).setOnClickListener(view -> selectOrderFilter(FILTER_ACTIVE));
 
         findViewById(R.id.filterOrderAll)
                 .setOnClickListener(view ->
@@ -186,11 +233,25 @@ public class ReportsActivity extends BaseScreenActivity {
                         )
                 );
 
+        findViewById(R.id.filterOrderContacted)
+                .setOnClickListener(view ->
+                        selectOrderFilter(
+                                OrderRequest.STATUS_CONTACTED
+                        )
+                );
+
 
         findViewById(R.id.filterOrderApproved)
                 .setOnClickListener(view ->
                         selectOrderFilter(
                                 OrderRequest.STATUS_APPROVED
+                        )
+                );
+
+        findViewById(R.id.filterOrderPreparing)
+                .setOnClickListener(view ->
+                        selectOrderFilter(
+                                OrderRequest.STATUS_PREPARING
                         )
                 );
 
@@ -229,6 +290,8 @@ public class ReportsActivity extends BaseScreenActivity {
 
     private void renderFilterStyles() {
 
+        styleFilter(R.id.filterOrderActive, FILTER_ACTIVE.equals(selectedOrderStatus));
+
         styleFilter(
                 R.id.filterOrderAll,
                 FILTER_ALL.equals(
@@ -244,8 +307,22 @@ public class ReportsActivity extends BaseScreenActivity {
         );
 
         styleFilter(
+                R.id.filterOrderContacted,
+                OrderRequest.STATUS_CONTACTED.equals(
+                        selectedOrderStatus
+                )
+        );
+
+        styleFilter(
                 R.id.filterOrderApproved,
                 OrderRequest.STATUS_APPROVED.equals(
+                        selectedOrderStatus
+                )
+        );
+
+        styleFilter(
+                R.id.filterOrderPreparing,
+                OrderRequest.STATUS_PREPARING.equals(
                         selectedOrderStatus
                 )
         );
@@ -391,7 +468,7 @@ public class ReportsActivity extends BaseScreenActivity {
                 R.id.textReportSales
         )).setText(
                 store.formatMoney(
-                        store.getTodaySalesTotal()
+                        periodSalesTotal()
                 )
         );
 
@@ -436,7 +513,7 @@ public class ReportsActivity extends BaseScreenActivity {
 
 
         saleAdapter.submitList(
-                store.getSales()
+                periodSales()
         );
 
 
@@ -450,10 +527,15 @@ public class ReportsActivity extends BaseScreenActivity {
 
     private void renderOrders() {
 
-        List<OrderRequest> filtered =
-                store.getOrderRequestsByStatus(
-                        selectedOrderStatus
-                );
+        List<OrderRequest> filtered;
+        if (FILTER_ACTIVE.equals(selectedOrderStatus)) {
+            filtered = new ArrayList<>();
+            for (OrderRequest order : store.getOrderRequests()) {
+                if (OrderStatusUtils.isActive(order.getStatus())) { filtered.add(order); }
+            }
+        } else {
+            filtered = store.getOrderRequestsByStatus(selectedOrderStatus);
+        }
 
 
         orderAdapter.submitList(
@@ -474,8 +556,8 @@ public class ReportsActivity extends BaseScreenActivity {
         pendingCount.setText(
                 pending
                         + (pending == 1
-                        ? " pendiente"
-                        : " pendientes")
+                        ? " nuevo"
+                        : " nuevos")
         );
 
 
@@ -532,20 +614,19 @@ public class ReportsActivity extends BaseScreenActivity {
     // GANANCIA
     // =============================================================
 
-    private int calculateProfit() {
+    private long calculateProfit() {
 
-        int profit = 0;
+        long profit = 0;
 
 
         for (Sale sale :
-                store.getSales()) {
+                periodSales()) {
 
             for (CartItem item :
                     sale.getItems()) {
 
                 profit +=
-                        item.getProduct()
-                                .getPotentialProfit()
+                        ((long)item.getProduct().getSalePrice() - item.getProduct().getPurchasePrice())
                                 * item.getQuantity();
             }
 
@@ -555,10 +636,7 @@ public class ReportsActivity extends BaseScreenActivity {
         }
 
 
-        return Math.max(
-                0,
-                profit
-        );
+        return profit;
     }
 
 
@@ -567,12 +645,27 @@ public class ReportsActivity extends BaseScreenActivity {
 
         return FILTER_ALL.equals(status)
 
+                || FILTER_ACTIVE.equals(status)
+
                 || OrderRequest.STATUS_PENDING.equals(status)
 
+                || OrderRequest.STATUS_CONTACTED.equals(status)
+
                 || OrderRequest.STATUS_APPROVED.equals(status)
+
+                || OrderRequest.STATUS_PREPARING.equals(status)
 
                 || OrderRequest.STATUS_REJECTED.equals(status)
 
                 || OrderRequest.STATUS_COMPLETED.equals(status);
+    }
+
+    private List<Sale> periodSales() {
+        return SalesPeriod.filter(store.getSales(),selectedPeriod,System.currentTimeMillis(),java.util.TimeZone.getDefault());
+    }
+    private long periodSalesTotal() {
+        long total=0;
+        for(Sale sale:periodSales()) { total+=sale.getTotal(); }
+        return total;
     }
 }

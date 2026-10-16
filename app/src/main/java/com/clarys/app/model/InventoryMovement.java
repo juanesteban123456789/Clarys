@@ -1,5 +1,7 @@
 package com.clarys.app.model;
 
+import com.clarys.app.util.TextSanitizer;
+
 public class InventoryMovement {
     private final String productName;
     private final String type;
@@ -7,15 +9,16 @@ public class InventoryMovement {
     private final int previousStock;
     private final int newStock;
     private final String reason;
+    private String createdAt="";
 
     public InventoryMovement(String productName, String type, int quantity, int previousStock,
             int newStock, String reason) {
-        this.productName = productName;
-        this.type = type;
+        this.productName = TextSanitizer.orDefault(productName, "Producto");
+        this.type = TextSanitizer.emptyIfNull(type);
         this.quantity = quantity;
         this.previousStock = previousStock;
         this.newStock = newStock;
-        this.reason = reason;
+        this.reason = TextSanitizer.emptyIfNull(reason);
     }
 
     public String getProductName() {
@@ -41,4 +44,6 @@ public class InventoryMovement {
     public String getReason() {
         return reason;
     }
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String value) { createdAt=TextSanitizer.emptyIfNull(value); }
 }

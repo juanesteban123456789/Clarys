@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_login_canvas"
@@ -36,7 +37,7 @@
                 android:padding="13dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="@color/clarys_dark" />
+                app:tint="@color/clarys_dark" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -73,7 +74,7 @@
                 android:padding="13dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_home"
-                android:tint="@color/clarys_mid" />
+                app:tint="@color/clarys_mid" />
 
         </LinearLayout>
 

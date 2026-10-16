@@ -1,0 +1,66 @@
+CLARYS - VALIDACION EN DISPOSITIVO - 14 DE OCTUBRE DE 2026
+
+Dispositivo conectado: Xiaomi M2003J15SC, Android 12.
+Sesiones y credenciales: se uso la sesion de Clarys Gestion; no se extrajeron
+tokens ni se solicitaron contrasenas. El propietario autorizo datos de prueba.
+
+ERROR ENCONTRADO Y CORREGIDO
+El CHECK remoto contact_requests_status_check rechazaba Contactado.
+Se creo 20261014_order_statuses.sql y el propietario lo ejecuto en Supabase.
+La prueba repetida termino OK (1 test), usando repositorios reales desde Android.
+El bootstrap aislado reproduce ahora esa restriccion antigua antes de corregirla.
+El verificador de backend exige los seis estados para detectar despliegues incompletos.
+
+CICLO REAL CONTRA SUPABASE
+Producto de prueba: ID 9, variantes M/Negro (3) y L/Azul (2).
+Pedido ID 25: 2 unidades M/Negro por 40.000 COP.
+Pendiente -> Contactado -> Confirmado: total 5, reservado 2, disponible 3.
+En preparacion -> Entregado: total 3, reservado 0, disponible 3.
+Venta ID 2: 40.000 COP; repetir Entregado no genero una segunda venta.
+Pedido ID 26: 1 unidad L/Azul; reservar y cancelar dejo total 3 y reservado 0.
+La consulta publica por token devolvio el pedido correcto.
+La Edge Function genero descripcion con variante y reconocio el estado Entregado.
+Notas internas inicialmente vacias, sin texto null.
+Se rechazaron nombre vacio y cantidades superiores al stock con errores no vacios.
+El panel mostro 40.000 COP y el valor original del inventario (1.105.000 COP).
+
+CIERRE DE LOS DATOS DE PRUEBA
+Productos 8 y 9 quedaron inactivos y con stock cero.
+Pedido 24, creado en el primer intento, fue cancelado al detectar el CHECK antiguo.
+Se conservan la venta, cliente y movimientos/historial de demostracion autorizados.
+No se modifico stock de productos existentes ni se eliminaron cuentas.
+Los productos archivados dejan de sumarse a las alertas de stock del panel.
+Tras instalar la correccion, el panel mostro alertas 0, ventas 40.000 COP e
+inventario 1.105.000 COP. Se agregaron pruebas para archivados y stock reservado.
+
+FORMULARIOS Y PERSISTENCIA
+La prueba de formulario termino OK (1 test): campos obligatorios, longitudes,
+acentos/caracteres especiales, teclado numerico y bloqueo del cursor en montos.
+El primer lanzador de pruebas no pudo abrir la Activity por las restricciones
+de inicio en segundo plano; se ajusto solamente el arnes de instrumentacion.
+La prueba adopta el permiso shell de inicio durante su ejecucion y lo libera
+al terminar. No agrega permisos a las APK productivas.
+Carrito/variantes y favoritos con preferencias aisladas: OK (2 tests).
+El catalogo publico se reviso visualmente en el dispositivo y carga desde Supabase.
+
+COMPILACION FINAL
+assembleAdminDebug assembleClienteDebug testAdminDebugUnitTest
+testClienteDebugUnitTest lintAdminDebug lintClienteDebug: BUILD SUCCESSFUL.
+Java: 28 pruebas por variante, sin fallos ni errores.
+Lint: 0 errores y 630 advertencias por variante.
+Las dos APK finales se instalaron con adb install -r: Success.
+Se detuvo exclusivamente el contenedor PostgreSQL aislado de estas pruebas.
+El celular se desconecto antes de la captura final del grafico; no se afirma
+haber completado esa comprobacion visual. Los totales del panel si se leyeron.
+
+ALCANCE
+La prueba de negocio utiliza las clases de la app desde el celular; no simula
+todas las pulsaciones del proceso de compra en la interfaz.
+No se provoco una expiracion/revocacion real de sesion ni se elimino una cuenta.
+SMTP, Google OAuth y firma Release requieren sus verificaciones independientes.
+No se hizo commit ni push.
+
+SEGURIDAD DE LAS PRUEBAS
+AuthorizedOrderWorkflowTest no se ejecuta salvo clarysLiveTest=true.
+Repetirla con ese parametro crea nuevos datos reales de demostracion.
+DeviceFormValidationTest requiere clarysUiTest=true y no guarda productos.

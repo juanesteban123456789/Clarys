@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fillViewport="true" android:background="@drawable/bg_login_canvas">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp" android:paddingBottom="64dp">
+        <include layout="@layout/view_document_header" />
+        <TextView style="@style/DocumentHeading" android:text="@string/documents_form_title" />
+        <TextView android:id="@+id/textDocumentSource" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:textColor="@color/clarys_muted" />
+        <Spinner android:id="@+id/spinnerDocumentType" android:layout_width="match_parent" android:layout_height="52dp"
+            android:contentDescription="@string/documents_type" />
+        <EditText android:id="@+id/inputDocumentCustomer" style="@style/DocumentField" android:hint="@string/documents_customer" android:inputType="textPersonName" />
+        <EditText android:id="@+id/inputDocumentPhone" style="@style/DocumentField" android:hint="@string/documents_phone" android:inputType="phone" android:maxLength="25" />
+        <EditText android:id="@+id/inputDocumentCustomerId" style="@style/DocumentField" android:hint="@string/documents_customer_id" android:inputType="text" android:maxLength="40" />
+        <EditText android:id="@+id/inputDocumentEmail" style="@style/DocumentField" android:hint="@string/documents_email" android:inputType="textEmailAddress" android:maxLength="120" />
+        <TextView style="@style/DocumentHeading" android:text="@string/documents_payment" />
+        <Spinner android:id="@+id/spinnerDocumentPayment" android:layout_width="match_parent" android:layout_height="52dp"
+            android:contentDescription="@string/documents_payment" />
+        <TextView style="@style/DocumentHeading" android:text="@string/documents_items" />
+        <LinearLayout android:id="@+id/containerDocumentLines" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonAddDocumentLine" style="@style/DocumentAction"
+            android:drawableStart="@android:drawable/ic_input_add" android:text="@string/documents_add_line" />
+        <com.clarys.app.ui.EndLockedNumberEditText android:id="@+id/inputDocumentDiscount" style="@style/DocumentField"
+            android:hint="@string/documents_discount" android:inputType="number" android:maxLength="16" />
+        <TextView android:id="@+id/textDocumentTotals" style="@style/DocumentHeading" />
+        <EditText android:id="@+id/inputDocumentNotes" style="@style/DocumentField" android:hint="@string/documents_notes"
+            android:inputType="textMultiLine|textCapSentences" android:maxLength="500" android:minLines="2" android:gravity="top|start" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp"
+            android:text="@string/documents_disclaimer" android:textSize="12sp" android:textColor="@color/clarys_muted" />
+        <ProgressBar android:id="@+id/progressDocumentForm" android:layout_width="32dp" android:layout_height="32dp"
+            android:layout_gravity="center_horizontal" android:visibility="gone" />
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonSaveDocument" style="@style/DocumentAction"
+            android:drawableStart="@android:drawable/ic_menu_save" android:text="@string/documents_save" />
+    </LinearLayout>
+</ScrollView>

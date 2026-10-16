@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:paddingVertical="10dp" android:gravity="center_vertical" android:orientation="horizontal">
+    <TextView android:id="@+id/textDocumentLine" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:textColor="@color/clarys_dark" android:textSize="14sp" />
+    <androidx.appcompat.widget.AppCompatImageButton android:id="@+id/buttonEditDocumentLine" style="@style/DocumentIcon"
+        android:src="@android:drawable/ic_menu_edit" android:contentDescription="@string/documents_edit_line" />
+    <androidx.appcompat.widget.AppCompatImageButton android:id="@+id/buttonRemoveDocumentLine" style="@style/DocumentIcon"
+        android:src="@android:drawable/ic_menu_delete" android:contentDescription="@string/documents_remove_line" />
+</LinearLayout>

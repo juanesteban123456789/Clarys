@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_logout_title">¿Cerrar sesión?</string>
+    <string name="navigation_logout_message">Volverás a la pantalla de acceso del taller.</string>
+    <string name="navigation_logout">Cerrar sesión</string>
+    <string name="navigation_exit_title">¿Salir de Clarys?</string>
+    <string name="navigation_exit_message">Se cerrará la aplicación. Tus datos guardados en este dispositivo se conservarán.</string>
+    <string name="navigation_exit">Salir</string>
+    <string name="navigation_stay">Permanecer</string>
+    <string name="navigation_back_dashboard">Volver al panel</string>
+    <string name="navigation_back_catalog">Volver al catálogo</string>
+    <string name="navigation_wait_save">Espera a que termine el guardado</string>
+    <string name="navigation_wait_send">Espera a que termine el envío del pedido</string>
+</resources>

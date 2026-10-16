@@ -1,0 +1,90 @@
+CLARYS 1.1.0 - PREPARACION Y VIDEO PARA EL INSTRUCTOR
+
+ESTADO VERIFICADO EL 14 DE OCTUBRE DE 2026
+Backend v2 y catalogo publico: PASS; costos privados y pedidos restringidos.
+delete-account y generate-order-description: OPTIONS 200 y POST sin sesion 401.
+Compilacion de ambas APK, pruebas Java y Lint: BUILD SUCCESSFUL.
+Se verifico el ciclo real desde el celular con datos de demostracion autorizados.
+Ver VALIDACION_DISPOSITIVO_20261014.txt para resultados, IDs y limites de la prueba.
+
+ACTIVACION EXTERNA NECESARIA
+1. En Supabase SQL Editor, ejecutar en este orden:
+   supabase/migrations/20260912_production_hardening.sql
+   supabase/migrations/20261013_inventory_orders.sql
+   supabase/migrations/20261014_order_statuses.sql
+   Aplicarlos primero en un entorno de prueba y conservar un respaldo del proyecto real.
+   Alternativa: ACTIVACION_SUPABASE_CLARYS.sql contiene las tres migraciones en una
+   sola transaccion. Ejecuta este archivo completo en lugar de los anteriores.
+2. Desplegar delete-account usando el contenido de:
+   supabase/functions/delete-account/index.ts
+   La funcion valida el token contra Supabase Auth. SUPABASE_URL y
+   SUPABASE_SERVICE_ROLE_KEY son secretos del servidor; no se incluyen en las APK.
+   Volver a desplegar generate-order-description incluyendo index.ts y description.ts
+   para que el resumen considere variantes, reservas y estados finales.
+3. Verificar desde PowerShell:
+   .\tools\Verify-ClarysBackend.ps1
+   El resultado esperado es PASS para el backend y ambas funciones.
+   Un HTTP 404 indica una migracion o funcion pendiente de despliegue.
+4. Confirmar correo/Google y recuperacion de contrasena con las cuentas del taller.
+
+GUION SUGERIDO (DATOS DE PRUEBA)
+1. Mostrar las dos aplicaciones: Clarys Gestion y Clarys.
+2. Abrir Clarys Gestion e iniciar sesion con una cuenta de prueba.
+3. Crear una camiseta de demostracion, costo 10.000 y precio 20.000.
+4. Agregar variantes M/Negro (3 unidades) y L/Azul (2 unidades).
+   Mostrar total 5, reservado 0, disponible 5 y margen por unidad.
+5. Mostrar sugerencias de categorias y vista previa de imagen.
+6. Duplicar la prenda: los datos e imagen se reutilizan y el stock comienza en cero.
+7. Abrir Clarys, buscar la camiseta, filtrar talla/color/precio y marcar favorito.
+8. Seleccionar M/Negro, agregar 2 unidades al carrito y cerrar/abrir Clarys:
+   el carrito y la variante se conservan.
+9. Revisar el pedido, usar TU numero de contacto de prueba y enviarlo.
+10. Mostrar confirmacion y consultar Mis pedidos.
+11. En Clarys Gestion, abrir el pedido y marcar Contactado.
+12. Confirmarlo: total 5, reservado 2, disponible 3.
+13. Mostrar historial con fecha y responsable, notas y boton WhatsApp.
+14. Pasar a En preparacion y Entregado.
+    Se registra una sola venta, total fisico 3 y reservado 0.
+15. Mostrar ventas de hoy/semana/mes, grafico de siete dias y exportacion CSV.
+16. Crear un segundo pedido de prueba, confirmarlo y cancelarlo:
+    la reserva se libera sin descontar stock fisico ni registrar una venta.
+17. Mostrar formulario vacio, cantidad invalida, busqueda sin resultados y error/reintento.
+18. Mostrar Ayuda, Privacidad y version desde Configuracion.
+19. Para demostrar eliminacion, usar SOLO otra cuenta de prueba descartable.
+
+ALCANCE DE LOS AVISOS
+Los avisos se revisan periodicamente mediante Android JobScheduler.
+En segundo plano el intervalo minimo es 15 minutos, sujeto a bateria,
+permisos y red; no se presentan como notificaciones push instantaneas.
+La primera lectura establece una base para no avisar de pedidos antiguos.
+
+COMPILACION
+.\gradlew.bat assembleAdminDebug assembleClienteDebug testAdminDebugUnitTest testClienteDebugUnitTest lintAdminDebug lintClienteDebug
+
+APKS DE DEMOSTRACION
+app/build/outputs/apk/admin/debug/app-admin-debug.apk
+app/build/outputs/apk/cliente/debug/app-cliente-debug.apk
+Ambas utilizan Supabase real; no hay datos ficticios en el flujo productivo.
+
+PRUEBAS AISLADAS
+SQL: supabase/verification/inventory_orders_tests.sql
+Concurrencia: supabase/verification/concurrency_*.sql
+No ejecutar local_bootstrap.sql ni concurrency_setup.sql en el Supabase real.
+Java: SalesPeriodTest, CatalogFiltersTest, CsvExporterTest, OrderStatusUtilsTest.
+Android: ShoppingPersistenceTest utiliza preferencias de prueba aisladas.
+Android: AuthorizedOrderWorkflowTest requiere autorizacion clarysLiveTest=true;
+crea datos reales de demostracion. No ejecutarlo inadvertidamente.
+Android: DeviceFormValidationTest verifica los campos sin guardar productos.
+Edge: node tools/test-delete-account.cjs (sin llamadas reales).
+
+LIMITES DE LOS DATOS HISTORICOS
+Pedidos ya entregados antes de esta migracion no se convierten retrospectivamente
+en ventas. Pedidos anteriormente aprobados reservan al iniciar preparacion.
+Los precios del pedido nuevo y los costos de ventas nuevas quedan como snapshot.
+Los costos de ventas antiguas se reconstruyen desde el costo actual disponible:
+no es posible recuperar un costo historico que nunca fue almacenado.
+
+PUBLICACION
+Las APK Debug son para la demostracion. La publicacion requiere firma Release,
+Google OAuth correspondiente a esa firma y verificacion en Supabase real.
+No hacer commit/push hasta que el propietario lo solicite.

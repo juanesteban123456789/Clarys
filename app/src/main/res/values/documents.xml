@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="documents_title">Documentos de venta</string>
+    <string name="documents_subtitle">Comprobantes y cotizaciones</string>
+    <string name="documents_new">Nuevo documento</string>
+    <string name="documents_from_order">Desde pedido</string>
+    <string name="documents_from_sale">Desde venta</string>
+    <string name="documents_search">Buscar cliente, documento o pedido</string>
+    <string name="documents_filter">Tipo de documento</string>
+    <string name="documents_empty">No hay documentos que coincidan en este dispositivo.</string>
+    <string name="documents_history_error">No se pudo leer el historial local. No se eliminaron documentos.</string>
+    <string name="documents_delete_title">Eliminar documento local</string>
+    <string name="documents_delete_message">Se eliminará esta copia del historial. Los pedidos, ventas y archivos ya exportados no cambiarán.</string>
+    <string name="documents_delete">Eliminar</string>
+    <string name="documents_delete_error">No se pudo eliminar el documento.</string>
+    <string name="documents_cancel">Cancelar</string>
+    <string name="documents_accept">Aceptar</string>
+    <string name="documents_open">Abrir documento</string>
+    <string name="documents_no_orders">No hay pedidos disponibles para generar un documento.</string>
+    <string name="documents_no_sales">No hay ventas disponibles.</string>
+    <string name="documents_choose_order">Seleccionar pedido</string>
+    <string name="documents_choose_sale">Seleccionar venta</string>
+    <string name="documents_form_title">Documento comercial</string>
+    <string name="documents_type">Tipo</string>
+    <string name="documents_customer">Nombre del cliente</string>
+    <string name="documents_phone">Teléfono o WhatsApp (opcional)</string>
+    <string name="documents_customer_id">Identificación (opcional)</string>
+    <string name="documents_email">Correo (opcional)</string>
+    <string name="documents_payment">Estado del pago</string>
+    <string name="documents_items">Conceptos</string>
+    <string name="documents_add_line">Agregar concepto</string>
+    <string name="documents_discount">Descuento</string>
+    <string name="documents_notes">Observaciones para el cliente (opcional)</string>
+    <string name="documents_save">Guardar y ver PDF</string>
+    <string name="documents_disclaimer">No constituye factura electrónica de venta.</string>
+    <string name="documents_line_title">Concepto del documento</string>
+    <string name="documents_line_description">Descripción</string>
+    <string name="documents_line_quantity">Cantidad</string>
+    <string name="documents_line_price">Precio unitario</string>
+    <string name="documents_edit_line">Editar concepto</string>
+    <string name="documents_remove_line">Quitar concepto</string>
+    <string name="documents_customer_required">El nombre del cliente es obligatorio.</string>
+    <string name="documents_description_required">La descripción es obligatoria.</string>
+    <string name="documents_quantity_error">Escribe una cantidad entre 1 y 100.000.</string>
+    <string name="documents_price_error">Escribe un precio entre 0 y 100.000.000.</string>
+    <string name="documents_currency_error">Configura una moneda válida en Ajustes antes de crear documentos.</string>
+    <string name="documents_discount_error">El descuento debe estar entre cero y el subtotal.</string>
+    <string name="documents_phone_error">Escribe un teléfono válido.</string>
+    <string name="documents_email_error">Escribe un correo válido.</string>
+    <string name="documents_items_required">Agrega al menos un concepto.</string>
+    <string name="documents_max_lines">El documento admite hasta 100 conceptos.</string>
+    <string name="documents_order_unavailable">El pedido no está disponible o está cancelado.</string>
+    <string name="documents_sale_unavailable">La venta no está disponible para este taller.</string>
+    <string name="documents_restore_error">No se pudo recuperar el borrador de esta pantalla.</string>
+    <string name="documents_save_error">No se pudo guardar el documento. Intenta nuevamente.</string>
+    <string name="documents_existing">Ya existe un documento para este origen. Se abrió la copia original.</string>
+    <string name="documents_wait">Espera a que termine el guardado.</string>
+    <string name="documents_discard_title">Descartar cambios</string>
+    <string name="documents_discard_message">El documento todavía no se ha guardado.</string>
+    <string name="documents_discard">Descartar</string>
+    <string name="documents_totals">Subtotal: %1$s\nTotal: %2$s</string>
+    <string name="documents_exported">PDF guardado en la ubicación seleccionada.</string>
+    <string name="documents_export_error">No se pudo guardar el PDF en ese destino.</string>
+    <string name="documents_open_error">No se pudo abrir el PDF del documento.</string>
+    <string name="documents_share_error">No se pudo compartir el PDF.</string>
+    <string name="documents_export">Guardar PDF</string>
+    <string name="documents_share">Compartir PDF</string>
+    <string name="documents_print">Imprimir</string>
+    <string name="documents_previous">Página anterior</string>
+    <string name="documents_next">Página siguiente</string>
+    <string name="documents_page_number">Página %1$d de %2$d</string>
+    <string name="documents_preview">Vista previa del documento</string>
+    <string name="documents_line_summary">%1$s\n%2$d × %3$s = %4$s</string>
+    <string name="documents_row_title">%1$s · %2$s</string>
+    <string name="documents_row_details">%1$s · %2$s</string>
+    <string-array name="document_types"><item>Comprobante comercial</item><item>Cotización</item></string-array>
+    <string-array name="document_filters"><item>Todos</item><item>Comprobantes</item><item>Cotizaciones</item></string-array>
+    <string-array name="document_payments"><item>Pago no verificado</item><item>Pago registrado por el taller</item></string-array>
+    <style name="DocumentField" parent="DocumentFieldBase" />
+    <style name="DocumentFieldBase" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:textColor">@color/clarys_dark</item>
+        <item name="android:textColorHint">@color/clarys_muted</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:maxLength">100</item>
+        <item name="android:inputType">textCapSentences</item>
+    </style>
+    <style name="DocumentAction" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:background">@drawable/bg_action_client</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">12dp</item>
+        <item name="drawableTint">@android:color/white</item>
+    </style>
+    <style name="DocumentHeading">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:textColor">@color/clarys_dark</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="DocumentIcon" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/bg_header_action</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="tint">@color/clarys_dark</item>
+    </style>
+</resources>

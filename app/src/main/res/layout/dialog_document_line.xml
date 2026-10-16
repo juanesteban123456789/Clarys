@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+    <EditText android:id="@+id/inputDocumentLineDescription" style="@style/DocumentField" android:hint="@string/documents_line_description"
+        android:inputType="textCapSentences|textMultiLine" android:maxLength="180" />
+    <EditText android:id="@+id/inputDocumentLineQuantity" style="@style/DocumentField" android:hint="@string/documents_line_quantity"
+        android:inputType="number" android:maxLength="6" />
+    <com.clarys.app.ui.EndLockedNumberEditText android:id="@+id/inputDocumentLinePrice" style="@style/DocumentField"
+        android:hint="@string/documents_line_price" android:inputType="number" android:maxLength="9" />
+</LinearLayout>

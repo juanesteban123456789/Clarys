@@ -1,5 +1,7 @@
 package com.clarys.app.model;
 
+import com.clarys.app.util.TextSanitizer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,14 +14,15 @@ public class Sale {
     private final String status;
     private final int discount;
     private final List<CartItem> items;
+    private String createdAt = "";
 
     public Sale(int id, String customerName, String customerPhone, String paymentMethod,
             String status, int discount, List<CartItem> items) {
         this.id = id;
-        this.customerName = customerName;
-        this.customerPhone = customerPhone;
-        this.paymentMethod = paymentMethod;
-        this.status = status;
+        this.customerName = TextSanitizer.orDefault(customerName, "Cliente");
+        this.customerPhone = TextSanitizer.emptyIfNull(customerPhone);
+        this.paymentMethod = TextSanitizer.orDefault(paymentMethod, "Pendiente");
+        this.status = TextSanitizer.orDefault(status, "Confirmada");
         this.discount = Math.max(0, discount);
         this.items = new ArrayList<>(items);
     }
@@ -27,6 +30,9 @@ public class Sale {
     public int getId() {
         return id;
     }
+
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String value) { createdAt = TextSanitizer.emptyIfNull(value); }
 
     public String getCustomerName() {
         return customerName;
@@ -52,15 +58,15 @@ public class Sale {
         return Collections.unmodifiableList(items);
     }
 
-    public int getSubtotal() {
-        int subtotal = 0;
+    public long getSubtotal() {
+        long subtotal = 0;
         for (CartItem item : items) {
             subtotal += item.getSubtotal();
         }
         return subtotal;
     }
 
-    public int getTotal() {
+    public long getTotal() {
         return Math.max(0, getSubtotal() - discount);
     }
 

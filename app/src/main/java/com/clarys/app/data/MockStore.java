@@ -195,8 +195,8 @@ public class MockStore {
         }
     }
 
-    public int getCartTotal() {
-        int total = 0;
+    public long getCartTotal() {
+        long total = 0;
         for (CartItem item : cart) {
             total += item.getSubtotal();
         }
@@ -250,7 +250,7 @@ public class MockStore {
         return value == null || value.trim().isEmpty() ? fallback : value.trim();
     }
 
-    private void registerCustomerSale(String name, String phone, int total) {
+    private void registerCustomerSale(String name, String phone, long total) {
         for (Customer customer : customers) {
             if (customer.getPhone().equals(phone)) {
                 customer.registerSale(total);
@@ -293,18 +293,18 @@ public class MockStore {
         return count;
     }
 
-    public int getTodaySalesTotal() {
-        int total = 0;
+    public long getTodaySalesTotal() {
+        long total = 0;
         for (Sale sale : sales) {
             total += sale.getTotal();
         }
         return total;
     }
 
-    public int getInventoryValue() {
-        int total = 0;
+    public long getInventoryValue() {
+        long total = 0;
         for (Product product : products) {
-            total += product.getStock() * product.getPurchasePrice();
+            total += (long) product.getStock() * product.getPurchasePrice();
         }
         return total;
     }
@@ -316,7 +316,7 @@ public class MockStore {
         return Collections.max(products, Comparator.comparingInt(Product::getSoldUnits));
     }
 
-    public String formatMoney(int value) {
+    public String formatMoney(long value) {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
         formatter.setMaximumFractionDigits(0);
         return formatter.format(value);

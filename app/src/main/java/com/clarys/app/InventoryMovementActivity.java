@@ -8,6 +8,7 @@ import android.widget.Spinner;
 import com.clarys.app.data.StoreCallback;
 import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.Product;
+import com.clarys.app.ui.VariantPicker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,8 @@ public class InventoryMovementActivity extends BaseScreenActivity {
                 new String[]{"Entrada", "Salida", "Ajuste"}));
 
         findViewById(R.id.buttonApplyMovement).setOnClickListener(view -> applyMovement());
-        bindNavigation(R.id.buttonCancelMovement, InventoryActivity.class);
+        findViewById(R.id.buttonCancelMovement).setOnClickListener(view -> navigateHome());
+        ((android.widget.TextView) findViewById(R.id.buttonCancelMovement)).setText(R.string.navigation_back_dashboard);
     }
 
     private void loadProducts() {
@@ -65,7 +67,7 @@ public class InventoryMovementActivity extends BaseScreenActivity {
         }
 
         int quantity = parseQuantity();
-        if (quantity <= 0) {
+        if (quantity < 0 || (quantity == 0 && !"Ajuste".equals(typeSpinner.getSelectedItem().toString()))) {
             showMessage("Ingresa una cantidad válida");
             return;
         }
@@ -75,7 +77,9 @@ public class InventoryMovementActivity extends BaseScreenActivity {
         }
 
         Product selected = products.get(productSpinner.getSelectedItemPosition());
-        store.adjustStockAsync(selected.getId(), typeSpinner.getSelectedItem().toString(),
+        VariantPicker.show(this,selected,variantId -> {
+        findViewById(R.id.buttonApplyMovement).setEnabled(false);
+        store.adjustStockAsync(selected.getId(),variantId,typeSpinner.getSelectedItem().toString(),
                 quantity, reasonInput.getText().toString(), new StoreCallback<Void>() {
                     @Override
                     public void onSuccess(Void result) {
@@ -86,16 +90,18 @@ public class InventoryMovementActivity extends BaseScreenActivity {
 
                     @Override
                     public void onError(String message) {
+                        findViewById(R.id.buttonApplyMovement).setEnabled(true);
                         showMessage(message);
                     }
                 });
+        });
     }
 
     private int parseQuantity() {
         try {
             return Integer.parseInt(quantityInput.getText().toString().trim());
         } catch (NumberFormatException exception) {
-            return 0;
+            return -1;
         }
     }
 }

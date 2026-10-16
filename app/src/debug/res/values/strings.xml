@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="sqlite_evidence_short_title">SQLite SENA</string>
+    <string name="sqlite_evidence_header_subtitle">Evidencia académica local</string>
+    <string name="sqlite_evidence_title">Prueba de autenticación SQLite</string>
+    <string name="sqlite_evidence_subtitle" tools:ignore="TypographyDashes">Módulo académico GA8-220501096-AA2-EV02</string>
+    <string name="sqlite_evidence_notice">Demostración local aislada. La autenticación real de Clarys continúa funcionando con Supabase Auth.</string>
+    <string name="sqlite_evidence_demo_credentials">Usuario demo: admin@clarys.local\nContraseña demo: Sena1234*</string>
+    <string name="sqlite_evidence_email_label">Correo académico</string>
+    <string name="sqlite_evidence_email_hint">admin@clarys.local</string>
+    <string name="sqlite_evidence_password_label">Contraseña</string>
+    <string name="sqlite_evidence_password_hint">Ingresa la contraseña demo</string>
+    <string name="sqlite_evidence_validate">Validar usuario</string>
+    <string name="sqlite_evidence_clear">Limpiar</string>
+    <string name="sqlite_evidence_waiting">Esperando validación local.</string>
+    <string name="sqlite_evidence_required_fields">Correo y contraseña son obligatorios</string>
+    <string name="sqlite_evidence_success">Acceso correcto</string>
+    <string name="sqlite_evidence_invalid_credentials">Credenciales incorrectas</string>
+    <string name="sqlite_evidence_back">Volver al panel</string>
+</resources>

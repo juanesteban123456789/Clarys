@@ -1,0 +1,44 @@
+VALIDACION DE NOTIFICACIONES CLARYS - 14/10/2026
+
+Dispositivo: Xiaomi M2003J15SC, Android API 31.
+App administrativa Debug: com.clarys.app, version 1.1.0 (2).
+APK administrativa actualizada mediante instalacion -r, sin borrar datos.
+
+Prueba opt-in: OrderNotificationsDeviceTest.
+Ultima ejecucion: 18:24 America/Bogota. Resultado: OK (1 test).
+
+PASS: primera lectura establece la referencia sin avisar de pedidos antiguos.
+PASS: un pedido nuevo genera el aviso correcto en el canal HIGH.
+PASS: banner superior visible, confirmado por captura y detector de interfaz.
+PASS: repetir la consulta no vuelve a publicar el mismo aviso.
+PASS: resumen diario de 5 pedidos sinteticos activos: 2 nuevos, 1 contactado,
+      1 confirmado y 1 en preparacion; excluye entregados y cancelados.
+PASS: repetir la consulta el mismo dia no vuelve a publicar el resumen.
+PASS: tocar el resumen abre ReportsActivity con filtro active (Por atender).
+PASS: sin pedidos activos se retiran los avisos.
+PASS: estado de preferencias de prueba limpiado (<map />).
+PASS: tarea periodica 41013 registrada tras reabrir Clarys; ejecucion forzada
+      iniciada y terminada mediante jobFinished; estado final waiting.
+
+Primer intento: el detector visual exacto no reconocio el banner de MIUI,
+aunque la captura lo mostraba. Se ajusto solo la prueba automatizada para
+considerar los textos/RemoteViews de MIUI. La segunda ejecucion paso completa.
+No fue necesario cambiar el codigo productivo para hacer aparecer el banner.
+
+Seguridad: preferencias aisladas para los contadores sinteticos; sin crear
+pedidos ni modificar productos, ventas o inventario en Supabase. Las pantallas
+administrativas abiertas pueden consultar datos y renovar la sesion habitual.
+Avisos de prueba retirados y Clarys dejada en el panel administrativo.
+No se hizo commit ni push.
+
+Limitacion: no se espero un ciclo real de 24 horas ni se certifica ejecucion
+nocturna con ahorro de bateria/Doze. Se comprobo el disparo del resumen en
+horario permitido y su deduplicacion durante el mismo dia. Android puede
+retrasar los trabajos en segundo plano; este mecanismo no es push instantaneo.
+
+Capturas locales (archivos generados, no publicar sin revisar datos visibles):
+app/build/reports/device-notifications/new-order-banner.png
+app/build/reports/device-notifications/daily-notifications.png
+
+Comando utilizado (requiere sesion admin y telefono conectado):
+adb shell am instrument -w -r -e clarysNotificationTest true -e class com.clarys.app.data.OrderNotificationsDeviceTest com.clarys.app.test/androidx.test.runner.AndroidJUnitRunner

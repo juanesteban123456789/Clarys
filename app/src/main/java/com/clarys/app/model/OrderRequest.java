@@ -1,12 +1,16 @@
 package com.clarys.app.model;
 
+import com.clarys.app.util.TextSanitizer;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderRequest {
 
     public static final String STATUS_PENDING = "pending";
+    public static final String STATUS_CONTACTED = "contacted";
     public static final String STATUS_APPROVED = "approved";
+    public static final String STATUS_PREPARING = "preparing";
     public static final String STATUS_REJECTED = "rejected";
     public static final String STATUS_COMPLETED = "completed";
 
@@ -17,6 +21,7 @@ public class OrderRequest {
     private final List<CartItem> items;
 
     private String status;
+    private String aiDescription;
     private String adminNotes;
     private String receiptUrl;
     private String createdAt;
@@ -24,6 +29,8 @@ public class OrderRequest {
     private String approvedAt;
     private String rejectedAt;
     private String completedAt;
+    private List<OrderEvent> events = new ArrayList<>();
+    private int saleId;
 
     public OrderRequest(
             int id,
@@ -32,6 +39,7 @@ public class OrderRequest {
             String customerPhone,
             List<CartItem> items,
             String status,
+            String aiDescription,
             String adminNotes,
             String receiptUrl,
             String createdAt,
@@ -41,25 +49,31 @@ public class OrderRequest {
             String completedAt
     ) {
         this.id = id;
-        this.workshopId = workshopId;
-        this.customerName = customerName;
-        this.customerPhone = customerPhone;
+        this.workshopId = TextSanitizer.emptyIfNull(workshopId);
+        this.customerName = TextSanitizer.orDefault(customerName, "Cliente");
+        this.customerPhone = TextSanitizer.emptyIfNull(customerPhone);
         this.items = items == null
                 ? new ArrayList<>()
                 : new ArrayList<>(items);
-        this.status = status;
-        this.adminNotes = adminNotes;
-        this.receiptUrl = receiptUrl;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.approvedAt = approvedAt;
-        this.rejectedAt = rejectedAt;
-        this.completedAt = completedAt;
+        this.status = TextSanitizer.orDefault(status, STATUS_PENDING);
+        this.aiDescription = TextSanitizer.emptyIfNull(aiDescription);
+        this.adminNotes = TextSanitizer.emptyIfNull(adminNotes);
+        this.receiptUrl = TextSanitizer.emptyIfNull(receiptUrl);
+        this.createdAt = TextSanitizer.emptyIfNull(createdAt);
+        this.updatedAt = TextSanitizer.emptyIfNull(updatedAt);
+        this.approvedAt = TextSanitizer.emptyIfNull(approvedAt);
+        this.rejectedAt = TextSanitizer.emptyIfNull(rejectedAt);
+        this.completedAt = TextSanitizer.emptyIfNull(completedAt);
     }
 
     public int getId() {
         return id;
     }
+
+    public List<OrderEvent> getEvents() { return new ArrayList<>(events); }
+    public void setEvents(List<OrderEvent> values) { events = new ArrayList<>(values); }
+    public int getSaleId() { return saleId; }
+    public void setSaleId(int value) { saleId=value; }
 
     public String getWorkshopId() {
         return workshopId;
@@ -83,6 +97,10 @@ public class OrderRequest {
 
     public String getAdminNotes() {
         return adminNotes;
+    }
+
+    public String getAiDescription() {
+        return aiDescription;
     }
 
     public String getReceiptUrl() {
@@ -110,19 +128,23 @@ public class OrderRequest {
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status = TextSanitizer.orDefault(status, STATUS_PENDING);
     }
 
     public void setAdminNotes(String adminNotes) {
-        this.adminNotes = adminNotes;
+        this.adminNotes = TextSanitizer.emptyIfNull(adminNotes);
+    }
+
+    public void setAiDescription(String aiDescription) {
+        this.aiDescription = TextSanitizer.emptyIfNull(aiDescription);
     }
 
     public void setReceiptUrl(String receiptUrl) {
-        this.receiptUrl = receiptUrl;
+        this.receiptUrl = TextSanitizer.emptyIfNull(receiptUrl);
     }
 
-    public int getTotal() {
-        int total = 0;
+    public long getTotal() {
+        long total = 0;
 
         for (CartItem item : items) {
             total += item.getSubtotal();
@@ -147,6 +169,14 @@ public class OrderRequest {
 
     public boolean isApproved() {
         return STATUS_APPROVED.equalsIgnoreCase(status);
+    }
+
+    public boolean isContacted() {
+        return STATUS_CONTACTED.equalsIgnoreCase(status);
+    }
+
+    public boolean isPreparing() {
+        return STATUS_PREPARING.equalsIgnoreCase(status);
     }
 
     public boolean isRejected() {

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.clarys.app.data.StoreCallback;
 import com.clarys.app.data.SupabaseStore;
+import com.clarys.app.data.OrderNotifications;
 import com.clarys.app.model.OrderRequest;
 import com.clarys.app.model.Product;
 import com.clarys.app.ui.DashboardChartView;
@@ -18,6 +19,15 @@ public class MainActivity extends BaseScreenActivity {
 
     private SupabaseStore store;
     private DashboardChartView chartDashboard;
+    private final android.os.Handler orderRefreshHandler=new android.os.Handler(android.os.Looper.getMainLooper());
+    private boolean orderRefreshRunning;
+    private final Runnable orderRefreshTask=new Runnable() {
+        @Override public void run() {
+            if(!store.isAuthenticated()) { return; }
+            refreshOrdersForDashboard();
+            orderRefreshHandler.postDelayed(this,30000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +36,7 @@ public class MainActivity extends BaseScreenActivity {
         store = SupabaseStore.getInstance(this);
 
         if (!store.isAuthenticated()) {
-            openScreen(LoginActivity.class);
+            openScreen(AdminAccessActivity.class);
             finish();
             return;
         }
@@ -34,6 +44,14 @@ public class MainActivity extends BaseScreenActivity {
         setContentView(R.layout.activity_main);
 
         chartDashboard = findViewById(R.id.chartDashboard);
+        OrderNotifications.schedule(this);
+        if(android.os.Build.VERSION.SDK_INT>=33 && OrderNotifications.isEnabled(this)
+                && androidx.core.content.ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.POST_NOTIFICATIONS)!=android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
+                    granted -> { if(granted) { OrderNotifications.schedule(this); } })
+                    .launch(android.Manifest.permission.POST_NOTIFICATIONS);
+        }
 
         // Menú inferior desplegable
         setupBottomMenu();
@@ -59,10 +77,19 @@ public class MainActivity extends BaseScreenActivity {
         findViewById(R.id.buttonPendingOrders)
                 .setOnClickListener(view -> openPendingOrders());
 
+        findViewById(R.id.buttonDashboardSales)
+                .setOnClickListener(view -> openSalesReports());
+
+        findViewById(R.id.buttonDashboardLowStock)
+                .setOnClickListener(view -> openLowStockProducts());
+
+        findViewById(R.id.buttonDashboardInventoryValue)
+                .setOnClickListener(view -> openScreen(InventoryActivity.class));
+
         // Opciones adicionales
 
         findViewById(R.id.buttonOpenCatalog)
-                .setOnClickListener(view -> openAdminCatalog());
+                .setOnClickListener(view -> openClientCatalogPreview());
 
         bindNavigation(
                 R.id.buttonOpenCustomers,
@@ -74,8 +101,30 @@ public class MainActivity extends BaseScreenActivity {
                 SettingsActivity.class
         );
 
+        setupSQLiteEvidenceAccess();
+        bindNavigation(R.id.buttonOpenSalesDocuments, SalesDocumentsActivity.class);
+
         findViewById(R.id.buttonLogout)
                 .setOnClickListener(view -> logout());
+    }
+
+    /**
+     * Expone el módulo académico solo en DEBUG. La clase destino vive en el
+     * source set debug y no forma parte de las APK release.
+     */
+    private void setupSQLiteEvidenceAccess() {
+        View evidenceButton = findViewById(R.id.buttonOpenSQLiteEvidence);
+        evidenceButton.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
+
+        if (BuildConfig.DEBUG) {
+            evidenceButton.setOnClickListener(view -> {
+                Intent intent = new Intent();
+                intent.setClassName(
+                        getPackageName(),
+                        "com.clarys.app.evidence.sqlite.SQLiteEvidenceActivity");
+                startActivity(intent);
+            });
+        }
     }
 
 
@@ -217,6 +266,8 @@ public class MainActivity extends BaseScreenActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        orderRefreshHandler.removeCallbacks(orderRefreshTask);
+        orderRefreshHandler.postDelayed(orderRefreshTask,30000);
 
         renderDashboard();
 
@@ -263,6 +314,8 @@ public class MainActivity extends BaseScreenActivity {
     }
 
     private void refreshOrdersForDashboard() {
+        if(orderRefreshRunning || !store.isAuthenticated()) { return; }
+        orderRefreshRunning=true;
 
         store.refreshOrderRequests(
                 new StoreCallback<java.util.List<OrderRequest>>() {
@@ -270,17 +323,24 @@ public class MainActivity extends BaseScreenActivity {
                     @Override
                     public void onSuccess(
                             java.util.List<OrderRequest> result) {
+                        orderRefreshRunning=false;
+                        OrderNotifications.process(MainActivity.this,store.getWorkshopId(),result);
 
                         renderDashboard();
                     }
 
                     @Override
                     public void onError(String message) {
-
+                        orderRefreshRunning=false;
                         renderDashboard();
                     }
                 }
         );
+    }
+
+    @Override protected void onPause() {
+        orderRefreshHandler.removeCallbacks(orderRefreshTask);
+        super.onPause();
     }
 
     private void openPendingOrders() {
@@ -304,6 +364,16 @@ public class MainActivity extends BaseScreenActivity {
         startActivity(intent);
     }
 
+    private void openSalesReports() {
+        startActivity(new Intent(this, ReportsActivity.class));
+    }
+
+    private void openLowStockProducts() {
+        Intent intent = new Intent(this, ProductListActivity.class);
+        intent.putExtra(ProductListActivity.EXTRA_PRODUCT_FILTER, "Stock bajo");
+        startActivity(intent);
+    }
+
 
     // =========================================================
     // DASHBOARD
@@ -313,7 +383,7 @@ public class MainActivity extends BaseScreenActivity {
 
         Product product = store.getBestSeller();
 
-        int salesTotal =
+        long salesTotal =
                 store.getTodaySalesTotal();
 
         int orders =
@@ -368,12 +438,7 @@ public class MainActivity extends BaseScreenActivity {
                 );
 
 
-        chartDashboard.setMetrics(
-                salesTotal,
-                orders,
-                lowStock,
-                products
-        );
+        chartDashboard.setSales(store.getSales());
     }
 
 
@@ -381,7 +446,7 @@ public class MainActivity extends BaseScreenActivity {
     // CATÁLOGO
     // =========================================================
 
-    private void openAdminCatalog() {
+    private void openClientCatalogPreview() {
 
         Intent intent =
                 new Intent(
@@ -391,6 +456,11 @@ public class MainActivity extends BaseScreenActivity {
 
         intent.putExtra(
                 "adminCatalog",
+                false
+        );
+
+        intent.putExtra(
+                "openedFromAdmin",
                 true
         );
 
@@ -403,22 +473,6 @@ public class MainActivity extends BaseScreenActivity {
     // =========================================================
 
     private void logout() {
-
-        store.signOut();
-
-        Intent intent =
-                new Intent(
-                        this,
-                        LoginActivity.class
-                );
-
-        intent.addFlags(
-                Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NEW_TASK
-        );
-
-        startActivity(intent);
-
-        finish();
+        confirmRootExit();
     }
 }

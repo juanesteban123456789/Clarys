@@ -117,11 +117,15 @@
             <!-- ================================================= -->
 
             <LinearLayout
+                android:id="@+id/buttonDashboardSales"
                 android:layout_width="match_parent"
                 android:layout_height="122dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_action_client"
+                android:clickable="true"
                 android:elevation="6dp"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="18dp"
@@ -152,7 +156,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:alpha="0.8"
-                        android:text="Ventas"
+                        android:text="Ventas de hoy"
                         android:textColor="@color/clarys_light"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -172,7 +176,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:alpha="0.75"
-                        android:text="Rendimiento comercial"
+                        android:text="Toca para ver reportes"
                         android:textColor="@color/clarys_light"
                         android:textSize="11sp" />
 
@@ -258,6 +262,7 @@
                 <!-- STOCK BAJO -->
 
                 <LinearLayout
+                    android:id="@+id/buttonDashboardLowStock"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:minHeight="144dp"
@@ -265,6 +270,9 @@
                     android:layout_marginStart="6dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_stock_badge"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:orientation="vertical"
                     android:gravity="center"
                     android:padding="16dp">
@@ -303,6 +311,16 @@
                         android:textSize="22sp"
                         android:textStyle="bold" />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:text="Toca para revisar"
+                        android:textColor="@color/clarys_mid"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -313,10 +331,14 @@
             <!-- ================================================= -->
 
             <LinearLayout
+                android:id="@+id/buttonDashboardInventoryValue"
                 android:layout_width="match_parent"
                 android:layout_height="86dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_product_info_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -392,7 +414,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Actividad del taller"
+                            android:text="Ventas de los últimos 7 días"
                             android:textColor="@color/clarys_dark"
                             android:textSize="17sp"
                             android:textStyle="bold" />
@@ -401,7 +423,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
-                            android:text="Resumen operativo"
+                            android:text="Valores en pesos · fecha local"
                             android:textColor="@color/clarys_muted"
                             android:textSize="12sp" />
 
@@ -545,7 +567,7 @@
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="7dp"
-                    android:text="Mi catálogo"
+                    android:text="Vista cliente"
                     android:textAllCaps="false"
                     android:textColor="@color/clarys_mid"
                     android:textSize="11sp"
@@ -577,6 +599,10 @@
             </LinearLayout>
 
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buttonOpenSalesDocuments" style="@style/DocumentAction"
+                android:drawableStart="@drawable/ic_report" android:text="@string/documents_title" />
+
             <!-- AJUSTES -->
 
             <androidx.appcompat.widget.AppCompatButton
@@ -594,6 +620,25 @@
                 android:textSize="13sp"
                 android:textStyle="bold"
                 app:drawableStartCompat="@drawable/ic_settings"
+                app:drawableTint="@color/clarys_mid" />
+
+            <!-- Disponible únicamente en compilaciones DEBUG para la evidencia SENA. -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buttonOpenSQLiteEvidence"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="9dp"
+                android:background="@drawable/bg_soft_button"
+                android:backgroundTint="@null"
+                android:drawablePadding="9dp"
+                android:gravity="center"
+                android:text="@string/sqlite_evidence_menu"
+                android:textAllCaps="false"
+                android:textColor="@color/clarys_mid"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_inventory_dark"
                 app:drawableTint="@color/clarys_mid" />
 
 

@@ -126,7 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Utiliza el mismo número de teléfono que ingresaste cuando realizaste tu pedido."
+            android:text="Por privacidad, solo se muestran pedidos creados desde este dispositivo."
             android:textColor="@color/clarys_muted"
             android:textSize="14sp" />
 
@@ -149,7 +149,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Número de teléfono"
+                android:text="Pedidos guardados"
                 android:textColor="@color/clarys_dark"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -159,28 +159,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:text="Buscaremos los pedidos asociados a este número."
+                android:text="La aplicación utiliza códigos privados de seguimiento guardados de forma segura."
                 android:textColor="@color/clarys_muted"
                 android:textSize="12sp" />
-
-
-            <!-- INPUT -->
-
-            <EditText
-                android:id="@+id/inputClientOrdersPhone"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_input"
-                android:hint="Ej. 300 123 4567"
-                android:imeOptions="actionSearch"
-                android:inputType="phone"
-                android:maxLines="1"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:textColor="@color/clarys_text"
-                android:textColorHint="@color/clarys_muted"
-                android:textSize="15sp" />
 
 
             <!-- BOTÓN CONSULTAR -->
@@ -196,7 +177,7 @@
                 android:gravity="center"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Consultar pedidos"
+                android:text="Actualizar pedidos"
                 android:textAllCaps="false"
                 android:textColor="@color/clarys_light"
                 android:textSize="15sp"
@@ -217,7 +198,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:text="Ingresa el número utilizado al realizar tu pedido."
+            android:text="Consulta los pedidos creados desde este dispositivo."
             android:textColor="@color/clarys_muted"
             android:textSize="13sp" />
 
@@ -287,7 +268,7 @@
                 android:gravity="center"
                 android:minHeight="110dp"
                 android:padding="20dp"
-                android:text="No encontramos pedidos asociados a este número."
+                android:text="Todavía no hay pedidos guardados en este dispositivo."
                 android:textColor="@color/clarys_muted"
                 android:textSize="14sp"
                 android:visibility="gone" />
