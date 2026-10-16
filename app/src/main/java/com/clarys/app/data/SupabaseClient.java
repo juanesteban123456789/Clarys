@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -29,8 +30,19 @@ public class SupabaseClient {
     private static final MediaType JSON =
             MediaType.get("application/json; charset=utf-8");
 
+    private static final long CONNECT_TIMEOUT_SECONDS = 15L;
+    private static final long READ_TIMEOUT_SECONDS = 30L;
+    private static final long WRITE_TIMEOUT_SECONDS = 30L;
+    private static final long CALL_TIMEOUT_SECONDS = 45L;
+
     private final OkHttpClient client =
-            new OkHttpClient();
+            new OkHttpClient.Builder()
+                    .connectTimeout(CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                    .readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                    .writeTimeout(WRITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                    .callTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .build();
 
     private final Handler mainHandler =
             new Handler(Looper.getMainLooper());
@@ -185,8 +197,7 @@ public class SupabaseClient {
             return false;
         }
 
-        session.saveAuth(accessToken, refreshToken, userId, expiresAt);
-        return true;
+        return session.saveAuth(accessToken, refreshToken, userId, expiresAt);
     }
 
     private void completeRefresh(boolean active, String errorMessage) {
@@ -569,8 +580,7 @@ public class SupabaseClient {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException exception) {
-                postError(callback,
-                        "No se pudo conectar con Supabase: " + exception.getMessage());
+                postError(callback, connectionErrorMessage());
             }
 
             @Override
@@ -715,8 +725,7 @@ public class SupabaseClient {
 
                         postError(
                                 callback,
-                                "No se pudo conectar con Supabase: "
-                                        + exception.getMessage()
+                                connectionErrorMessage()
                         );
                     }
 
@@ -836,6 +845,10 @@ public class SupabaseClient {
 
         return "Supabase respondió con error "
                 + code;
+    }
+
+    private String connectionErrorMessage() {
+        return "No se pudo conectar. Revisa tu conexión e inténtalo nuevamente.";
     }
 
 

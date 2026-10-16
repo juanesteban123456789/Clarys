@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="promotion_title">Preparar publicación</string>
+    <string name="promotion_back">Volver atrás</string>
+    <string name="promotion_home">Ir al inicio</string>
+    <string name="promotion_post">Publicación</string>
+    <string name="promotion_story">Historia</string>
+    <string name="promotion_price">Mostrar precio</string>
+    <string name="promotion_contact">Mostrar WhatsApp</string>
+    <string name="promotion_caption">Descripción de la publicación</string>
+    <string name="promotion_copy">Copiar texto</string>
+    <string name="promotion_save">Guardar imagen</string>
+    <string name="promotion_share">Compartir</string>
+    <string name="promotion_reset">Restablecer texto</string>
+    <string name="promotion_copied">Descripción copiada</string>
+    <string name="promotion_saved">Imagen guardada</string>
+    <string name="promotion_empty">Escribe una descripción para copiarla</string>
+    <string name="promotion_unavailable">Este producto no está disponible para promocionar en tu taller</string>
+    <string name="promotion_missing_photo">Agrega una foto al producto antes de preparar la publicación</string>
+    <string name="promotion_error">No se pudo preparar la imagen. Revisa tu conexión e inténtalo nuevamente.</string>
+    <string name="promotion_export_error">No se pudo guardar o compartir la imagen. Inténtalo nuevamente.</string>
+    <string name="promotion_retry">Reintentar</string>
+    <string name="promotion_preview">Vista previa de la imagen promocional</string>
+    <string name="promotion_caption_label">Texto para acompañar la imagen</string>
+    <string name="promotion_reset_title">¿Restablecer la descripción?</string>
+    <string name="promotion_reset_message">Se reemplazará el texto editado con los datos del producto y las opciones actuales.</string>
+    <string name="promotion_discard_title">¿Salir de la publicación?</string>
+    <string name="promotion_discard_message">Los cambios del texto no se conservarán.</string>
+</resources>

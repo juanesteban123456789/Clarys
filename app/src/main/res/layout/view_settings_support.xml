@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:layout_marginTop="16dp">
+    <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchOrderNotifications"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="Avisos de pedidos" android:textColor="@color/clarys_dark" />
+    <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchDailyOrderReminder"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:minHeight="52dp"
+        android:text="@string/order_notifications_daily_switch" android:textColor="@color/clarys_dark" />
+    <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonOrderNotificationSettings"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp"
+        android:text="@string/order_notifications_settings" android:textAllCaps="false"
+        android:drawableStart="@drawable/ic_settings" android:drawablePadding="8dp"
+        android:textColor="@color/clarys_dark" android:background="@drawable/bg_admin_action"
+        android:backgroundTint="@null" />
+    <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonSettingsHelp"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="Ayuda y contacto" android:textAllCaps="false"
+        android:textColor="@color/clarys_dark" android:background="@drawable/bg_admin_action"
+        android:backgroundTint="@null" />
+    <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonSettingsPrivacy"
+        android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="8dp"
+        android:text="Privacidad" android:textAllCaps="false"
+        android:textColor="@color/clarys_dark" android:background="@drawable/bg_admin_action"
+        android:backgroundTint="@null" />
+    <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonDeleteAccount"
+        android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="8dp"
+        android:text="Eliminar cuenta y taller" android:textAllCaps="false"
+        android:textColor="@color/clarys_danger" android:background="@drawable/bg_soft_button"
+        android:backgroundTint="@null" />
+</LinearLayout>

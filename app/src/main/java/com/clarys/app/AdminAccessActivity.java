@@ -3,6 +3,7 @@ package com.clarys.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,12 +22,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 import java.util.Locale;
 
 public class AdminAccessActivity extends BaseScreenActivity {
+
+    private static final String TAG = "ClarysGoogleAuth";
 
     private SupabaseStore store;
 
@@ -79,6 +84,11 @@ public class AdminAccessActivity extends BaseScreenActivity {
                 R.id.buttonHeaderHome,
                 R.id.buttonHeaderBack
         );
+
+        if (BuildConfig.IS_ADMIN_APP) {
+            findViewById(R.id.buttonHeaderHome).setVisibility(View.GONE);
+            findViewById(R.id.buttonHeaderBack).setVisibility(View.GONE);
+        }
 
 
         emailInput =
@@ -511,12 +521,10 @@ public class AdminAccessActivity extends BaseScreenActivity {
         }
 
 
-        if (passwordValue.length() < 6
-                || passwordValue.length()
-                > ValidationUtils.MAX_SHORT_TEXT_LENGTH) {
+        if (!ValidationUtils.isStrongPassword(passwordValue)) {
 
             showMessage(
-                    "La contraseña debe tener entre 6 y 80 caracteres"
+                    "Usa mínimo 8 caracteres con mayúscula, minúscula, número y símbolo"
             );
 
             return false;
@@ -1097,10 +1105,30 @@ public class AdminAccessActivity extends BaseScreenActivity {
 
 
         } catch (ApiException exception) {
+            int statusCode = exception.getStatusCode();
+            Log.w(TAG, "Google Sign-In falló con código " + statusCode);
+            showMessage(getGoogleSignInErrorMessage(statusCode));
+        }
+    }
 
-            showMessage(
-                    "No se pudo iniciar sesión con Google"
-            );
+    private String getGoogleSignInErrorMessage(int statusCode) {
+        switch (statusCode) {
+            case CommonStatusCodes.DEVELOPER_ERROR:
+                return "Google rechazó la configuración de esta aplicación (código 10)";
+            case CommonStatusCodes.NETWORK_ERROR:
+                return "No se pudo conectar con Google. Revisa tu conexión (código 7)";
+            case CommonStatusCodes.INTERNAL_ERROR:
+                return "Google Play Services presentó un error interno (código 8)";
+            case CommonStatusCodes.API_NOT_CONNECTED:
+                return "Google Play Services no está disponible en este dispositivo (código 17)";
+            case GoogleSignInStatusCodes.SIGN_IN_CANCELLED:
+                return "El inicio de sesión con Google fue cancelado (código 12501)";
+            case GoogleSignInStatusCodes.SIGN_IN_FAILED:
+                return "Google rechazó el inicio de sesión (código 12500)";
+            case GoogleSignInStatusCodes.SIGN_IN_CURRENTLY_IN_PROGRESS:
+                return "Ya hay un inicio de sesión con Google en curso (código 12502)";
+            default:
+                return "No se pudo iniciar sesión con Google (código " + statusCode + ")";
         }
     }
 
@@ -1219,7 +1247,6 @@ public class AdminAccessActivity extends BaseScreenActivity {
          *
          * AdminAccessActivity
          * CatalogActivity
-         * LoginActivity
          */
         intent.addFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK

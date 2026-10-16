@@ -252,15 +252,17 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/buttonAddProduct"
                 android:layout_width="0dp"
-                android:layout_height="62dp"
+                android:layout_height="54dp"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_action_client"
                 android:backgroundTint="@null"
-                android:elevation="5dp"
                 android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:singleLine="true"
                 android:text="Agregar producto"
                 android:textAllCaps="false"
                 android:textColor="@color/clarys_light"
@@ -274,14 +276,17 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/buttonOpenInventoryFromProducts"
                 android:layout_width="0dp"
-                android:layout_height="62dp"
+                android:layout_height="54dp"
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_admin_action"
                 android:backgroundTint="@null"
                 android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:singleLine="true"
                 android:text="Inventario"
                 android:textAllCaps="false"
                 android:textColor="@color/clarys_mid"
@@ -357,8 +362,66 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="@drawable/bg_product_info_card"
+            android:minHeight="148dp"
             android:orientation="vertical"
             android:padding="8dp">
+
+            <ProgressBar
+                android:id="@+id/progressAdminProducts"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="34dp"
+                android:layout_marginBottom="34dp"
+                android:indeterminateTint="@color/clarys_mid" />
+
+            <LinearLayout
+                android:id="@+id/layoutAdminProductsState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingTop="22dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="22dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/textAdminProductsStateTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/clarys_dark"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textAdminProductsStateMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:textColor="@color/clarys_muted"
+                    android:textSize="13sp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/buttonAdminProductsStateAction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_action_client"
+                    android:backgroundTint="@null"
+                    android:minWidth="150dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/clarys_light"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerAdminProducts"
@@ -367,7 +430,8 @@
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
                 android:paddingTop="4dp"
-                android:paddingBottom="4dp" />
+                android:paddingBottom="4dp"
+                android:visibility="gone" />
 
         </LinearLayout>
 

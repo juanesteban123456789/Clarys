@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,6 +21,7 @@ import com.clarys.app.data.StoreCallback;
 import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.CartItem;
 import com.clarys.app.model.OrderRequest;
+import com.clarys.app.util.OrderStatusUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,8 +36,6 @@ public class ClientOrdersActivity extends BaseScreenActivity {
 
     private ClientPreferences clientPreferences;
 
-    private EditText inputPhone;
-
     private AppCompatButton buttonSearch;
 
     private ProgressBar progress;
@@ -50,6 +47,8 @@ public class ClientOrdersActivity extends BaseScreenActivity {
     private RecyclerView recyclerOrders;
 
     private ClientOrdersAdapter adapter;
+
+    private boolean openedFromAdmin;
 
 
     // =========================================================
@@ -69,6 +68,15 @@ public class ClientOrdersActivity extends BaseScreenActivity {
         store =
                 SupabaseStore.getInstance(this);
 
+        openedFromAdmin =
+                BuildConfig.IS_ADMIN_APP
+                        && getIntent().getBooleanExtra(
+                        "openedFromAdmin",
+                        false
+                )
+                        && AppModeManager.isAdminMode(this)
+                        && store.isAuthenticated();
+
 
         clientPreferences =
                 new ClientPreferences(this);
@@ -80,11 +88,10 @@ public class ClientOrdersActivity extends BaseScreenActivity {
 
         setupRecycler();
 
-        restoreLastPhone();
-
         setupActions();
 
         renderInitialState();
+        searchOrders();
     }
 
 
@@ -108,12 +115,6 @@ public class ClientOrdersActivity extends BaseScreenActivity {
     // =========================================================
 
     private void bindViews() {
-
-        inputPhone =
-                findViewById(
-                        R.id.inputClientOrdersPhone
-                );
-
 
         buttonSearch =
                 findViewById(
@@ -183,9 +184,7 @@ public class ClientOrdersActivity extends BaseScreenActivity {
          */
         if (buttonHome != null) {
 
-            buttonHome.setOnClickListener(
-                    view -> openClientCatalog()
-            );
+            buttonHome.setOnClickListener(view -> navigateHome());
         }
     }
 
@@ -206,6 +205,11 @@ public class ClientOrdersActivity extends BaseScreenActivity {
         intent.putExtra(
                 "adminCatalog",
                 false
+        );
+
+        intent.putExtra(
+                "openedFromAdmin",
+                openedFromAdmin
         );
 
 
@@ -248,20 +252,6 @@ public class ClientOrdersActivity extends BaseScreenActivity {
         buttonSearch.setOnClickListener(
                 view -> searchOrders()
         );
-
-
-        /*
-         * Si el usuario pulsa "buscar" desde el teclado,
-         * también realizamos la consulta.
-         */
-        inputPhone.setOnEditorActionListener(
-                (textView, actionId, event) -> {
-
-                    searchOrders();
-
-                    return true;
-                }
-        );
     }
 
 
@@ -271,52 +261,21 @@ public class ClientOrdersActivity extends BaseScreenActivity {
 
     private void searchOrders() {
 
-        String phone =
-                inputPhone
-                        .getText()
-                        .toString()
-                        .trim();
-
-
-        // -----------------------------------------------------
-        // VALIDACIÓN BÁSICA
-        // -----------------------------------------------------
-
-        if (phone.isEmpty()) {
-
-            showMessage(
-                    "Escribe tu número de teléfono"
-            );
-
-            inputPhone.requestFocus();
-
+        List<String> trackingTokens = clientPreferences.getTrackingTokens();
+        if (trackingTokens.isEmpty()) {
+            showEmptyState();
             return;
         }
-
-
-        if (!ValidationUtils.isValidPhone(phone)) {
-
-            showMessage(
-                    "Escribe un número de teléfono válido"
-            );
-
-            inputPhone.requestFocus();
-
-            return;
-        }
-
-
-        hideKeyboard();
 
         setLoading(true);
 
 
         // =====================================================
-        // AQUÍ SE LLAMA findClientOrdersByPhone()
+        // Los tokens son secretos aleatorios, no números telefónicos.
         // =====================================================
 
-        store.findClientOrdersByPhone(
-                phone,
+        store.findClientOrdersByTrackingTokens(
+                trackingTokens,
 
                 new StoreCallback<List<OrderRequest>>() {
 
@@ -325,11 +284,6 @@ public class ClientOrdersActivity extends BaseScreenActivity {
                             List<OrderRequest> orders) {
 
                         setLoading(false);
-
-
-                        saveLastPhone(
-                                phone
-                        );
 
 
                         if (orders == null
@@ -389,7 +343,7 @@ public class ClientOrdersActivity extends BaseScreenActivity {
 
 
         textStatus.setText(
-                "Ingresa el número utilizado al realizar tu pedido."
+                "Consulta los pedidos creados desde este dispositivo."
         );
     }
 
@@ -398,11 +352,6 @@ public class ClientOrdersActivity extends BaseScreenActivity {
             boolean loading) {
 
         buttonSearch.setEnabled(
-                !loading
-        );
-
-
-        inputPhone.setEnabled(
                 !loading
         );
 
@@ -468,11 +417,11 @@ public class ClientOrdersActivity extends BaseScreenActivity {
         textStatus.setText(
                 count == 1
 
-                        ? "Encontramos 1 pedido asociado a este número."
+                        ? "Encontramos 1 pedido de este dispositivo."
 
                         : "Encontramos "
                         + count
-                        + " pedidos asociados a este número."
+                        + " pedidos de este dispositivo."
         );
     }
 
@@ -500,7 +449,7 @@ public class ClientOrdersActivity extends BaseScreenActivity {
 
 
         textEmpty.setText(
-                "No encontramos pedidos asociados a este número."
+                "Todavía no hay pedidos guardados en este dispositivo."
         );
     }
 
@@ -531,72 +480,6 @@ public class ClientOrdersActivity extends BaseScreenActivity {
 
                         : message
         );
-    }
-
-
-    // =========================================================
-    // TELÉFONO RECIENTE
-    // =========================================================
-
-    private void saveLastPhone(
-            String phone) {
-
-        clientPreferences.savePhone(
-                phone
-        );
-    }
-
-
-    private void restoreLastPhone() {
-
-        String phone =
-                clientPreferences.getLastPhone();
-
-
-        if (phone != null
-                && !phone.isEmpty()) {
-
-            inputPhone.setText(
-                    phone
-            );
-
-
-            inputPhone.setSelection(
-                    phone.length()
-            );
-        }
-    }
-
-
-    // =========================================================
-    // TECLADO
-    // =========================================================
-
-    private void hideKeyboard() {
-
-        View focused =
-                getCurrentFocus();
-
-
-        if (focused == null) {
-            return;
-        }
-
-
-        InputMethodManager manager =
-                (InputMethodManager)
-                        getSystemService(
-                                Context.INPUT_METHOD_SERVICE
-                        );
-
-
-        if (manager != null) {
-
-            manager.hideSoftInputFromWindow(
-                    focused.getWindowToken(),
-                    0
-            );
-        }
     }
 
 
@@ -1346,43 +1229,12 @@ public class ClientOrdersActivity extends BaseScreenActivity {
 
     private String statusLabel(
             String status) {
-
-        if (OrderRequest.STATUS_PENDING
-                .equalsIgnoreCase(status)) {
-
-            return "PENDIENTE";
-        }
-
-
-        if (OrderRequest.STATUS_APPROVED
-                .equalsIgnoreCase(status)) {
-
-            return "APROBADO";
-        }
-
-
-        if (OrderRequest.STATUS_REJECTED
-                .equalsIgnoreCase(status)) {
-
-            return "DENEGADO";
-        }
-
-
-        if (OrderRequest.STATUS_COMPLETED
-                .equalsIgnoreCase(status)) {
-
-            return "COMPLETADO";
-        }
-
-
-        return status == null
-                || status.trim().isEmpty()
-
-                ? "PENDIENTE"
-
-                : status.toUpperCase(
-                Locale.ROOT
-        );
+        String label = OrderStatusUtils.label(status);
+        return "PEDIDO".equals(label)
+                && status != null
+                && !status.trim().isEmpty()
+                ? status.toUpperCase(Locale.ROOT)
+                : label;
     }
 
 

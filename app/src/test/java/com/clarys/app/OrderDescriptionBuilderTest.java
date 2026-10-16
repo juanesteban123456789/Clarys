@@ -54,13 +54,83 @@ public class OrderDescriptionBuilderTest {
         assertTrue(description.contains("2 unidades de Camiseta"));
         assertTrue(description.contains("1 unidad de Pantalón"));
         assertTrue(description.contains("$ 110.000"));
-        assertTrue(description.contains("stock suficiente"));
+        assertTrue(description.contains("inventario disponible es suficiente"));
+    }
+
+    @Test
+    public void buildIdentifiesInsufficientAndInactiveProducts() {
+        Product shirt = product(
+                1,
+                "Camiseta",
+                25000,
+                1,
+                true
+        );
+        Product pants = product(
+                2,
+                "Pantalón",
+                60000,
+                10,
+                false
+        );
+
+        OrderRequest order = order(
+                new CartItem(shirt, 2),
+                new CartItem(pants, 1)
+        );
+
+        String description = OrderDescriptionBuilder.build(
+                order,
+                "$ 110.000"
+        );
+
+        assertTrue(description.contains("inventario es insuficiente"));
+        assertTrue(description.contains("Camiseta (solicita 2 y hay 1)"));
+        assertTrue(description.contains("Pantalón no está activo"));
+    }
+
+    @Test
+    public void buildRequestsManualValidationWhenInventoryIsUnknown() {
+        Product product = product(
+                3,
+                "Vestido",
+                80000
+        );
+
+        OrderRequest order = order(
+                new CartItem(product, 1, false)
+        );
+
+        String description = OrderDescriptionBuilder.build(
+                order,
+                "$ 80.000"
+        );
+
+        assertTrue(description.contains(
+                "verificar manualmente el stock de Vestido"
+        ));
     }
 
     private Product product(
             int id,
             String name,
             int price) {
+
+        return product(
+                id,
+                name,
+                price,
+                10,
+                true
+        );
+    }
+
+    private Product product(
+            int id,
+            String name,
+            int price,
+            int stock,
+            boolean active) {
 
         return new Product(
                 id,
@@ -69,13 +139,34 @@ public class OrderDescriptionBuilderTest {
                 "Ropa",
                 0,
                 price,
-                10,
+                stock,
                 2,
                 "",
                 "",
                 "",
-                true,
+                active,
                 0
+        );
+    }
+
+    private OrderRequest order(
+            CartItem... items) {
+
+        return new OrderRequest(
+                10,
+                "workshop",
+                "Juanito",
+                "573001234567",
+                Arrays.asList(items),
+                OrderRequest.STATUS_PENDING,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
         );
     }
 }

@@ -17,19 +17,18 @@ public class LauncherActivity extends AppCompatActivity {
         SupabaseStore store =
                 SupabaseStore.getInstance(this);
 
-
-        boolean wantsAdmin =
-                AppModeManager.isAdminMode(this);
-
-        if (!wantsAdmin) {
+        if (!BuildConfig.IS_ADMIN_APP) {
+            AppModeManager.enterClientMode(this);
             openClientCatalog();
             return;
         }
 
         if (!store.isAuthenticated()) {
-            openLogin();
+            openAdminAccess();
             return;
         }
+
+        AppModeManager.enterAdminMode(this);
 
         store.validateAdminSession(true, new StoreCallback<Boolean>() {
             @Override
@@ -39,7 +38,7 @@ public class LauncherActivity extends AppCompatActivity {
                 } else {
                     store.signOut();
                     AppModeManager.enterClientMode(LauncherActivity.this);
-                    openLogin();
+                    openAdminAccess();
                 }
             }
 
@@ -59,8 +58,8 @@ public class LauncherActivity extends AppCompatActivity {
         finish();
     }
 
-    private void openLogin() {
-        openAndFinish(LoginActivity.class);
+    private void openAdminAccess() {
+        openAndFinish(AdminAccessActivity.class);
     }
 
     private void openAndFinish(Class<?> targetActivity) {

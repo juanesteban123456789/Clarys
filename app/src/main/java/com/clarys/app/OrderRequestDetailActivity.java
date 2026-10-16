@@ -15,6 +15,9 @@ import com.clarys.app.data.StoreCallback;
 import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.model.CartItem;
 import com.clarys.app.model.OrderRequest;
+import com.clarys.app.model.OrderEvent;
+import com.clarys.app.util.OrderStatusUtils;
+import com.clarys.app.util.SalesPeriod;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -190,24 +193,21 @@ public class OrderRequestDetailActivity
 
         approveButton
                 .setOnClickListener(
-                        view ->
-                                updateStatus(
-                                        OrderRequest.STATUS_APPROVED
-                                )
+                        view -> advanceOrder()
                 );
 
 
         rejectButton
                 .setOnClickListener(
                         view ->
-                                confirmReject()
+                                confirmCancel()
                 );
 
 
         completeButton
                 .setOnClickListener(
                         view ->
-                                confirmComplete()
+                                confirmDelivery()
                 );
     }
 
@@ -273,6 +273,13 @@ public class OrderRequestDetailActivity
         if (order == null) {
             return;
         }
+
+        findViewById(R.id.buttonOrderDocument).setEnabled(!order.isRejected());
+        findViewById(R.id.buttonOrderDocument).setOnClickListener(view -> {
+            android.content.Intent intent = new android.content.Intent(this, SalesDocumentFormActivity.class);
+            intent.putExtra("orderId", orderId);
+            startActivity(intent);
+        });
 
 
         ((TextView) findViewById(
@@ -346,6 +353,9 @@ public class OrderRequestDetailActivity
         );
 
 
+        renderTimeline();
+
+
         renderDescription();
 
         whatsappButton.setVisibility(
@@ -363,6 +373,97 @@ public class OrderRequestDetailActivity
         renderReceipt();
 
         renderActions();
+    }
+
+
+    private void renderTimeline() {
+
+        LinearLayout timeline =
+                findViewById(R.id.layoutOrderTimeline);
+
+        timeline.removeAllViews();
+
+        if (order.isRejected()) {
+            timeline.addView(createTimelineStep(
+                    OrderStatusUtils.label(order.getStatus()),
+                    true,
+                    true
+            ));
+        } else {
+            int currentIndex =
+                    OrderStatusUtils.progressIndex(order.getStatus());
+
+            String[] statuses =
+                    OrderStatusUtils.workflowStatuses();
+
+            for (int index = 0; index < statuses.length; index++) {
+                timeline.addView(createTimelineStep(
+                        OrderStatusUtils.label(statuses[index]),
+                        index <= currentIndex,
+                        false
+                ));
+            }
+        }
+
+        String updatedAt = order.getUpdatedAt();
+        if (updatedAt == null || updatedAt.trim().isEmpty()) {
+            updatedAt = order.getCreatedAt();
+        }
+
+        ((TextView) findViewById(R.id.textOrderTimelineUpdated))
+                .setText("Última actualización: " + formatDate(updatedAt));
+        LinearLayout audit = findViewById(R.id.layoutOrderAuditTrail);
+        audit.removeAllViews();
+        for (OrderEvent event : order.getEvents()) {
+            TextView entry = new TextView(this);
+            entry.setText(OrderStatusUtils.label(event.getStatus())+" · "+formatDate(event.getCreatedAt())
+                    +" · "+(event.getActorId().isEmpty() ? "Cliente" : "Administración"));
+            entry.setTextSize(11);
+            entry.setTextColor(getColor(R.color.clarys_muted));
+            entry.setPadding(0,dp(4),0,dp(4));
+            audit.addView(entry);
+        }
+        if (order.getSaleId()>0) {
+            TextView sale = new TextView(this);
+            sale.setText("Venta registrada #" + order.getSaleId());
+            sale.setTextColor(getColor(R.color.clarys_mid));
+            audit.addView(sale);
+        }
+    }
+
+
+    private TextView createTimelineStep(
+            String label,
+            boolean reached,
+            boolean cancelled) {
+
+        TextView step = new TextView(this);
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        dp(42)
+                );
+        params.setMarginEnd(dp(8));
+        step.setLayoutParams(params);
+        step.setGravity(android.view.Gravity.CENTER);
+        step.setPadding(dp(14), 0, dp(14), 0);
+        step.setText(label);
+        step.setTextSize(10);
+        step.setTypeface(step.getTypeface(), android.graphics.Typeface.BOLD);
+        step.setBackgroundResource(cancelled
+                ? R.drawable.bg_soft_card
+                : reached
+                ? R.drawable.bg_category_chip_active
+                : R.drawable.bg_category_chip);
+        step.setTextColor(getColor(cancelled
+                ? R.color.clarys_danger
+                : reached
+                ? R.color.clarys_light
+                : R.color.clarys_muted));
+        step.setContentDescription(
+                "Estado " + label.toLowerCase(java.util.Locale.getDefault())
+        );
+        return step;
     }
 
 
@@ -519,8 +620,7 @@ public class OrderRequestDetailActivity
 
 
         uploadReceiptButton.setVisibility(
-                order.isPending()
-                        || order.isApproved()
+                OrderStatusUtils.isActive(order.getStatus())
                         ? View.VISIBLE
                         : View.GONE
         );
@@ -529,14 +629,11 @@ public class OrderRequestDetailActivity
 
     private void renderActions() {
 
-        boolean pending =
-                order.isPending();
-
-        boolean approved =
-                order.isApproved();
-
         boolean manageable =
-                pending || approved;
+                OrderStatusUtils.isActive(order.getStatus());
+
+        boolean preparing =
+                order.isPreparing();
 
 
         findViewById(
@@ -549,23 +646,35 @@ public class OrderRequestDetailActivity
 
 
         approveButton.setVisibility(
-                pending
+                manageable && !preparing
                         ? View.VISIBLE
                         : View.GONE
+        );
+
+        ((TextView) approveButton).setText(
+                OrderStatusUtils.nextActionLabel(order.getStatus())
         );
 
 
         rejectButton.setVisibility(
-                pending
+                manageable
                         ? View.VISIBLE
                         : View.GONE
         );
 
+        ((TextView) rejectButton).setText(
+                "Cancelar pedido"
+        );
+
 
         completeButton.setVisibility(
-                approved
+                preparing
                         ? View.VISIBLE
                         : View.GONE
+        );
+
+        ((TextView) completeButton).setText(
+                "Marcar como entregado"
         );
     }
 
@@ -627,7 +736,7 @@ public class OrderRequestDetailActivity
     private void persistDescription(
             String description,
             boolean requestedByUser,
-            boolean generatedWithAi) {
+            boolean generatedByService) {
 
         store.updateOrderRequestDescription(
                 orderId,
@@ -642,9 +751,9 @@ public class OrderRequestDetailActivity
 
                         if (requestedByUser) {
                             showMessage(
-                                    generatedWithAi
-                                            ? "Descripción mejorada con IA"
-                                            : "La IA no está disponible; se creó una descripción local"
+                                    generatedByService
+                                            ? "Descripción automática actualizada"
+                                            : "Se creó una descripción local del pedido"
                             );
                         }
                     }
@@ -689,7 +798,7 @@ public class OrderRequestDetailActivity
                 .setText(
                         loading
                                 ? "Generando descripción..."
-                                : "Mejorar descripción con IA"
+                                : "Actualizar descripción"
                 );
     }
 
@@ -946,8 +1055,23 @@ public class OrderRequestDetailActivity
     // ESTADOS
     // =============================================================
 
+    private void advanceOrder() {
+
+        String nextStatus =
+                OrderStatusUtils.nextStatus(order.getStatus());
+
+        if (nextStatus == null) {
+            showMessage("Este pedido ya no tiene una transición disponible");
+            return;
+        }
+
+        updateStatus(nextStatus);
+    }
+
     private void updateStatus(
             String status) {
+
+        setStatusActionsEnabled(false);
 
         store.updateOrderRequestStatus(
                 orderId,
@@ -959,8 +1083,11 @@ public class OrderRequestDetailActivity
                     public void onSuccess(
                             Void result) {
 
+                        setStatusActionsEnabled(true);
+
                         showMessage(
-                                "Pedido actualizado"
+                                "Pedido actualizado: "
+                                        + OrderStatusUtils.label(status)
                         );
 
                         refreshOrder();
@@ -971,28 +1098,38 @@ public class OrderRequestDetailActivity
                     public void onError(
                             String message) {
 
+                        setStatusActionsEnabled(true);
+
                         showMessage(message);
                     }
                 }
         );
     }
 
+    private void setStatusActionsEnabled(
+            boolean enabled) {
 
-    private void confirmReject() {
+        approveButton.setEnabled(enabled);
+        rejectButton.setEnabled(enabled);
+        completeButton.setEnabled(enabled);
+    }
+
+
+    private void confirmCancel() {
 
         new AlertDialog.Builder(this)
                 .setTitle(
-                        "Denegar pedido"
+                        "Cancelar pedido"
                 )
                 .setMessage(
-                        "¿Seguro que deseas denegar este pedido?"
+                        "¿Seguro que deseas cancelar este pedido? Esta acción cerrará su flujo."
                 )
                 .setNegativeButton(
                         "Cancelar",
                         null
                 )
                 .setPositiveButton(
-                        "Denegar",
+                        "Cancelar pedido",
                         (dialog, which) ->
                                 updateStatus(
                                         OrderRequest.STATUS_REJECTED
@@ -1002,21 +1139,21 @@ public class OrderRequestDetailActivity
     }
 
 
-    private void confirmComplete() {
+    private void confirmDelivery() {
 
         new AlertDialog.Builder(this)
                 .setTitle(
-                        "Completar pedido"
+                        "Confirmar entrega"
                 )
                 .setMessage(
-                        "¿Confirmas que este pedido fue completado?"
+                        "¿Confirmas que el pedido fue entregado al cliente?"
                 )
                 .setNegativeButton(
                         "Cancelar",
                         null
                 )
                 .setPositiveButton(
-                        "Completar",
+                        "Marcar entregado",
                         (dialog, which) ->
                                 updateStatus(
                                         OrderRequest.STATUS_COMPLETED
@@ -1032,67 +1169,13 @@ public class OrderRequestDetailActivity
 
     private String statusLabel(
             String status) {
-
-        if (OrderRequest.STATUS_PENDING
-                .equals(status)) {
-
-            return "PENDIENTE";
-        }
-
-
-        if (OrderRequest.STATUS_APPROVED
-                .equals(status)) {
-
-            return "APROBADO";
-        }
-
-
-        if (OrderRequest.STATUS_REJECTED
-                .equals(status)) {
-
-            return "DENEGADO";
-        }
-
-
-        if (OrderRequest.STATUS_COMPLETED
-                .equals(status)) {
-
-            return "COMPLETADO";
-        }
-
-
-        return "PEDIDO";
+        return OrderStatusUtils.label(status);
     }
 
 
     private String formatDate(
             String raw) {
-
-        if (raw == null
-                || raw.trim().isEmpty()) {
-
-            return "Fecha no disponible";
-        }
-
-
-        String clean =
-                raw.replace(
-                        "T",
-                        " "
-                );
-
-
-        if (clean.length() >= 16) {
-
-            clean =
-                    clean.substring(
-                            0,
-                            16
-                    );
-        }
-
-
-        return clean;
+        return SalesPeriod.display(raw);
     }
 
 

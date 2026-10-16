@@ -36,7 +36,8 @@ public class InventoryMovementAdapter extends RecyclerView.Adapter<InventoryMove
         holder.title.setText(movement.getType() + " | " + movement.getProductName());
         holder.detail.setText("Cantidad " + movement.getQuantity()
                 + " | " + movement.getPreviousStock() + " -> " + movement.getNewStock());
-        holder.reason.setText(movement.getReason());
+        holder.reason.setText(movement.getReason() + (movement.getCreatedAt().isEmpty() ? ""
+                : " · " + com.clarys.app.util.SalesPeriod.display(movement.getCreatedAt())));
     }
 
     @Override

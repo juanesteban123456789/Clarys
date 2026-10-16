@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:padding="16dp" android:orientation="vertical" android:background="@drawable/bg_login_canvas">
+    <include layout="@layout/view_document_header" />
+    <TextView android:id="@+id/textDocumentPreviewTitle" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" android:layout_marginBottom="8dp" android:textColor="@color/clarys_dark" android:textStyle="bold" android:textSize="14sp" />
+    <ProgressBar android:id="@+id/progressDocumentPreview" android:layout_width="28dp" android:layout_height="28dp" android:layout_gravity="center_horizontal" android:visibility="gone" />
+    <ImageView android:id="@+id/imageDocumentPage" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:scaleType="fitCenter" android:contentDescription="@string/documents_preview" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+        <androidx.appcompat.widget.AppCompatImageButton android:id="@+id/buttonDocumentPrevious" style="@style/DocumentIcon"
+            android:src="@drawable/ic_arrow_back" android:contentDescription="@string/documents_previous" />
+        <TextView android:id="@+id/textDocumentPageNumber" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:gravity="center" android:textColor="@color/clarys_dark" />
+        <androidx.appcompat.widget.AppCompatImageButton android:id="@+id/buttonDocumentNext" style="@style/DocumentIcon"
+            android:src="@drawable/ic_arrow_back" android:rotation="180" android:contentDescription="@string/documents_next" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false">
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonExportDocument" style="@style/DocumentAction" android:layout_width="0dp"
+            android:layout_height="96dp"
+            android:layout_weight="1" android:drawableTop="@android:drawable/ic_menu_save" android:text="@string/documents_export" android:textSize="12sp" />
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonShareDocument" style="@style/DocumentAction" android:layout_width="0dp"
+            android:layout_height="96dp"
+            android:layout_weight="1" android:layout_marginHorizontal="6dp" android:drawableTop="@android:drawable/ic_menu_share"
+            android:text="@string/documents_share" android:textSize="12sp" />
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonPrintDocument" style="@style/DocumentAction" android:layout_width="0dp"
+            android:layout_height="96dp"
+            android:layout_weight="1" android:drawableTop="@drawable/ic_document_print" android:text="@string/documents_print" android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>

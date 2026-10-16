@@ -3,6 +3,7 @@ package com.clarys.app.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.security.GeneralSecurityException;
 import java.util.Locale;
 
 public class SupabaseSession {
@@ -23,6 +24,7 @@ public class SupabaseSession {
     private static SupabaseSession instance;
 
     private final SharedPreferences preferences;
+    private final SessionCipher sessionCipher = new SessionCipher();
 
     private SupabaseSession(Context context) {
         preferences = context.getApplicationContext()
@@ -36,15 +38,23 @@ public class SupabaseSession {
         return instance;
     }
 
-    public void saveAuth(String accessToken, String refreshToken, String userId,
-                         long expiresAtEpochSeconds) {
-        preferences.edit()
-                .putString(KEY_ACCESS_TOKEN, accessToken)
-                .putString(KEY_REFRESH_TOKEN, refreshToken)
-                .putString(KEY_USER_ID, userId)
-                .putLong(KEY_ACCESS_TOKEN_EXPIRES_AT, expiresAtEpochSeconds)
-                .putLong(KEY_LAST_REFRESH_AT, currentEpochSeconds())
-                .apply();
+    public boolean saveAuth(String accessToken, String refreshToken, String userId,
+                            long expiresAtEpochSeconds) {
+        try {
+            String encryptedAccessToken = sessionCipher.encrypt(accessToken);
+            String encryptedRefreshToken = sessionCipher.encrypt(refreshToken);
+            preferences.edit()
+                    .putString(KEY_ACCESS_TOKEN, encryptedAccessToken)
+                    .putString(KEY_REFRESH_TOKEN, encryptedRefreshToken)
+                    .putString(KEY_USER_ID, userId)
+                    .putLong(KEY_ACCESS_TOKEN_EXPIRES_AT, expiresAtEpochSeconds)
+                    .putLong(KEY_LAST_REFRESH_AT, currentEpochSeconds())
+                    .apply();
+            return true;
+        } catch (GeneralSecurityException exception) {
+            clearAuthTokens();
+            return false;
+        }
     }
 
     public void saveProfile(String workshopId, String role) {
@@ -84,11 +94,11 @@ public class SupabaseSession {
     }
 
     public String getAccessToken() {
-        return preferences.getString(KEY_ACCESS_TOKEN, null);
+        return readSecureToken(KEY_ACCESS_TOKEN);
     }
 
     public String getRefreshToken() {
-        return preferences.getString(KEY_REFRESH_TOKEN, null);
+        return readSecureToken(KEY_REFRESH_TOKEN);
     }
 
     public String getUserId() {
@@ -135,6 +145,38 @@ public class SupabaseSession {
 
     public void clear() {
         preferences.edit().clear().apply();
+    }
+
+    /**
+     * Lee tokens cifrados y migra una sesión antigua sin conservar texto plano.
+     */
+    private String readSecureToken(String key) {
+        String storedValue = preferences.getString(key, null);
+        if (!hasText(storedValue)) {
+            return null;
+        }
+
+        try {
+            if (sessionCipher.isEncrypted(storedValue)) {
+                return sessionCipher.decrypt(storedValue);
+            }
+
+            String encryptedValue = sessionCipher.encrypt(storedValue);
+            preferences.edit().putString(key, encryptedValue).apply();
+            return storedValue;
+        } catch (GeneralSecurityException | IllegalArgumentException exception) {
+            clearAuthTokens();
+            return null;
+        }
+    }
+
+    private void clearAuthTokens() {
+        preferences.edit()
+                .remove(KEY_ACCESS_TOKEN)
+                .remove(KEY_REFRESH_TOKEN)
+                .remove(KEY_ACCESS_TOKEN_EXPIRES_AT)
+                .remove(KEY_LAST_REFRESH_AT)
+                .apply();
     }
 
     private String normalize(String value) {

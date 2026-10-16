@@ -3,11 +3,14 @@ package com.clarys.app;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.activity.OnBackPressedCallback;
 
 import com.clarys.app.data.SupabaseStore;
 import com.clarys.app.data.StoreCallback;
@@ -24,6 +27,69 @@ public abstract class BaseScreenActivity extends AppCompatActivity {
     private boolean sessionMonitoringActive;
     private boolean redirectingToLogin;
     private final Runnable sessionCheck = this::validateAdminSession;
+    private AlertDialog exitDialog;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() { handleBackNavigation(); }
+        });
+    }
+
+    /** Atras nunca recorre pantallas antiguas: vuelve al inicio o confirma la salida. */
+    protected void handleBackNavigation() {
+        if (getClass().equals(homeActivity())) { confirmRootExit(); }
+        else { navigateHome(); }
+    }
+
+    protected void navigateHome() {
+        if (isFinishing() || isDestroyed()) { return; }
+        if (getClass().equals(homeActivity())) { return; }
+        requestLeaveScreen(() -> {
+            Class<?> destination = homeActivity();
+            if (destination == MainActivity.class) { AppModeManager.enterAdminMode(this); }
+            Intent intent = new Intent(this, destination);
+            intent.putExtra(CatalogActivity.EXTRA_ADMIN_CATALOG, false);
+            intent.putExtra(CatalogActivity.EXTRA_OPENED_FROM_ADMIN, false);
+            // El inicio es la unica raiz: no queda ningun producto o formulario debajo.
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
+    }
+
+    /** Los formularios pueden confirmar el descarte antes de aplicar la navegacion comun. */
+    protected void requestLeaveScreen(Runnable navigation) { navigation.run(); }
+
+    private Class<?> homeActivity() {
+        if (!BuildConfig.IS_ADMIN_APP) { return CatalogActivity.class; }
+        return SupabaseStore.getInstance(this).isAuthenticated() ? MainActivity.class : AdminAccessActivity.class;
+    }
+
+    protected void confirmRootExit() {
+        if (isFinishing() || isDestroyed()) { return; }
+        if (exitDialog != null && exitDialog.isShowing()) { return; }
+        boolean logout = BuildConfig.IS_ADMIN_APP && SupabaseStore.getInstance(this).isAuthenticated();
+        exitDialog = new AlertDialog.Builder(this)
+                .setTitle(logout ? R.string.navigation_logout_title : R.string.navigation_exit_title)
+                .setMessage(logout ? R.string.navigation_logout_message : R.string.navigation_exit_message)
+                .setNegativeButton(R.string.navigation_stay, null)
+                .setPositiveButton(logout ? R.string.navigation_logout : R.string.navigation_exit, (dialog, which) -> {
+                    if (logout) {
+                        com.clarys.app.data.OrderNotifications.cancel(this);
+                        SupabaseStore.getInstance(this).signOut();
+                        AppModeManager.enterClientMode(this);
+                        Intent intent = new Intent(this, AdminAccessActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // El catalogo no tiene sesion; salir no borra carrito, favoritos o seguimiento.
+                        finishAndRemoveTask();
+                    }
+                }).show();
+    }
 
     @Override
     protected void onResume() {
@@ -43,6 +109,12 @@ public abstract class BaseScreenActivity extends AppCompatActivity {
         sessionMonitoringActive = false;
         sessionHandler.removeCallbacks(sessionCheck);
         super.onPause();
+    }
+
+    @Override protected void onDestroy() {
+        sessionHandler.removeCallbacks(sessionCheck);
+        if (exitDialog != null) { exitDialog.dismiss(); }
+        super.onDestroy();
     }
 
     private void validateAdminSession() {
@@ -101,7 +173,15 @@ public abstract class BaseScreenActivity extends AppCompatActivity {
         AppModeManager.enterClientMode(this);
         showMessage("Tu sesión administrativa venció. Inicia sesión nuevamente.");
 
-        Intent intent = new Intent(this, LoginActivity.class);
+        Class<?> destination = BuildConfig.IS_ADMIN_APP
+                ? AdminAccessActivity.class
+                : CatalogActivity.class;
+        Intent intent = new Intent(this, destination);
+
+        if (!BuildConfig.IS_ADMIN_APP) {
+            intent.putExtra("adminCatalog", false);
+        }
+
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -123,36 +203,7 @@ public abstract class BaseScreenActivity extends AppCompatActivity {
 
         if (homeButton != null) {
 
-            homeButton.setOnClickListener(view -> {
-
-                SupabaseStore store =
-                        SupabaseStore.getInstance(this);
-
-                boolean adminMode =
-                        AppModeManager.isAdminMode(this)
-                                && store.isAuthenticated();
-
-
-                if (adminMode) {
-
-                    openScreen(MainActivity.class);
-
-                } else {
-
-                    Intent intent =
-                            new Intent(
-                                    this,
-                                    CatalogActivity.class
-                            );
-
-                    intent.putExtra(
-                            "adminCatalog",
-                            false
-                    );
-
-                    startActivity(intent);
-                }
-            });
+            homeButton.setOnClickListener(view -> navigateHome());
         }
 
 
@@ -200,6 +251,10 @@ public abstract class BaseScreenActivity extends AppCompatActivity {
 
     protected void openScreen(
             Class<?> targetActivity) {
+
+        if (isFinishing() || isDestroyed()) { return; }
+
+        if (targetActivity == homeActivity()) { navigateHome(); return; }
 
         if (getClass().equals(targetActivity)) {
             return;

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="@drawable/bg_login_canvas" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:orientation="vertical">
+        <include layout="@layout/view_document_header" />
+        <TextView style="@style/DocumentHeading" android:text="@string/documents_subtitle" />
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonNewDocument" style="@style/DocumentAction"
+            android:drawableStart="@android:drawable/ic_input_add" android:text="@string/documents_new" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonDocumentFromOrder" style="@style/DocumentAction"
+                android:layout_width="0dp" android:layout_weight="1" android:text="@string/documents_from_order" />
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonDocumentFromSale" style="@style/DocumentAction"
+                android:layout_width="0dp" android:layout_weight="1" android:layout_marginStart="8dp" android:text="@string/documents_from_sale" />
+        </LinearLayout>
+        <EditText android:id="@+id/inputDocumentSearch" style="@style/DocumentField" android:hint="@string/documents_search" android:inputType="text" />
+        <Spinner android:id="@+id/spinnerDocumentFilter" android:layout_width="match_parent" android:layout_height="52dp"
+            android:layout_marginTop="8dp" android:contentDescription="@string/documents_filter" />
+        <ProgressBar android:id="@+id/progressDocumentHistory" android:layout_width="32dp" android:layout_height="32dp"
+            android:layout_gravity="center_horizontal" android:visibility="gone" />
+        <TextView android:id="@+id/textDocumentHistoryEmpty" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:paddingVertical="24dp" android:text="@string/documents_empty" android:textColor="@color/clarys_muted" />
+        <LinearLayout android:id="@+id/containerDocumentHistory" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

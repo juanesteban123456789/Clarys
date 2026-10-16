@@ -2,6 +2,10 @@ package com.clarys.app;
 
 import android.os.Bundle;
 import android.widget.EditText;
+import android.content.Intent;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
+import com.clarys.app.data.OrderNotifications;
 
 import com.clarys.app.data.StoreCallback;
 import com.clarys.app.data.SupabaseStore;
@@ -31,6 +35,68 @@ public class SettingsActivity extends BaseScreenActivity {
         minStockInput.setText(String.valueOf(store.getDefaultMinStock()));
 
         findViewById(R.id.buttonSaveSettings).setOnClickListener(view -> saveSettings());
+        SwitchCompat notifications=findViewById(R.id.switchOrderNotifications);
+        SwitchCompat dailyReminder = findViewById(R.id.switchDailyOrderReminder);
+        dailyReminder.setChecked(OrderNotifications.isDailyReminderEnabled(this));
+        dailyReminder.setEnabled(OrderNotifications.isEnabled(this));
+        dailyReminder.setOnCheckedChangeListener((button, checked) ->
+                OrderNotifications.setDailyReminderEnabled(this, checked));
+        findViewById(R.id.buttonOrderNotificationSettings).setOnClickListener(view -> {
+            Intent intent = new Intent(android.os.Build.VERSION.SDK_INT >= 26
+                    ? android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                    : android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            if (android.os.Build.VERSION.SDK_INT >= 26) {
+                intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, getPackageName());
+            } else {
+                intent.setData(android.net.Uri.parse("package:" + getPackageName()));
+            }
+            startActivity(intent);
+        });
+        notifications.setChecked(OrderNotifications.isEnabled(this));
+        notifications.setOnCheckedChangeListener((button,checked)-> {
+            OrderNotifications.setEnabled(this,checked);
+            dailyReminder.setEnabled(checked);
+            if(checked && android.os.Build.VERSION.SDK_INT>=33
+                    && androidx.core.content.ContextCompat.checkSelfPermission(this,android.Manifest.permission.POST_NOTIFICATIONS)
+                    !=android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                showMessage("Activa los avisos de Clarys en los permisos del dispositivo");
+                Intent intent=new Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE,getPackageName());
+                startActivity(intent);
+            }
+        });
+        findViewById(R.id.buttonSettingsHelp).setOnClickListener(view -> openScreen(HelpActivity.class));
+        findViewById(R.id.buttonSettingsPrivacy).setOnClickListener(view -> {
+            Intent intent=new Intent(this,HelpActivity.class); intent.putExtra("privacy",true); startActivity(intent);
+        });
+        findViewById(R.id.buttonDeleteAccount).setOnClickListener(view -> confirmDeleteAccount());
+    }
+
+    private void confirmDeleteAccount() {
+        EditText password=new EditText(this);
+        password.setHint("Contraseña (si usas correo)");
+        password.setInputType(android.text.InputType.TYPE_CLASS_TEXT|android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Eliminar cuenta y taller")
+                .setMessage("Se eliminarán la cuenta, el taller, sus productos, pedidos, ventas e imágenes. "
+                        +"Esta acción es permanente. Exporta tus datos antes de continuar.")
+                .setView(password).setNegativeButton("Conservar cuenta",null).setPositiveButton("Eliminar",null).create();
+        dialog.setOnShowListener(ignored -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            store.deleteAccount(password.getText().toString(),new StoreCallback<Void>() {
+                @Override public void onSuccess(Void result) {
+                    OrderNotifications.cancel(SettingsActivity.this);
+                    dialog.dismiss();
+                    Intent intent=new Intent(SettingsActivity.this,AdminAccessActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent); finish();
+                }
+                @Override public void onError(String message) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    password.setError(message);
+                }
+            });
+        }));
+        dialog.show();
     }
 
     private void saveSettings() {

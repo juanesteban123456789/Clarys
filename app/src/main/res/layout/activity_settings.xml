@@ -385,6 +385,8 @@
         <!-- GUARDAR -->
         <!-- ================================================= -->
 
+        <include layout="@layout/view_settings_support" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonSaveSettings"
             android:layout_width="match_parent"

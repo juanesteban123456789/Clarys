@@ -8,7 +8,9 @@ import java.util.List;
 public class OrderRequest {
 
     public static final String STATUS_PENDING = "pending";
+    public static final String STATUS_CONTACTED = "contacted";
     public static final String STATUS_APPROVED = "approved";
+    public static final String STATUS_PREPARING = "preparing";
     public static final String STATUS_REJECTED = "rejected";
     public static final String STATUS_COMPLETED = "completed";
 
@@ -27,6 +29,8 @@ public class OrderRequest {
     private String approvedAt;
     private String rejectedAt;
     private String completedAt;
+    private List<OrderEvent> events = new ArrayList<>();
+    private int saleId;
 
     public OrderRequest(
             int id,
@@ -65,6 +69,11 @@ public class OrderRequest {
     public int getId() {
         return id;
     }
+
+    public List<OrderEvent> getEvents() { return new ArrayList<>(events); }
+    public void setEvents(List<OrderEvent> values) { events = new ArrayList<>(values); }
+    public int getSaleId() { return saleId; }
+    public void setSaleId(int value) { saleId=value; }
 
     public String getWorkshopId() {
         return workshopId;
@@ -134,8 +143,8 @@ public class OrderRequest {
         this.receiptUrl = TextSanitizer.emptyIfNull(receiptUrl);
     }
 
-    public int getTotal() {
-        int total = 0;
+    public long getTotal() {
+        long total = 0;
 
         for (CartItem item : items) {
             total += item.getSubtotal();
@@ -160,6 +169,14 @@ public class OrderRequest {
 
     public boolean isApproved() {
         return STATUS_APPROVED.equalsIgnoreCase(status);
+    }
+
+    public boolean isContacted() {
+        return STATUS_CONTACTED.equalsIgnoreCase(status);
+    }
+
+    public boolean isPreparing() {
+        return STATUS_PREPARING.equalsIgnoreCase(status);
     }
 
     public boolean isRejected() {

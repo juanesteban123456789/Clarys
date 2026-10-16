@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <service android:name=".data.OrderNotificationJobService" android:enabled="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".CustomerActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".ReportsActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".SaleDetailActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".SaleActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".InventoryMovementActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".ProductFormActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".ProductListActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".InventoryActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".ManagementActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".AdminAccessActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".OrderRequestDetailActivity"
+            android:enabled="false" />
+        <activity
+            android:name=".MainActivity"
+            android:enabled="false" />
+    </application>
+
+</manifest>

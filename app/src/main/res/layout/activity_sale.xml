@@ -499,12 +499,14 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <com.clarys.app.ui.EndLockedNumberEditText
                 android:id="@+id/inputSaleDiscount"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:layout_marginTop="7dp"
                 android:background="@drawable/bg_input"
+                android:digits="0123456789"
+                android:gravity="end|center_vertical"
                 android:hint="0"
                 android:inputType="number"
                 android:paddingStart="14dp"
@@ -512,6 +514,7 @@
                 android:singleLine="true"
                 android:textColor="@color/clarys_text"
                 android:textColorHint="@color/clarys_muted"
+                android:textDirection="ltr"
                 android:textSize="14sp" />
 
         </LinearLayout>

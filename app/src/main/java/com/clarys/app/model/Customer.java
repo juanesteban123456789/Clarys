@@ -6,9 +6,9 @@ public class Customer {
     private final String name;
     private final String phone;
     private int totalOrders;
-    private int totalSpent;
+    private long totalSpent;
 
-    public Customer(String name, String phone, int totalOrders, int totalSpent) {
+    public Customer(String name, String phone, int totalOrders, long totalSpent) {
         this.name = TextSanitizer.orDefault(name, "Cliente");
         this.phone = TextSanitizer.emptyIfNull(phone);
         this.totalOrders = totalOrders;
@@ -27,11 +27,11 @@ public class Customer {
         return totalOrders;
     }
 
-    public int getTotalSpent() {
+    public long getTotalSpent() {
         return totalSpent;
     }
 
-    public void registerSale(int total) {
+    public void registerSale(long total) {
         totalOrders++;
         totalSpent += Math.max(0, total);
     }

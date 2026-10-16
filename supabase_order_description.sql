@@ -1,5 +1,5 @@
--- Clarys - descripción automática de pedidos
--- Ejecutar una sola vez en Supabase SQL Editor antes de usar la IA.
+-- Clarys - descripción automática de pedidos mediante reglas locales.
+-- Ejecutar una sola vez en Supabase SQL Editor antes de usar esta función.
 
 alter table public.contact_requests
     add column if not exists ai_description text;

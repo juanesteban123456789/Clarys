@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginTop="16dp" android:orientation="vertical">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Período de ventas" android:textSize="13sp" android:textColor="@color/clarys_dark" />
+    <Spinner android:id="@+id/spinnerReportPeriod" android:layout_width="match_parent"
+        android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input"
+        android:contentDescription="Seleccionar período de ventas" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginTop="8dp">
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonExportSales"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp"
+            android:background="@drawable/bg_admin_action" android:backgroundTint="@null"
+            android:text="Exportar ventas" android:textSize="12sp" android:textAllCaps="false"
+            android:textColor="@color/clarys_dark" />
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonExportInventory"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp"
+            android:layout_marginStart="8dp" android:background="@drawable/bg_admin_action"
+            android:backgroundTint="@null" android:text="Exportar inventario" android:textSize="12sp"
+            android:textAllCaps="false" android:textColor="@color/clarys_dark" />
+    </LinearLayout>
+</LinearLayout>

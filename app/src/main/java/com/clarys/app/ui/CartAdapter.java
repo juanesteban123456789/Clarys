@@ -50,7 +50,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         CartItem item = items.get(position);
         holder.name.setText(item.getProduct().getName());
         holder.detail.setText(store.formatMoney(item.getProduct().getSalePrice())
-                + " | disponible " + item.getProduct().getStock());
+                + " | disponible " + item.getAvailableStock()
+                + (item.getVariantLabel().isEmpty() ? "" : " | " + item.getVariantLabel()));
+        holder.plusButton.setEnabled(item.getQuantity() < item.getAvailableStock());
         holder.quantity.setText(String.valueOf(item.getQuantity()));
         holder.subtotal.setText(store.formatMoney(item.getSubtotal()));
         holder.minusButton.setOnClickListener(view -> listener.onQuantityChanged(item, item.getQuantity() - 1));

@@ -78,6 +78,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 ? "Costo " + store.formatMoney(product.getPurchasePrice())
                         + " | Margen " + store.formatMoney(product.getPotentialProfit())
                         + " | Vendidas " + product.getSoldUnits()
+                        + " | Total " + product.getTotalStock() + " | Reservado " + product.getReservedStock()
                 : buildPublicExtra(product));
         if (product.getImageUrl().isEmpty()) {
             holder.image.setVisibility(View.GONE);

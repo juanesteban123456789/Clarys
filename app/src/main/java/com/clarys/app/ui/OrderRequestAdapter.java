@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.clarys.app.R;
 import com.clarys.app.model.OrderRequest;
+import com.clarys.app.util.OrderStatusUtils;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -123,29 +124,12 @@ public class OrderRequestAdapter
 
     private String statusLabel(
             String status) {
-
-        if (OrderRequest.STATUS_PENDING.equals(status)) {
-            return "PENDIENTE";
-        }
-
-        if (OrderRequest.STATUS_APPROVED.equals(status)) {
-            return "APROBADO";
-        }
-
-        if (OrderRequest.STATUS_REJECTED.equals(status)) {
-            return "DENEGADO";
-        }
-
-        if (OrderRequest.STATUS_COMPLETED.equals(status)) {
-            return "COMPLETADO";
-        }
-
-        return "PEDIDO";
+        return OrderStatusUtils.label(status);
     }
 
 
     private String formatMoney(
-            int value) {
+            long value) {
 
         NumberFormat formatter =
                 NumberFormat.getCurrencyInstance(

@@ -452,6 +452,8 @@
         <!-- PEDIDOS DE CLIENTES -->
         <!-- ================================================= -->
 
+        <include layout="@layout/view_report_tools" />
+
         <LinearLayout
             android:id="@+id/layoutOrderRequestsSection"
             android:layout_width="match_parent"
@@ -545,6 +547,22 @@
                         android:textStyle="bold" />
 
 
+                    <TextView
+                        android:id="@+id/filterOrderActive"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_product_category"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:text="@string/order_notifications_active_filter"
+                        android:textColor="@color/clarys_mid"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
                     <!-- PENDIENTES -->
 
                     <TextView
@@ -558,7 +576,23 @@
                         android:gravity="center"
                         android:paddingStart="15dp"
                         android:paddingEnd="15dp"
-                        android:text="Pendientes"
+                        android:text="Nuevos"
+                        android:textColor="@color/clarys_muted"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/filterOrderContacted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_admin_action"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:text="Contactados"
                         android:textColor="@color/clarys_muted"
                         android:textSize="11sp"
                         android:textStyle="bold" />
@@ -577,7 +611,23 @@
                         android:gravity="center"
                         android:paddingStart="15dp"
                         android:paddingEnd="15dp"
-                        android:text="Aprobados"
+                        android:text="Confirmados"
+                        android:textColor="@color/clarys_muted"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/filterOrderPreparing"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_admin_action"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:text="En preparación"
                         android:textColor="@color/clarys_muted"
                         android:textSize="11sp"
                         android:textStyle="bold" />
@@ -596,7 +646,7 @@
                         android:gravity="center"
                         android:paddingStart="15dp"
                         android:paddingEnd="15dp"
-                        android:text="Denegados"
+                        android:text="Cancelados"
                         android:textColor="@color/clarys_muted"
                         android:textSize="11sp"
                         android:textStyle="bold" />
@@ -615,7 +665,7 @@
                         android:gravity="center"
                         android:paddingStart="15dp"
                         android:paddingEnd="15dp"
-                        android:text="Completados"
+                        android:text="Entregados"
                         android:textColor="@color/clarys_muted"
                         android:textSize="11sp"
                         android:textStyle="bold" />

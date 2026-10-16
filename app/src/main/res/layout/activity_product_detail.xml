@@ -325,6 +325,8 @@
         <!-- ACCIÓN PRINCIPAL -->
         <!-- ===================================== -->
 
+        <include layout="@layout/view_product_extras" />
+
         <LinearLayout
             android:id="@+id/buttonAddToCart"
             android:layout_width="match_parent"

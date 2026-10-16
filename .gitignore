@@ -7,5 +7,16 @@ captures/
 app/build/
 *.apk
 *.aab
+*.jks
+*.keystore
+keystore.properties
 supabase/.temp/
 supabase/functions/.env
+.clarys-backup/
+clarys-backup.config.json
+.pgpass
+respaldos/
+backups/
+*.dump
+*.backup
+*.dpapi

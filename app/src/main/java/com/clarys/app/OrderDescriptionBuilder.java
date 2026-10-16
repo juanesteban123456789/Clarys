@@ -3,11 +3,12 @@ package com.clarys.app;
 import com.clarys.app.model.CartItem;
 import com.clarys.app.model.OrderRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Construye una descripción administrativa útil cuando la IA
- * no está configurada o no se encuentra disponible.
+ * Construye una descripción administrativa del pedido sin depender
+ * de servicios de inteligencia artificial externos.
  */
 final class OrderDescriptionBuilder {
 
@@ -28,8 +29,17 @@ final class OrderDescriptionBuilder {
                 "El cliente"
         );
 
-        StringBuilder products =
-                new StringBuilder();
+        List<String> products =
+                new ArrayList<>();
+
+        List<String> insufficientStock =
+                new ArrayList<>();
+
+        List<String> inactiveProducts =
+                new ArrayList<>();
+
+        List<String> unknownStock =
+                new ArrayList<>();
 
         List<CartItem> items =
                 order.getItems();
@@ -45,36 +55,114 @@ final class OrderDescriptionBuilder {
                 continue;
             }
 
-            if (products.length() > 0) {
-                products.append(
-                        index == items.size() - 1
-                                ? " y "
-                                : ", "
-                );
-            }
+            String productName = safe(
+                    item.getProduct().getName(),
+                    "producto"
+            );
 
-            products.append(item.getQuantity())
-                    .append(
+            products.add(
+                    item.getQuantity()
+                            + (
                             item.getQuantity() == 1
                                     ? " unidad de "
                                     : " unidades de "
                     )
-                    .append(item.getProduct().getName());
+                            + productName + (item.getVariantLabel().isEmpty() ? "" : " (" + item.getVariantLabel() + ")")
+            );
+
+            if (!item.isInventoryKnown()) {
+                unknownStock.add(productName);
+            } else if (!item.getProduct().isActive()) {
+                inactiveProducts.add(productName);
+            } else if (!order.isApproved() && !order.isPreparing() && !order.isCompleted()
+                    && item.getAvailableStock() < item.getQuantity()) {
+                insufficientStock.add(
+                        productName
+                                + " (solicita "
+                                + item.getQuantity()
+                                + " y hay "
+                                + item.getProduct().getStock()
+                                + ")"
+                );
+            }
         }
 
         String requestedProducts =
-                products.length() == 0
-                        ? "los productos indicados"
-                        : products.toString();
+                naturalList(
+                        products,
+                        "los productos indicados"
+                );
+
+        List<String> inventoryMessages =
+                new ArrayList<>();
+
+        if (!insufficientStock.isEmpty()) {
+            inventoryMessages.add(
+                    "El inventario es insuficiente para "
+                            + naturalList(insufficientStock, "")
+            );
+        }
+
+        if (!inactiveProducts.isEmpty()) {
+            inventoryMessages.add(
+                    naturalList(inactiveProducts, "")
+                            + (
+                            inactiveProducts.size() == 1
+                                    ? " no está activo"
+                                    : " no están activos"
+                    )
+            );
+        }
+
+        if (!unknownStock.isEmpty()) {
+            inventoryMessages.add(
+                    "se debe verificar manualmente el stock de "
+                            + naturalList(unknownStock, "")
+            );
+        }
+
+        if (inventoryMessages.isEmpty()) {
+            inventoryMessages.add(
+                    "El inventario disponible es suficiente para atender "
+                            + "las cantidades solicitadas"
+            );
+        }
 
         return customerName
                 + " está solicitando "
                 + requestedProducts
                 + ". El valor total estimado a pagar es "
                 + safe(formattedTotal, "el indicado en el pedido")
-                + ". Antes de aprobar, valida que exista stock suficiente "
-                + "para cada producto, confirma el método de pago y acuerda "
-                + "la entrega con el cliente.";
+                + ". "
+                + joinSentences(inventoryMessages)
+                + ". Confirma el método de pago y acuerda la entrega "
+                + "antes de aprobar el pedido.";
+    }
+
+    private static String naturalList(
+            List<String> values,
+            String fallback) {
+
+        if (values == null || values.isEmpty()) {
+            return fallback;
+        }
+
+        if (values.size() == 1) {
+            return values.get(0);
+        }
+
+        return String.join(
+                ", ",
+                values.subList(0, values.size() - 1)
+        )
+                + " y "
+                + values.get(values.size() - 1);
+    }
+
+    private static String joinSentences(
+            List<String> values) {
+
+        return String.join(". ", values);
     }
 
     private static String safe(
@@ -83,6 +171,7 @@ final class OrderDescriptionBuilder {
 
         return value == null
                 || value.trim().isEmpty()
+                || "null".equalsIgnoreCase(value.trim())
                 ? fallback
                 : value.trim();
     }

@@ -19,6 +19,11 @@ import com.clarys.app.ui.CartAdapter;
 import com.clarys.app.ui.ProductAdapter;
 
 public class SaleActivity extends BaseScreenActivity {
+    @Override protected void requestLeaveScreen(Runnable navigation) {
+        if (saving) { showMessage(getString(R.string.navigation_wait_save)); return; }
+        navigation.run();
+    }
+    private boolean saving;
     private SupabaseStore store;
     private ProductAdapter productAdapter;
     private CartAdapter cartAdapter;
@@ -51,18 +56,22 @@ public class SaleActivity extends BaseScreenActivity {
         productAdapter = new ProductAdapter("Agregar", "Detalle", true, new ProductAdapter.ProductActionListener() {
             @Override
             public void onPrimaryAction(Product product) {
-                if (store.addToCart(product.getId(), 1)) {
+                if(saving) { return; }
+                com.clarys.app.ui.VariantPicker.show(SaleActivity.this,product,variantId -> {
+                if (store.addToCart(product.getId(),variantId,1)) {
                     showMessage("Agregado a venta");
                     refreshCart();
                 } else {
                     showMessage("Sin stock disponible");
                 }
+                });
             }
 
             @Override
             public void onSecondaryAction(Product product) {
                 Intent intent = new Intent(SaleActivity.this, ProductDetailActivity.class);
                 intent.putExtra("productId", product.getId());
+                intent.putExtra(CatalogActivity.EXTRA_ADMIN_CATALOG,true);
                 startActivity(intent);
             }
         });
@@ -71,13 +80,15 @@ public class SaleActivity extends BaseScreenActivity {
         RecyclerView cartList = findViewById(R.id.recyclerSaleCart);
         cartList.setLayoutManager(new LinearLayoutManager(this));
         cartAdapter = new CartAdapter((CartItem item, int newQuantity) -> {
-            store.updateCartQuantity(item.getProduct().getId(), newQuantity);
+            if(saving) { return; }
+            store.updateCartQuantity(item.getProduct().getId(),item.getVariantId(),newQuantity);
             refreshCart();
         });
         cartList.setAdapter(cartAdapter);
 
         findViewById(R.id.buttonSaleSearch).setOnClickListener(view -> refreshProducts());
         findViewById(R.id.buttonClearSaleCart).setOnClickListener(view -> {
+            if(saving) { return; }
             store.clearCart();
             refreshCart();
         });
@@ -112,6 +123,7 @@ public class SaleActivity extends BaseScreenActivity {
     }
 
     private void confirmSale() {
+        if(saving) { return; }
         Integer discount = parseDiscount();
         if (discount == null) {
             return;
@@ -121,11 +133,15 @@ public class SaleActivity extends BaseScreenActivity {
             return;
         }
 
+        saving=true;
+        findViewById(R.id.buttonConfirmSale).setEnabled(false);
         store.confirmSaleAsync(customerInput.getText().toString(), phoneInput.getText().toString(),
                 paymentSpinner.getSelectedItem().toString(), discount, "Confirmada",
                 new StoreCallback<Sale>() {
                     @Override
                     public void onSuccess(Sale sale) {
+                        saving=false;
+                        findViewById(R.id.buttonConfirmSale).setEnabled(true);
                         showMessage("Venta registrada");
                         Intent intent = new Intent(SaleActivity.this, SaleDetailActivity.class);
                         if (sale != null) {
@@ -136,6 +152,8 @@ public class SaleActivity extends BaseScreenActivity {
 
                     @Override
                     public void onError(String message) {
+                        saving=false;
+                        findViewById(R.id.buttonConfirmSale).setEnabled(true);
                         showMessage(message);
                     }
                 });

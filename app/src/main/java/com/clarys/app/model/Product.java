@@ -2,6 +2,9 @@ package com.clarys.app.model;
 
 import com.clarys.app.util.TextSanitizer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Product {
     private final int id;
     private String name;
@@ -10,6 +13,8 @@ public class Product {
     private int purchasePrice;
     private int salePrice;
     private int stock;
+    private int reservedStock;
+    private List<ProductVariant> variants = new ArrayList<>();
     private int minStock;
     private String sizes;
     private String colors;
@@ -88,7 +93,19 @@ public class Product {
     }
 
     public int getStock() {
-        return stock;
+        return Math.max(0, stock - reservedStock);
+    }
+
+    public int getTotalStock() { return stock; }
+    public int getReservedStock() { return reservedStock; }
+    public void setReservedStock(int value) { reservedStock = Math.max(0, value); }
+    public List<ProductVariant> getVariants() { return new ArrayList<>(variants); }
+    public void setVariants(List<ProductVariant> values) { variants = new ArrayList<>(values); }
+    public ProductVariant getVariant(String id) {
+        for (ProductVariant variant : variants) {
+            if (variant.getId().equals(id)) { return variant; }
+        }
+        return null;
     }
 
     public void setStock(int stock) {
@@ -155,11 +172,16 @@ public class Product {
     }
 
     public boolean isLowStock() {
-        return stock > 0 && stock <= minStock;
+        return getStock() > 0 && getStock() <= minStock;
     }
 
     public boolean isOutOfStock() {
-        return stock == 0;
+        return getStock() == 0;
+    }
+
+    /** Los productos archivados no requieren alertas de reposicion en el panel. */
+    public boolean needsStockReplenishment() {
+        return active && (isLowStock() || isOutOfStock());
     }
 
     public int getPotentialProfit() {

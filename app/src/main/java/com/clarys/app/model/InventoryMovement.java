@@ -9,6 +9,7 @@ public class InventoryMovement {
     private final int previousStock;
     private final int newStock;
     private final String reason;
+    private String createdAt="";
 
     public InventoryMovement(String productName, String type, int quantity, int previousStock,
             int newStock, String reason) {
@@ -43,4 +44,6 @@ public class InventoryMovement {
     public String getReason() {
         return reason;
     }
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String value) { createdAt=TextSanitizer.emptyIfNull(value); }
 }

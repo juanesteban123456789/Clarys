@@ -407,6 +407,8 @@
 
 
         <!-- NUEVA VENTA -->
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/buttonSaleDocument" style="@style/DocumentAction"
+            android:drawableStart="@drawable/ic_report" android:text="@string/documents_from_sale" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonNewSaleFromDetail"

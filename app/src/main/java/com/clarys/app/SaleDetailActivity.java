@@ -29,9 +29,16 @@ public class SaleDetailActivity extends BaseScreenActivity {
                 ? store.getSales().get(0)
                 : store.getSale(saleId);
         if (sale == null) {
+            findViewById(R.id.buttonSaleDocument).setEnabled(false);
             ((TextView) findViewById(R.id.textSaleDetailTitle)).setText("Venta no encontrada");
             return;
         }
+
+        findViewById(R.id.buttonSaleDocument).setOnClickListener(view -> {
+            android.content.Intent intent = new android.content.Intent(this, SalesDocumentFormActivity.class);
+            intent.putExtra("saleId", sale.getId());
+            startActivity(intent);
+        });
 
         ((TextView) findViewById(R.id.textSaleDetailTitle)).setText("Venta #" + sale.getId());
         ((TextView) findViewById(R.id.textSaleDetailCustomer)).setText(sale.getCustomerName()
@@ -46,6 +53,7 @@ public class SaleDetailActivity extends BaseScreenActivity {
         for (CartItem item : sale.getItems()) {
             TextView itemText = new TextView(this);
             itemText.setText(item.getProduct().getName() + " x" + item.getQuantity()
+                    + (item.getVariantLabel().isEmpty() ? "" : " · "+item.getVariantLabel())
                     + " | " + store.formatMoney(item.getSubtotal()));
             itemText.setTextColor(getColor(R.color.clarys_text));
             itemText.setTextSize(15);

@@ -1,4 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Clarys</string>
+    <string name="order_notifications_channel_new">Pedidos nuevos</string>
+    <string name="order_notifications_channel_new_description">Avisos emergentes de pedidos nuevos del taller.</string>
+    <string name="order_notifications_channel_daily">Resumen diario de pedidos</string>
+    <string name="order_notifications_channel_daily_description">Recordatorio diario de pedidos por atender.</string>
+    <string name="order_notifications_new_title">Nuevos pedidos</string>
+    <string name="order_notifications_daily_title">Pedidos por atender</string>
+    <string name="order_notifications_daily_detail">Nuevos: %1$d · Contactados: %2$d\nConfirmados: %3$d · En preparación: %4$d</string>
+    <string name="order_notifications_daily_switch">Recordatorio diario de pedidos</string>
+    <string name="order_notifications_settings">Configurar notificaciones</string>
+    <string name="order_notifications_active_filter">Por atender</string>
+    <plurals name="order_notifications_new_count">
+        <item quantity="one">Tienes %d pedido nuevo por revisar.</item>
+        <item quantity="other">Tienes %d pedidos nuevos por revisar.</item>
+    </plurals>
+    <plurals name="order_notifications_active_count">
+        <item quantity="one">Tienes %d pedido pendiente de atención.</item>
+        <item quantity="other">Tienes %d pedidos pendientes de atención.</item>
+    </plurals>
+    <string name="share_product_title">Compartir producto</string>
+    <string name="share_product_preparing">Preparando imagen del producto…</string>
+    <string name="share_product_image_unavailable">No se pudo cargar la imagen. Se compartirá solo el texto.</string>
+    <string name="share_product_app_unavailable">No hay una aplicación disponible para compartir este producto.</string>
+    <string name="sqlite_evidence_menu">Prueba SQLite SENA</string>
+    <string name="catalog_title">Catálogo</string>
+    <string name="catalog_subtitle">Prendas de talleres disponibles</string>
+    <string name="catalog_hero_title">Encuentra algo hecho para ti</string>
+    <string name="catalog_hero_description">Explora por categoría y pide tus favoritos.</string>
+    <string name="catalog_search_hint">Buscar prenda, categoría o código</string>
+    <string name="catalog_search_action">Buscar productos</string>
+    <string name="catalog_open_counter_sale">Abrir venta en mostrador</string>
+    <string name="catalog_explore_categories">Explorar categorías</string>
+    <string name="catalog_swipe_categories">Desliza para encontrar lo que buscas</string>
+    <string name="catalog_categories">Categorías</string>
+    <string name="catalog_all">Todo</string>
+    <string name="catalog_empty">Aún no hay productos disponibles.</string>
+    <string name="catalog_no_results">No encontramos productos con ese criterio.</string>
+    <string name="catalog_results_for">Resultados para "%1$s"</string>
+    <string name="catalog_see_more">Ver más</string>
+    <string name="catalog_product_image">Imagen del producto</string>
+    <string name="catalog_view_product">Ver producto</string>
+    <string name="catalog_add_to_cart">Agregar al carrito</string>
+    <string name="catalog_back">Volver atrás</string>
+    <string name="catalog_home">Ir al inicio</string>
+    <string name="catalog_logo">Logo de Clarys</string>
+    <string name="catalog_open_catalog">Ver catálogo</string>
+    <string name="catalog_cart">Carrito</string>
+    <string name="catalog_open_cart">Abrir carrito</string>
+    <string name="catalog_orders">Mis pedidos</string>
+    <string name="catalog_open_orders">Consultar mis pedidos</string>
+    <string name="catalog_admin_panel">Panel</string>
+    <string name="catalog_return_admin_panel">Volver al panel administrativo</string>
+    <string name="catalog_admin_products">Productos</string>
+    <string name="catalog_admin_orders">Pedidos</string>
+    <plurals name="catalog_product_count">
+        <item quantity="one">%d producto</item>
+        <item quantity="other">%d productos</item>
+    </plurals>
+    <plurals name="catalog_match_count">
+        <item quantity="one">%d coincidencia</item>
+        <item quantity="other">%d coincidencias</item>
+    </plurals>
 </resources>
