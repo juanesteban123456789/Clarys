@@ -10,8 +10,8 @@ Clarys se comunica con Supabase mediante APIs HTTP usando OkHttp.
   talleres, perfiles, productos, inventario, clientes, ventas y pedidos.
 - Supabase RPC (/rest/v1/rpc): operaciones transaccionales como ajustar stock
   y confirmar ventas.
-- Supabase Edge Functions API (/functions/v1): generación de la descripción
-  administrativa de pedidos mediante generate-order-description.
+- Supabase Edge Functions API (/functions/v1): generación automática de la
+  descripción administrativa mediante reglas locales, sin servicios de IA.
 - Supabase Storage API (/storage/v1): subida y consulta de imágenes de
   productos y comprobantes.
 
@@ -40,7 +40,8 @@ SERVICES - REGLAS Y LÓGICA DEL NEGOCIO
 - SupabaseStore centraliza autenticación, productos, stock, ventas, clientes,
   pedidos, configuración y almacenamiento.
 - SupabaseClient centraliza el transporte HTTP con OkHttp.
-- OrderDescriptionBuilder y WhatsAppUtils contienen servicios especializados.
+- OrderDescriptionBuilder genera resúmenes mediante reglas locales y
+  WhatsAppUtils prepara la comunicación con el cliente.
 
 MODELS - ESTRUCTURA DE LOS DATOS
 - El paquete com.clarys.app.model contiene Product, Customer, Sale,
